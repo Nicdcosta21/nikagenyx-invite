@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Nikolas & Kavita — 27 Oct 2025, Kochi</title>
 
+  <!-- stop the favicon 404 for now (replace later with a real icon if you like) -->
+  <link rel="icon" href="data:," />
+
+  <!-- Fonts & Tailwind -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
@@ -18,13 +22,34 @@
 
   <style>
     :root { --wine:#7b1733; --wine-soft:#fdebef; --ink:#1f2937; }
-    body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; color: var(--ink); }
+    html, body { height: 100%; }
+    body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; color: var(--ink); position: relative; }
+
+    /* --- Static, non-scrolling background image with tint --- */
+    body::before {                 /* photo layer */
+      content: "";
+      position: fixed; inset: 0;
+      background: url('/assets/hero.jpg') center / cover no-repeat;
+      z-index: -2;
+    }
+    body::after {                  /* subtle wine overlay */
+      content: "";
+      position: fixed; inset: 0;
+      background: linear-gradient(180deg, rgba(20,6,10,.60), rgba(20,6,10,.60));
+      z-index: -1;
+    }
+
     h1,h2,h3 { font-family: "Playfair Display", Georgia, serif; }
-    .hero{ background-image:url('/assets/hero.jpg'); background-size:cover; background-position:center; position:relative; min-height:100vh; color:#fff; }
-    .hero::before{ content:""; position:absolute; inset:0; background:linear-gradient(180deg,rgba(20,6,10,.55),rgba(20,6,10,.65)); backdrop-filter:blur(1.5px); }
-    .card{ background:#fff; border-radius:1.25rem; padding:2rem; box-shadow:0 20px 35px rgba(0,0,0,.15); background-image:radial-gradient(80% 60% at 5% 0%, var(--wine-soft), transparent 40%); }
+    .hero{ min-height:100vh; display:flex; align-items:center; }
+    .card{
+      background:#fff; color: var(--ink);
+      border-radius:1.25rem; padding:2rem;
+      box-shadow:0 20px 35px rgba(0,0,0,.15);
+      background-image:radial-gradient(80% 60% at 5% 0%, var(--wine-soft), transparent 40%);
+    }
     .btn{ display:inline-flex; align-items:center; justify-content:center; padding:.85rem 1.2rem; border-radius:.75rem; font-weight:600; }
-    .btn-primary{ background:var(--wine); color:#fff; } .btn-primary:hover{ filter:brightness(0.95); }
+    .btn-primary{ background:var(--wine); color:#fff; }
+    .btn-primary:hover{ filter:brightness(0.95); }
     .btn-outline{ background:#fff; border:1px solid rgba(123,23,51,.3); color:var(--wine); }
     .underline-link{ color:var(--wine); text-decoration:underline; }
     .modal-bg{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; padding:1rem; z-index:50; }
@@ -34,10 +59,11 @@
 </head>
 <body class="bg-white antialiased">
   <header class="hero">
-    <div class="relative z-10">
-      <div class="max-w-4xl mx-auto px-6 py-16 text-center">
-        <p class="tracking-widest text-sm opacity-90">Together with their families</p>
-        <h1 class="mt-3 text-4xl md:text-6xl font-semibold">Nikolas &amp; Kavita</h1>
+    <div class="w-full">
+      <div class="max-w-4xl mx-auto px-6 py-12 text-center">
+        <!-- make only these headings white; card text stays dark -->
+        <p class="tracking-widest text-sm opacity-90 text-white">Together with their families</p>
+        <h1 class="mt-3 text-4xl md:text-6xl font-semibold text-white">Nikolas &amp; Kavita</h1>
 
         <div class="card mt-10">
           <p class="uppercase tracking-widest text-xs text-gray-500">Wedding Invitation</p>
@@ -57,7 +83,6 @@
           </div>
 
           <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-            <!-- Button names: Set A -->
             <button id="btnYes" class="btn btn-primary">I’m coming</button>
             <button id="btnMaybe" class="btn btn-outline">Save the date</button>
           </div>
@@ -77,15 +102,15 @@
           </p>
         </div>
 
-        <p class="mt-10 text-sm uppercase tracking-widest">Countdown</p>
-        <div id="countdown" class="mt-1 text-2xl md:text-3xl font-semibold"></div>
+        <p class="mt-10 text-sm uppercase tracking-widest text-white">Countdown</p>
+        <div id="countdown" class="mt-1 text-2xl md:text-3xl font-semibold text-white"></div>
 
-        <p class="mt-10">Colour of the day: <span class="font-semibold" style="color:var(--wine)">Wine Red</span></p>
+        <p class="mt-10 text-white">Colour of the day: <span class="font-semibold" style="color:#ffd3df">Wine Red</span></p>
       </div>
     </div>
   </header>
 
-  <footer class="py-10 text-center text-gray-500 text-sm">
+  <footer class="py-10 text-center text-gray-200 text-sm">
     invite.nikagenyx.com · Kochi, Kerala
   </footer>
 
@@ -101,7 +126,7 @@
                  placeholder="e.g., John Fernandes">
         </div>
 
-        <!-- Count is shown only for “I’m coming” -->
+        <!-- Shown only for “I’m coming” -->
         <div id="countGroup" class="hidden">
           <label for="guestCount" class="block text-sm font-medium text-gray-700">Number of people</label>
           <select id="guestCount" name="guestCount"
@@ -138,7 +163,7 @@
       tick(); setInterval(tick, 1000);
     })();
 
-    // ICS with reminder: “yes” -> 7 days, “maybe” -> 30 days
+    // ICS with reminder: yes -> 7 days, maybe -> 30 days
     function icsWithReminder(status) {
       const dtStartUTC = '20251027T093000Z'; // 3:00 PM IST
       const dtEndUTC   = '20251027T153000Z'; // 9:00 PM IST
@@ -151,7 +176,7 @@
         'Ceremony: Santa Cruz Cathedral Basilica, Fort Kochi (3:00 PM IST).',
         'Reception: RAAS Residency, Thoppumpady, Kochi.',
         'Maps:', mapCeremony, mapReception
-      ].join('\\n');
+      ].join('\n');
 
       return [
         'BEGIN:VCALENDAR','VERSION:2.0','CALSCALE:GREGORIAN','METHOD:PUBLISH',
@@ -164,7 +189,7 @@
         'DTSTART:' + dtStartUTC,'DTEND:' + dtEndUTC,
         'BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:Wedding reminder','TRIGGER:' + trigger,'END:VALARM',
         'END:VEVENT','END:VCALENDAR'
-      ].join('\\r\\n');
+      ].join('\r\n');
     }
 
     function downloadICS(ics, filename) {
@@ -184,7 +209,7 @@
       } catch(e) { /* silent */ }
     }
 
-    // Modal logic
+    // Modal logic (also fixes the ARIA warning by toggling aria-hidden)
     const modalBg   = document.getElementById('modalBg');
     const form      = document.getElementById('rsvpForm');
     const nameEl    = document.getElementById('guestName');
@@ -197,7 +222,6 @@
       pendingStatus = status;
       nameEl.value = '';
       countEl.value = '';
-      // Show count only for “I’m coming”
       if (status === 'sure') {
         countWrap.classList.remove('hidden');
         countEl.setAttribute('required', 'required');
@@ -206,9 +230,13 @@
         countEl.removeAttribute('required');
       }
       modalBg.style.display = 'flex';
+      modalBg.setAttribute('aria-hidden','false');   // <-- fix
       nameEl.focus();
     }
-    function closeModal(){ modalBg.style.display = 'none'; }
+    function closeModal(){
+      modalBg.style.display = 'none';
+      modalBg.setAttribute('aria-hidden','true');    // <-- fix
+    }
 
     document.getElementById('btnYes').addEventListener('click',  () => openModal('sure'));
     document.getElementById('btnMaybe').addEventListener('click',() => openModal('not_sure'));
@@ -218,7 +246,7 @@
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const name  = nameEl.value.trim();
-      const count = (pendingStatus === 'sure') ? countEl.value : ''; // blank for “Save the date”
+      const count = (pendingStatus === 'sure') ? countEl.value : '';
       if (!name || !pendingStatus) return;
       if (pendingStatus === 'sure' && !count) return;
 
