@@ -5,17 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>NIKOLAS & KAVITA — 27 Oct 2025, Kochi</title>
 
-  <!-- prevent favicon 404 until you add a real one -->
   <link rel="icon" href="data:," />
-
-  <!-- Fonts & Tailwind -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 
-  <meta name="description" content="Wedding Ceremony of Nikolas Samson D’Costa and Kavita Kevin Fernandes — 27 Oct 2025, 3:00 PM at Santa Cruz Cathedral Basilica, Fort Kochi. Reception to follow at RAAS Residency, Thoppumpady." />
+  <meta name="description" content="Wedding Ceremony of Nikolas Samson D’Costa and Kavita Kevin Fernandes — 27 Oct 2025, 3:00 PM at Santa Cruz Cathedral Basilica, Fort Kochi. Reception to follow at RAAS Residency, Thoppumpady. Home: Zion Villa, MLA Road, Pallurthy, Kochi 682006." />
   <meta property="og:title" content="NIKOLAS & KAVITA — Wedding Ceremony" />
-  <meta property="og:description" content="27 Oct 2025 • 3:00 PM • Santa Cruz Cathedral Basilica, Fort Kochi • Reception at RAAS Residency." />
+  <meta property="og:description" content="27 Oct 2025 • 3:00 PM • Santa Cruz Cathedral Basilica, Fort Kochi • Reception at RAAS Residency • Home: Zion Villa, Pallurthy." />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="/assets/hero.jpg" />
   <meta name="theme-color" content="#7b1733" />
@@ -25,7 +22,6 @@
     html, body { height: 100%; }
     body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; color: var(--ink); position: relative; }
 
-    /* --- Static, non-scrolling background with soft blur & wine tint --- */
     body::before {
       content: ""; position: fixed; inset: 0;
       background: url('/assets/hero.jpg') center / cover no-repeat;
@@ -66,14 +62,12 @@
   <header class="hero">
     <div class="w-full">
       <div class="max-w-3xl mx-auto px-6 py-10 text-center">
-        <!-- Scripture -->
         <blockquote class="verse text-white text-base md:text-lg leading-relaxed">
           “Place me like a seal over your heart… for love is as strong as death…
           Many waters cannot quench love; rivers cannot sweep it away”
           <small>— Song of Solomon 8:6–7</small>
         </blockquote>
 
-        <!-- Main Card -->
         <div class="card mt-8">
           <p class="text-gray-600">You are cordially invited, together with their families, to the</p>
           <h2 class="smallcaps mt-1 tracking-widest text-sm text-gray-600">Wedding Ceremony</h2>
@@ -103,13 +97,27 @@
             </div>
           </div>
 
-          <!-- Action buttons -->
+          <!-- NEW: Home & Travel -->
+          <hr class="my-6"/>
+          <div class="grid gap-2 text-base text-gray-700">
+            <div>
+              <div class="smallcaps text-xs text-gray-500">Home Address</div>
+              <div>Zion Villa, MLA Road, Pallurthy, Kochi 682006</div>
+            </div>
+            <div class="mt-2">
+              <div class="smallcaps text-xs text-gray-500">Travel</div>
+              <div>Nearest Railway Station: <strong>Ernakulam Junction (ERS)</strong></div>
+              <div>Nearest Airport: <strong>Cochin International Airport</strong></div>
+            </div>
+          </div>
+
+          <!-- Actions -->
           <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
             <button id="btnYes" class="btn btn-primary">I’m coming</button>
             <button id="btnMaybe" class="btn btn-outline">Save the date</button>
           </div>
 
-          <!-- Maps line -->
+          <!-- Maps -->
           <p class="mt-6 text-sm text-gray-700">
             Ceremony map:
             <a class="underline-link" target="_blank" rel="noopener"
@@ -127,7 +135,7 @@
           <p class="mt-6 text-base font-bold text-gray-700">Colour of the day: Wine Red</p>
         </div>
 
-        <!-- Countdown (outside card, like the original) -->
+        <!-- Countdown -->
         <p class="mt-6 text-sm uppercase tracking-widest text-white">Countdown</p>
         <div id="countdown" class="mt-1 text-2xl md:text-3xl font-semibold text-white"></div>
       </div>
@@ -150,7 +158,6 @@
                  placeholder="e.g., John Fernandes">
         </div>
 
-        <!-- Shown only when “I’m coming” -->
         <div id="countGroup" class="hidden">
           <label for="guestCount" class="block text-sm font-medium text-gray-700">Number of people</label>
           <select id="guestCount" name="guestCount"
@@ -170,7 +177,7 @@
   </div>
 
   <script>
-    // Countdown to 27 Oct 2025 15:00 IST (shows D days HH:MM:SS)
+    // Countdown to 27 Oct 2025 15:00 IST
     (function(){
       const target = new Date('2025-10-27T15:00:00+05:30').getTime();
       const el = document.getElementById('countdown');
@@ -179,8 +186,8 @@
         const now = Date.now();
         let diff = Math.max(0, target - now);
         const d = Math.floor(diff / (1000*60*60*24)); diff -= d*24*60*60*1000;
-        const h = Math.floor(diff / (1000*60*60));     diff -= h*60*60*1000;
-        const m = Math.floor(diff / (1000*60));        diff -= m*60*1000;
+        const h = Math.floor(diff / (1000*60*60)); diff -= h*60*60*1000;
+        const m = Math.floor(diff / (1000*60)); diff -= m*60*1000;
         const s = Math.floor(diff / 1000);
         el.textContent = `${d} days ${pad(h)}:${pad(m)}:${pad(s)}`;
       }
@@ -200,8 +207,11 @@
         'Wedding Ceremony of Nikolas & Kavita.',
         'Time: 3:00 PM IST at Santa Cruz Cathedral Basilica, Fort Kochi.',
         'Reception to follow at RAAS Residency, Thoppumpady, Kochi.',
+        'Home address: Zion Villa, MLA Road, Pallurthy, Kochi 682006.',
+        'Nearest Railway Station: Ernakulam Junction (ERS).',
+        'Nearest Airport: Cochin International Airport.',
         'Maps:', mapCeremony, mapReception
-      ].join('\n');
+      ].join('\\n');
 
       return [
         'BEGIN:VCALENDAR','VERSION:2.0','CALSCALE:GREGORIAN','METHOD:PUBLISH',
@@ -214,7 +224,7 @@
         'DTSTART:' + dtStartUTC,'DTEND:' + dtEndUTC,
         'BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:Wedding reminder','TRIGGER:' + trigger,'END:VALARM',
         'END:VEVENT','END:VCALENDAR'
-      ].join('\r\n');
+      ].join('\\r\\n');
     }
 
     function downloadICS(ics, filename) {
@@ -234,14 +244,13 @@
       } catch(e) { /* silent */ }
     }
 
-    // Modal logic (accessibility-correct aria-hidden toggling)
     const modalBg   = document.getElementById('modalBg');
     const form      = document.getElementById('rsvpForm');
     const nameEl    = document.getElementById('guestName');
     const countWrap = document.getElementById('countGroup');
     const countEl   = document.getElementById('guestCount');
     const cancelBtn = document.getElementById('cancelBtn');
-    let pendingStatus = null; // 'sure' or 'not_sure'
+    let pendingStatus = null;
 
     function openModal(status){
       pendingStatus = status;
