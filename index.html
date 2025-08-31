@@ -72,12 +72,21 @@
 
         <!-- Main Card -->
         <div class="card mt-8">
+
           <p class="text-gray-600">You are cordially invited together with their families to the</p>
           <h2 class="mt-1 text-3xl md:text-5xl font-bold text-gray-700">WEDDING CEREMONY</h2>
 
           <div class="mt-5 text-gray-700">
             <p class="text-sm">s/o Samson Nicholas D’Costa and Suni Samson D’Costa,</p>
             <h1 class="mt-1 text-5xl md:text-7xl font-bold tracking-wide">NIKOLAS &amp; KAVITA</h1>
+
+          <p class="text-gray-600">You are cordially invited, together with their families, to the</p>
+          <h2 class="mt-1 text-2xl md:text-3xl font-bold text-gray-700">WEDDING CEREMONY</h2>
+
+          <div class="mt-5 text-gray-700">
+            <p class="text-sm">s/o Samson Nicholas D’Costa and Suni Samson D’Costa,</p>
+            <h1 class="mt-1 text-4xl md:text-6xl font-bold tracking-wide">NIKOLAS &amp; KAVITA</h1>
+
             <p class="text-sm mt-1">d/o Kevin Thomas Fernandes and Annie Kevin Fernandes.</p>
           </div>
 
@@ -162,6 +171,7 @@
     (function(){
       const el = document.getElementById('countdown');
       if(!el) return;
+
       const eventDate = new Date('2025-10-27T15:00:00+05:30');
       function update(){
         const diff = eventDate - new Date();
@@ -171,12 +181,29 @@
           const minutes = Math.floor((diff / (1000 * 60)) % 60);
           const seconds = Math.floor((diff / 1000) % 60);
           el.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s to go!`;
+
+
+      function update(){
+        const eventDate = new Date('2025-10-27T15:00:00+05:30');
+        const diff = eventDate - new Date();
+        if(diff > 0){
+          const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+          el.textContent = days + ' days to go!';
+
         } else {
           el.textContent = 'Today is the day!';
         }
       }
       update();
+
       setInterval(update, 1000);
+
+
+      setInterval(update, 1000);
+
+      setInterval(update, 86400000);
+
+
     })();
 
     // ICS with reminder: yes -> 7 days, maybe -> 30 days
