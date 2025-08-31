@@ -1,0 +1,9 @@
+{
+  "name": "invite-nikagenyx",
+  "private": true,
+  "version": "1.0.0",
+  "license": "MIT",
+  "dependencies": {
+    "googleapis": "^131.0.0"
+  }
+}
