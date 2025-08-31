@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Nikolas & Kavita — 27 Oct 2025, Kochi</title>
+  <title>NIKOLAS & KAVITA — 27 Oct 2025, Kochi</title>
 
-  <!-- stop the favicon 404 for now (replace later with a real icon if you like) -->
+  <!-- prevent favicon 404 until you add a real one -->
   <link rel="icon" href="data:," />
 
   <!-- Fonts & Tailwind -->
@@ -13,9 +13,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 
-  <meta name="description" content="Wedding of Nikolas Samson D’Costa and Kavita Kevin Fernandes — 27 Oct 2025, 3:00 PM at Santa Cruz Cathedral Basilica, Fort Kochi. Reception: RAAS Residency, Thoppumpady." />
-  <meta property="og:title" content="Nikolas & Kavita — 27 Oct 2025" />
-  <meta property="og:description" content="Ceremony at Santa Cruz Cathedral Basilica, Fort Kochi. Reception at RAAS Residency, Thoppumpady, Kochi." />
+  <meta name="description" content="Wedding Ceremony of Nikolas Samson D’Costa and Kavita Kevin Fernandes — 27 Oct 2025, 3:00 PM at Santa Cruz Cathedral Basilica, Fort Kochi. Reception to follow at RAAS Residency, Thoppumpady." />
+  <meta property="og:title" content="NIKOLAS & KAVITA — Wedding Ceremony" />
+  <meta property="og:description" content="27 Oct 2025 • 3:00 PM • Santa Cruz Cathedral Basilica, Fort Kochi • Reception at RAAS Residency." />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="/assets/hero.jpg" />
   <meta name="theme-color" content="#7b1733" />
@@ -25,16 +25,14 @@
     html, body { height: 100%; }
     body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; color: var(--ink); position: relative; }
 
-    /* --- Static, non-scrolling background image with tint --- */
-    body::before {                 /* photo layer */
-      content: "";
-      position: fixed; inset: 0;
+    /* --- Static, non-scrolling background image with wine tint --- */
+    body::before {
+      content: ""; position: fixed; inset: 0;
       background: url('/assets/hero.jpg') center / cover no-repeat;
       z-index: -2;
     }
-    body::after {                  /* subtle wine overlay */
-      content: "";
-      position: fixed; inset: 0;
+    body::after {
+      content: ""; position: fixed; inset: 0;
       background: linear-gradient(180deg, rgba(20,6,10,.60), rgba(20,6,10,.60));
       z-index: -1;
     }
@@ -50,44 +48,65 @@
     .btn{ display:inline-flex; align-items:center; justify-content:center; padding:.85rem 1.2rem; border-radius:.75rem; font-weight:600; }
     .btn-primary{ background:var(--wine); color:#fff; }
     .btn-primary:hover{ filter:brightness(0.95); }
-    .btn-outline{ background:#fff; border:1px solid rgba(123,23,51,.3); color:var(--wine); }
+    .btn-outline{ background:#fff; border:1px solid rgba(123,23,51,.35); color:var(--wine); }
     .underline-link{ color:var(--wine); text-decoration:underline; }
     .modal-bg{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; padding:1rem; z-index:50; }
     .modal{ width:100%; max-width:480px; background:#fff; border-radius:1rem; padding:1.25rem; box-shadow:0 20px 40px rgba(0,0,0,.25); }
     .hidden{ display:none; }
+    .smallcaps { letter-spacing: .08em; text-transform: uppercase; }
+    blockquote.verse { font-style: italic; color:#f8e7ec; }
+    blockquote.verse small { display:block; margin-top:.35rem; opacity:.9; }
   </style>
 </head>
 <body class="bg-white antialiased">
   <header class="hero">
     <div class="w-full">
-      <div class="max-w-4xl mx-auto px-6 py-12 text-center">
-        <!-- make only these headings white; card text stays dark -->
-        <p class="tracking-widest text-sm opacity-90 text-white">Together with their families</p>
-        <h1 class="mt-3 text-4xl md:text-6xl font-semibold text-white">Nikolas &amp; Kavita</h1>
+      <div class="max-w-3xl mx-auto px-6 py-10 text-center">
+        <!-- Scripture -->
+        <blockquote class="verse text-white text-base md:text-lg leading-relaxed">
+          “Place me like a seal over your heart… for love is as strong as death…<br/>
+          Many waters cannot quench love; rivers cannot sweep it away.”
+          <small>— Song of Solomon 8:6–7</small>
+        </blockquote>
 
-        <div class="card mt-10">
-          <p class="uppercase tracking-widest text-xs text-gray-500">Wedding Invitation</p>
-          <h2 class="mt-2 text-2xl md:text-3xl">Monday, 27 October 2025</h2>
-          <p class="mt-2 text-lg">3:00 PM — Santa Cruz Cathedral Basilica, Fort Kochi</p>
-          <p class="mt-1 text-lg">Reception to follow at RAAS Residency, Thoppumpady, Kochi</p>
+        <!-- Main Card -->
+        <div class="card mt-8">
+          <p class="text-gray-600">You are cordially invited, together with their families, to the</p>
+          <h2 class="smallcaps mt-1 tracking-widest text-sm text-gray-600">Wedding Ceremony</h2>
 
-          <hr class="my-6">
-
-          <div class="text-base md:text-lg leading-relaxed">
-            <p class="mt-1">
-              <strong>Nikolas Samson D’Costa</strong>, son of Samson Nicholas D’Costa and Suni Samson D’Costa,
-            </p>
-            <p>
-              weds <strong>Kavita Kevin Fernandes</strong>, daughter of Kevin Thomas Fernandes and Annie Kevin Fernandes.
-            </p>
+          <div class="mt-5 text-gray-700">
+            <p class="text-sm">s/o Samson Nicholas D’Costa and Suni Samson D’Costa,</p>
+            <h1 class="mt-1 text-3xl md:text-5xl font-semibold tracking-wide">NIKOLAS &amp; KAVITA</h1>
+            <p class="text-sm mt-1">d/o Kevin Thomas Fernandes and Annie Kevin Fernandes.</p>
           </div>
 
+          <hr class="my-6"/>
+
+          <div class="grid gap-3 text-base">
+            <div>
+              <div class="smallcaps text-xs text-gray-500">On</div>
+              <div class="text-xl md:text-2xl">Monday, 27 October 2025</div>
+            </div>
+
+            <div>
+              <div class="smallcaps text-xs text-gray-500">Time</div>
+              <div>3:00 PM — Santa Cruz Cathedral Basilica, Fort Kochi</div>
+            </div>
+
+            <div>
+              <div class="smallcaps text-xs text-gray-500">Reception</div>
+              <div>To follow at RAAS Residency, Thoppumpady, Kochi</div>
+            </div>
+          </div>
+
+          <!-- Action buttons -->
           <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
             <button id="btnYes" class="btn btn-primary">I’m coming</button>
             <button id="btnMaybe" class="btn btn-outline">Save the date</button>
           </div>
 
-          <p class="mt-6 text-sm text-gray-600">
+          <!-- Maps line -->
+          <p class="mt-6 text-sm text-gray-700">
             Ceremony map:
             <a class="underline-link" target="_blank" rel="noopener"
                href="https://www.google.com/maps/place/X67V%2BW4G+Santa+Cruz+Cathedral+Basilica,+Kochi,+Bastian+St,+Fort+Nagar,+Fort+Kochi,+Kochi,+Kerala+682001/@9.9609796,76.2523107,16z/data=!3m1!1e3!4m14!1m7!3m6!1s0x3b086dccada9f3f1:0x4c980457c575174c!2sRAAS+Residency,+No+11%2F3319+B,+junction,+near+Thoppumpady,+Thoppumpady,+Kochi,+Kerala+682005!8m2!3d9.9347732!4d76.2641605!16s%2Fg%2F11sgr8ht9l!3m5!1s0x3b086d36b7ff0567:0x4ed899ce06f39a3b!8m2!3d9.9648197!4d76.2428293!16zL20vMDkwamtf?g_ep=Eg1tbF8yMDI1MDgyN18wIJvbDyoASAJQAQ%3D%3D">
@@ -102,10 +121,7 @@
           </p>
         </div>
 
-        <p class="mt-10 text-sm uppercase tracking-widest text-white">Countdown</p>
-        <div id="countdown" class="mt-1 text-2xl md:text-3xl font-semibold text-white"></div>
-
-        <p class="mt-10 text-white">Colour of the day: <span class="font-semibold" style="color:#ffd3df">Wine Red</span></p>
+        <p class="mt-8 text-white">Colour of the day: <span class="font-semibold" style="color:#ffd3df">Wine Red</span></p>
       </div>
     </div>
   </header>
@@ -126,7 +142,7 @@
                  placeholder="e.g., John Fernandes">
         </div>
 
-        <!-- Shown only for “I’m coming” -->
+        <!-- Shown only when “I’m coming” -->
         <div id="countGroup" class="hidden">
           <label for="guestCount" class="block text-sm font-medium text-gray-700">Number of people</label>
           <select id="guestCount" name="guestCount"
@@ -146,23 +162,6 @@
   </div>
 
   <script>
-    // Countdown to 27 Oct 2025 15:00 IST
-    (function(){
-      const target = new Date('2025-10-27T15:00:00+05:30').getTime();
-      const el = document.getElementById('countdown');
-      const pad = n => String(n).padStart(2,'0');
-      function tick(){
-        const now = Date.now();
-        let diff = Math.max(0, target - now);
-        const d = Math.floor(diff / (1000*60*60*24)); diff -= d*24*60*60*1000;
-        const h = Math.floor(diff / (1000*60*60)); diff -= h*60*60*1000;
-        const m = Math.floor(diff / (1000*60)); diff -= m*60*1000;
-        const s = Math.floor(diff / 1000);
-        el.textContent = `${d} days ${pad(h)}:${pad(m)}:${pad(s)}`;
-      }
-      tick(); setInterval(tick, 1000);
-    })();
-
     // ICS with reminder: yes -> 7 days, maybe -> 30 days
     function icsWithReminder(status) {
       const dtStartUTC = '20251027T093000Z'; // 3:00 PM IST
@@ -173,8 +172,9 @@
       const mapReception = 'https://www.google.com/maps/place/RAAS+Residency,+No+11%2F3319+B,+junction,+near+Thoppumpady,+Thoppumpady,+Kochi,+Kerala+682005/@9.9347732,76.2641605,17z/data=!3m1!1e3!4m14!1m7!3m6!1s0x3b086dccada9f3f1:0x4c980457c575174c!2sRAAS+Residency,+No+11%2F3319+B,+junction,+near+Thoppumpady,+Thoppumpady,+Kochi,+Kerala+682005!8m2!3d9.9347732!4d76.2641605!16s%2Fg%2F11sgr8ht9l!3m5!1s0x3b086dccada9f3f1:0x4c980457c575174c!8m2!3d9.9347732!4d76.2641605!16s%2Fg%2F11sgr8ht9l?g_ep=Eg1tbF8yMDI1MDgyN18wIJvbDyoASAJQAQ%3D%3D';
 
       const desc = [
-        'Ceremony: Santa Cruz Cathedral Basilica, Fort Kochi (3:00 PM IST).',
-        'Reception: RAAS Residency, Thoppumpady, Kochi.',
+        'Wedding Ceremony of Nikolas & Kavita.',
+        'Time: 3:00 PM IST at Santa Cruz Cathedral Basilica, Fort Kochi.',
+        'Reception to follow at RAAS Residency, Thoppumpady, Kochi.',
         'Maps:', mapCeremony, mapReception
       ].join('\n');
 
@@ -183,7 +183,7 @@
         'BEGIN:VEVENT',
         'UID:' + (crypto.randomUUID ? crypto.randomUUID() : (Date.now() + '@invite.nikagenyx.com')),
         'DTSTAMP:' + new Date().toISOString().replace(/[-:]/g,'').split('.')[0] + 'Z',
-        'SUMMARY:Nikolas & Kavita — Wedding',
+        'SUMMARY:NIKOLAS & KAVITA — Wedding Ceremony',
         'DESCRIPTION:' + desc,
         'LOCATION:Santa Cruz Cathedral Basilica, Fort Kochi; Reception: RAAS Residency, Thoppumpady, Kochi',
         'DTSTART:' + dtStartUTC,'DTEND:' + dtEndUTC,
@@ -209,7 +209,7 @@
       } catch(e) { /* silent */ }
     }
 
-    // Modal logic (also fixes the ARIA warning by toggling aria-hidden)
+    // Modal logic (accessibility-correct aria-hidden toggling)
     const modalBg   = document.getElementById('modalBg');
     const form      = document.getElementById('rsvpForm');
     const nameEl    = document.getElementById('guestName');
@@ -220,23 +220,12 @@
 
     function openModal(status){
       pendingStatus = status;
-      nameEl.value = '';
-      countEl.value = '';
-      if (status === 'sure') {
-        countWrap.classList.remove('hidden');
-        countEl.setAttribute('required', 'required');
-      } else {
-        countWrap.classList.add('hidden');
-        countEl.removeAttribute('required');
-      }
-      modalBg.style.display = 'flex';
-      modalBg.setAttribute('aria-hidden','false');   // <-- fix
-      nameEl.focus();
+      nameEl.value = ''; countEl.value = '';
+      if (status === 'sure') { countWrap.classList.remove('hidden'); countEl.setAttribute('required','required'); }
+      else { countWrap.classList.add('hidden'); countEl.removeAttribute('required'); }
+      modalBg.style.display = 'flex'; modalBg.setAttribute('aria-hidden','false'); nameEl.focus();
     }
-    function closeModal(){
-      modalBg.style.display = 'none';
-      modalBg.setAttribute('aria-hidden','true');    // <-- fix
-    }
+    function closeModal(){ modalBg.style.display='none'; modalBg.setAttribute('aria-hidden','true'); }
 
     document.getElementById('btnYes').addEventListener('click',  () => openModal('sure'));
     document.getElementById('btnMaybe').addEventListener('click',() => openModal('not_sure'));
@@ -249,7 +238,6 @@
       const count = (pendingStatus === 'sure') ? countEl.value : '';
       if (!name || !pendingStatus) return;
       if (pendingStatus === 'sure' && !count) return;
-
       await logToSheet({ name, status: pendingStatus, count });
       downloadICS(icsWithReminder(pendingStatus), `Nikolas_Kavita_Wedding_2025-10-27_${pendingStatus}.ics`);
       closeModal();
