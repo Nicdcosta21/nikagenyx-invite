@@ -30,6 +30,8 @@
       content: ""; position: fixed; inset: 0;
       background: url('/assets/hero.jpg') center / cover no-repeat;
       z-index: -2;
+      filter: blur(8px);
+      transform: scale(1.05);
     }
     body::after {
       content: ""; position: fixed; inset: 0;
@@ -42,7 +44,7 @@
     .card{
       background:#fff; color: var(--ink);
       border-radius:1.25rem; padding:2rem;
-      box-shadow:0 20px 35px rgba(0,0,0,.15);
+      box-shadow:0 25px 50px rgba(0,0,0,.3);
       background-image:radial-gradient(80% 60% at 5% 0%, var(--wine-soft), transparent 40%);
     }
     .btn{ display:inline-flex; align-items:center; justify-content:center; padding:.85rem 1.2rem; border-radius:.75rem; font-weight:600; }
@@ -51,7 +53,7 @@
     .btn-outline{ background:#fff; border:1px solid rgba(123,23,51,.35); color:var(--wine); }
     .underline-link{ color:var(--wine); text-decoration:underline; }
     .modal-bg{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; padding:1rem; z-index:50; }
-    .modal{ width:100%; max-width:480px; background:#fff; border-radius:1rem; padding:1.25rem; box-shadow:0 20px 40px rgba(0,0,0,.25); }
+    .modal{ width:100%; max-width:480px; background:#fff; border-radius:1rem; padding:1.25rem; box-shadow:0 25px 50px rgba(0,0,0,.3); }
     .hidden{ display:none; }
     .smallcaps { letter-spacing: .08em; text-transform: uppercase; }
     blockquote.verse { font-style: italic; color:#f8e7ec; }
@@ -72,11 +74,11 @@
         <!-- Main Card -->
         <div class="card mt-8">
           <p class="text-gray-600">You are cordially invited, together with their families, to the</p>
-          <h2 class="smallcaps mt-1 tracking-widest text-sm text-gray-600">Wedding Ceremony</h2>
+          <h2 class="mt-1 text-2xl md:text-3xl font-bold text-gray-700">WEDDING CEREMONY</h2>
 
           <div class="mt-5 text-gray-700">
             <p class="text-sm">s/o Samson Nicholas D’Costa and Suni Samson D’Costa,</p>
-            <h1 class="mt-1 text-3xl md:text-5xl font-semibold tracking-wide">NIKOLAS &amp; KAVITA</h1>
+            <h1 class="mt-1 text-4xl md:text-6xl font-bold tracking-wide">NIKOLAS &amp; KAVITA</h1>
             <p class="text-sm mt-1">d/o Kevin Thomas Fernandes and Annie Kevin Fernandes.</p>
           </div>
 
@@ -119,9 +121,10 @@
                RAAS Residency
             </a>
           </p>
-        </div>
 
-        <p class="mt-8 text-white">Colour of the day: <span class="font-semibold" style="color:#ffd3df">Wine Red</span></p>
+          <p class="mt-6 text-base font-bold text-gray-700">Colour of the day: Wine Red</p>
+          <p id="countdown" class="mt-2 text-sm text-gray-700"></p>
+        </div>
       </div>
     </div>
   </header>
@@ -162,6 +165,27 @@
   </div>
 
   <script>
+    // Countdown to the big day
+    (function(){
+      const el = document.getElementById('countdown');
+      if(!el) return;
+      const eventDate = new Date('2025-10-27T15:00:00+05:30');
+      function update(){
+        const diff = eventDate - new Date();
+        if(diff > 0){
+          const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+          const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+          const minutes = Math.floor((diff / (1000 * 60)) % 60);
+          const seconds = Math.floor((diff / 1000) % 60);
+          el.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s to go!`;
+        } else {
+          el.textContent = 'Today is the day!';
+        }
+      }
+      update();
+      setInterval(update, 1000);
+    })();
+
     // ICS with reminder: yes -> 7 days, maybe -> 30 days
     function icsWithReminder(status) {
       const dtStartUTC = '20251027T093000Z'; // 3:00 PM IST
