@@ -25,17 +25,19 @@
     html, body { height: 100%; }
     body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; color: var(--ink); position: relative; }
 
-    /* --- Static, non-scrolling background image with wine tint --- */
+    /* --- Static, non-scrolling background with soft blur & wine tint --- */
     body::before {
       content: ""; position: fixed; inset: 0;
       background: url('/assets/hero.jpg') center / cover no-repeat;
       z-index: -2;
-      filter: blur(8px);
-      transform: scale(1.05);
+      filter: blur(8px) saturate(.95) brightness(.9);
+      transform: scale(1.04);
     }
     body::after {
       content: ""; position: fixed; inset: 0;
-      background: linear-gradient(180deg, rgba(20,6,10,.60), rgba(20,6,10,.60));
+      background:
+        radial-gradient(80% 70% at 50% -10%, rgba(123,23,51,0.28), transparent 60%),
+        linear-gradient(180deg, rgba(20,6,10,.55), rgba(20,6,10,.65));
       z-index: -1;
     }
 
@@ -44,7 +46,7 @@
     .card{
       background:#fff; color: var(--ink);
       border-radius:1.25rem; padding:2rem;
-      box-shadow:0 25px 50px rgba(0,0,0,.3);
+      box-shadow:0 25px 50px rgba(0,0,0,.28);
       background-image:radial-gradient(80% 60% at 5% 0%, var(--wine-soft), transparent 40%);
     }
     .btn{ display:inline-flex; align-items:center; justify-content:center; padding:.85rem 1.2rem; border-radius:.75rem; font-weight:600; }
@@ -66,27 +68,19 @@
       <div class="max-w-3xl mx-auto px-6 py-10 text-center">
         <!-- Scripture -->
         <blockquote class="verse text-white text-base md:text-lg leading-relaxed">
-          "Place me like a seal over your heart... for love is as strong as death... Many waters cannot quench love; rivers cannot sweep it away"
-          <small>Song of Solomon 8:6-7</small>
+          “Place me like a seal over your heart… for love is as strong as death…
+          Many waters cannot quench love; rivers cannot sweep it away”
+          <small>— Song of Solomon 8:6–7</small>
         </blockquote>
 
         <!-- Main Card -->
         <div class="card mt-8">
-
-          <p class="text-gray-600">You are cordially invited together with their families to the</p>
-          <h2 class="mt-1 text-3xl md:text-5xl font-bold text-gray-700">WEDDING CEREMONY</h2>
-
-          <div class="mt-5 text-gray-700">
-            <p class="text-sm">s/o Samson Nicholas D’Costa and Suni Samson D’Costa,</p>
-            <h1 class="mt-1 text-5xl md:text-7xl font-bold tracking-wide">NIKOLAS &amp; KAVITA</h1>
-
           <p class="text-gray-600">You are cordially invited, together with their families, to the</p>
-          <h2 class="mt-1 text-2xl md:text-3xl font-bold text-gray-700">WEDDING CEREMONY</h2>
+          <h2 class="smallcaps mt-1 tracking-widest text-sm text-gray-600">Wedding Ceremony</h2>
 
           <div class="mt-5 text-gray-700">
             <p class="text-sm">s/o Samson Nicholas D’Costa and Suni Samson D’Costa,</p>
             <h1 class="mt-1 text-4xl md:text-6xl font-bold tracking-wide">NIKOLAS &amp; KAVITA</h1>
-
             <p class="text-sm mt-1">d/o Kevin Thomas Fernandes and Annie Kevin Fernandes.</p>
           </div>
 
@@ -98,9 +92,15 @@
               <div class="text-xl md:text-2xl">Monday, 27 October 2025</div>
             </div>
 
-            <div>3:00 PM — Santa Cruz Cathedral Basilica, Fort Kochi</div>
+            <div>
+              <div class="smallcaps text-xs text-gray-500">Time</div>
+              <div>3:00 PM — Santa Cruz Cathedral Basilica, Fort Kochi</div>
+            </div>
 
-            <div>Reception to follow at RAAS Residency, Thoppumpady, Kochi</div>
+            <div>
+              <div class="smallcaps text-xs text-gray-500">Reception</div>
+              <div>To follow at RAAS Residency, Thoppumpady, Kochi</div>
+            </div>
           </div>
 
           <!-- Action buttons -->
@@ -125,8 +125,11 @@
           </p>
 
           <p class="mt-6 text-base font-bold text-gray-700">Colour of the day: Wine Red</p>
-          <p id="countdown" class="mt-2 text-sm text-gray-700"></p>
         </div>
+
+        <!-- Countdown (outside card, like the original) -->
+        <p class="mt-6 text-sm uppercase tracking-widest text-white">Countdown</p>
+        <div id="countdown" class="mt-1 text-2xl md:text-3xl font-semibold text-white"></div>
       </div>
     </div>
   </header>
@@ -167,43 +170,21 @@
   </div>
 
   <script>
-    // Countdown to the big day
+    // Countdown to 27 Oct 2025 15:00 IST (shows D days HH:MM:SS)
     (function(){
+      const target = new Date('2025-10-27T15:00:00+05:30').getTime();
       const el = document.getElementById('countdown');
-      if(!el) return;
-
-      const eventDate = new Date('2025-10-27T15:00:00+05:30');
-      function update(){
-        const diff = eventDate - new Date();
-        if(diff > 0){
-          const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-          const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-          const minutes = Math.floor((diff / (1000 * 60)) % 60);
-          const seconds = Math.floor((diff / 1000) % 60);
-          el.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s to go!`;
-
-
-      function update(){
-        const eventDate = new Date('2025-10-27T15:00:00+05:30');
-        const diff = eventDate - new Date();
-        if(diff > 0){
-          const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
-          el.textContent = days + ' days to go!';
-
-        } else {
-          el.textContent = 'Today is the day!';
-        }
+      const pad = n => String(n).padStart(2,'0');
+      function tick(){
+        const now = Date.now();
+        let diff = Math.max(0, target - now);
+        const d = Math.floor(diff / (1000*60*60*24)); diff -= d*24*60*60*1000;
+        const h = Math.floor(diff / (1000*60*60));     diff -= h*60*60*1000;
+        const m = Math.floor(diff / (1000*60));        diff -= m*60*1000;
+        const s = Math.floor(diff / 1000);
+        el.textContent = `${d} days ${pad(h)}:${pad(m)}:${pad(s)}`;
       }
-      update();
-
-      setInterval(update, 1000);
-
-
-      setInterval(update, 1000);
-
-      setInterval(update, 86400000);
-
-
+      tick(); setInterval(tick, 1000);
     })();
 
     // ICS with reminder: yes -> 7 days, maybe -> 30 days
