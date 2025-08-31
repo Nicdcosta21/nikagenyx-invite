@@ -29,6 +29,7 @@
     .underline-link{ color:var(--wine); text-decoration:underline; }
     .modal-bg{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; padding:1rem; z-index:50; }
     .modal{ width:100%; max-width:480px; background:#fff; border-radius:1rem; padding:1.25rem; box-shadow:0 20px 40px rgba(0,0,0,.25); }
+    .hidden{ display:none; }
   </style>
 </head>
 <body class="bg-white antialiased">
@@ -56,8 +57,9 @@
           </div>
 
           <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-            <button id="btnSure" class="btn btn-primary">Sure</button>
-            <button id="btnMaybe" class="btn btn-outline">Not sure</button>
+            <!-- Button names: Set A -->
+            <button id="btnYes" class="btn btn-primary">I’m coming</button>
+            <button id="btnMaybe" class="btn btn-outline">Save the date</button>
           </div>
 
           <p class="mt-6 text-sm text-gray-600">
@@ -88,24 +90,28 @@
   </footer>
 
   <!-- Modal -->
-  <div id="modalBg" class="modal-bg">
-    <div class="modal">
-      <h3 class="text-xl font-semibold mb-3" style="color:var(--wine)">Save your reminder</h3>
+  <div id="modalBg" class="modal-bg" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <h3 id="modalTitle" class="text-xl font-semibold mb-3" style="color:var(--wine)">Save your reminder</h3>
       <form id="rsvpForm" class="space-y-4">
         <div>
           <label for="guestName" class="block text-sm font-medium text-gray-700">Full name</label>
           <input id="guestName" name="guestName" type="text" required
-                 class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-300">
+                 class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-300"
+                 placeholder="e.g., John Fernandes">
         </div>
-        <div>
+
+        <!-- Count is shown only for “I’m coming” -->
+        <div id="countGroup" class="hidden">
           <label for="guestCount" class="block text-sm font-medium text-gray-700">Number of people</label>
-          <select id="guestCount" name="guestCount" required
+          <select id="guestCount" name="guestCount"
                   class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-300">
             <option value="" disabled selected>Select</option>
             <option>1</option><option>2</option><option>3</option>
             <option>4</option><option>5</option><option>6</option>
           </select>
         </div>
+
         <div class="flex gap-2 justify-end pt-2">
           <button type="button" id="cancelBtn" class="btn btn-outline">Cancel</button>
           <button type="submit" class="btn btn-primary">Save & Add to Calendar</button>
@@ -132,10 +138,12 @@
       tick(); setInterval(tick, 1000);
     })();
 
+    // ICS with reminder: “yes” -> 7 days, “maybe” -> 30 days
     function icsWithReminder(status) {
       const dtStartUTC = '20251027T093000Z'; // 3:00 PM IST
       const dtEndUTC   = '20251027T153000Z'; // 9:00 PM IST
       const trigger = (status === 'sure') ? '-P7D' : '-P30D';
+
       const mapCeremony = 'https://www.google.com/maps/place/X67V%2BW4G+Santa+Cruz+Cathedral+Basilica,+Kochi,+Bastian+St,+Fort+Nagar,+Fort+Kochi,+Kochi,+Kerala+682001/@9.9609796,76.2523107,16z/data=!3m1!1e3!4m14!1m7!3m6!1s0x3b086dccada9f3f1:0x4c980457c575174c!2sRAAS+Residency,+No+11%2F3319+B,+junction,+near+Thoppumpady,+Thoppumpady,+Kochi,+Kerala+682005!8m2!3d9.9347732!4d76.2641605!16s%2Fg%2F11sgr8ht9l!3m5!1s0x3b086d36b7ff0567:0x4ed899ce06f39a3b!8m2!3d9.9648197!4d76.2428293!16zL20vMDkwamtf?g_ep=Eg1tbF8yMDI1MDgyN18wIJvbDyoASAJQAQ%3D%3D';
       const mapReception = 'https://www.google.com/maps/place/RAAS+Residency,+No+11%2F3319+B,+junction,+near+Thoppumpady,+Thoppumpady,+Kochi,+Kerala+682005/@9.9347732,76.2641605,17z/data=!3m1!1e3!4m14!1m7!3m6!1s0x3b086dccada9f3f1:0x4c980457c575174c!2sRAAS+Residency,+No+11%2F3319+B,+junction,+near+Thoppumpady,+Thoppumpady,+Kochi,+Kerala+682005!8m2!3d9.9347732!4d76.2641605!16s%2Fg%2F11sgr8ht9l!3m5!1s0x3b086dccada9f3f1:0x4c980457c575174c!8m2!3d9.9347732!4d76.2641605!16s%2Fg%2F11sgr8ht9l?g_ep=Eg1tbF8yMDI1MDgyN18wIJvbDyoASAJQAQ%3D%3D';
 
@@ -143,7 +151,7 @@
         'Ceremony: Santa Cruz Cathedral Basilica, Fort Kochi (3:00 PM IST).',
         'Reception: RAAS Residency, Thoppumpady, Kochi.',
         'Maps:', mapCeremony, mapReception
-      ].join('\n');
+      ].join('\\n');
 
       return [
         'BEGIN:VCALENDAR','VERSION:2.0','CALSCALE:GREGORIAN','METHOD:PUBLISH',
@@ -156,7 +164,7 @@
         'DTSTART:' + dtStartUTC,'DTEND:' + dtEndUTC,
         'BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:Wedding reminder','TRIGGER:' + trigger,'END:VALARM',
         'END:VEVENT','END:VCALENDAR'
-      ].join('\r\n');
+      ].join('\\r\\n');
     }
 
     function downloadICS(ics, filename) {
@@ -166,43 +174,55 @@
       document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
     }
 
-    async function logNameStatus(name, status, count) {
+    async function logToSheet(payload) {
       try {
         await fetch('/.netlify/functions/log_event', {
           method:'POST',
           headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ name, status, count })
+          body: JSON.stringify(payload)
         });
       } catch(e) { /* silent */ }
     }
 
     // Modal logic
-    const modalBg = document.getElementById('modalBg');
-    const form = document.getElementById('rsvpForm');
-    const nameEl = document.getElementById('guestName');
-    const countEl = document.getElementById('guestCount');
+    const modalBg   = document.getElementById('modalBg');
+    const form      = document.getElementById('rsvpForm');
+    const nameEl    = document.getElementById('guestName');
+    const countWrap = document.getElementById('countGroup');
+    const countEl   = document.getElementById('guestCount');
     const cancelBtn = document.getElementById('cancelBtn');
-    let pendingStatus = null;
+    let pendingStatus = null; // 'sure' or 'not_sure'
 
     function openModal(status){
       pendingStatus = status;
-      nameEl.value = ''; countEl.value = '';
-      modalBg.style.display = 'flex'; nameEl.focus();
+      nameEl.value = '';
+      countEl.value = '';
+      // Show count only for “I’m coming”
+      if (status === 'sure') {
+        countWrap.classList.remove('hidden');
+        countEl.setAttribute('required', 'required');
+      } else {
+        countWrap.classList.add('hidden');
+        countEl.removeAttribute('required');
+      }
+      modalBg.style.display = 'flex';
+      nameEl.focus();
     }
     function closeModal(){ modalBg.style.display = 'none'; }
 
-    document.getElementById('btnSure').addEventListener('click', () => openModal('sure'));
-    document.getElementById('btnMaybe').addEventListener('click', () => openModal('not_sure'));
+    document.getElementById('btnYes').addEventListener('click',  () => openModal('sure'));
+    document.getElementById('btnMaybe').addEventListener('click',() => openModal('not_sure'));
     cancelBtn.addEventListener('click', closeModal);
     modalBg.addEventListener('click', (e) => { if (e.target === modalBg) closeModal(); });
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const name = nameEl.value.trim();
-      const count = countEl.value;
-      if (!name || !count || !pendingStatus) return;
+      const name  = nameEl.value.trim();
+      const count = (pendingStatus === 'sure') ? countEl.value : ''; // blank for “Save the date”
+      if (!name || !pendingStatus) return;
+      if (pendingStatus === 'sure' && !count) return;
 
-      await logNameStatus(name, pendingStatus, count);
+      await logToSheet({ name, status: pendingStatus, count });
       downloadICS(icsWithReminder(pendingStatus), `Nikolas_Kavita_Wedding_2025-10-27_${pendingStatus}.ics`);
       closeModal();
     });
