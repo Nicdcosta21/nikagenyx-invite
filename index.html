@@ -38,6 +38,7 @@
     }
 
     h1,h2,h3 { font-family: "Playfair Display", Georgia, serif; }
+    .heading-elegant { letter-spacing: .01em; }
     .hero{ min-height:100vh; display:flex; align-items:center; }
     .card{
       background:#fff; color: var(--ink);
@@ -70,12 +71,14 @@
 
         <div class="card mt-8">
           <p class="text-gray-600">You are cordially invited, together with their families, to the</p>
-          <h2 class="smallcaps mt-1 tracking-widest text-sm text-gray-600">Wedding Ceremony</h2>
+
+          <!-- Headings aligned: same font/weight/size -->
+          <h2 class="heading-elegant text-4xl md:text-6xl font-bold mt-2">WEDDING CEREMONY</h2>
 
           <div class="mt-5 text-gray-700">
-            <p class="text-sm">s/o Samson Nicholas D’Costa and Suni Samson D’Costa,</p>
-            <h1 class="mt-1 text-4xl md:text-6xl font-bold tracking-wide">NIKOLAS &amp; KAVITA</h1>
-            <p class="text-sm mt-1">d/o Kevin Thomas Fernandes and Annie Kevin Fernandes.</p>
+            <p class="text-base md:text-lg">s/o Samson Nicholas D’Costa and Suni Samson D’Costa,</p>
+            <h1 class="heading-elegant text-4xl md:text-6xl font-bold tracking-wide mt-1">NIKOLAS &amp; KAVITA</h1>
+            <p class="text-base md:text-lg mt-1">d/o Kevin Thomas Fernandes and Annie Kevin Fernandes.</p>
           </div>
 
           <hr class="my-6"/>
@@ -97,7 +100,7 @@
             </div>
           </div>
 
-          <!-- NEW: Home & Travel -->
+          <!-- Home & Travel -->
           <hr class="my-6"/>
           <div class="grid gap-2 text-base text-gray-700">
             <div>
@@ -211,7 +214,7 @@
         'Nearest Railway Station: Ernakulam Junction (ERS).',
         'Nearest Airport: Cochin International Airport.',
         'Maps:', mapCeremony, mapReception
-      ].join('\\n');
+      ].join('\n');
 
       return [
         'BEGIN:VCALENDAR','VERSION:2.0','CALSCALE:GREGORIAN','METHOD:PUBLISH',
@@ -224,7 +227,7 @@
         'DTSTART:' + dtStartUTC,'DTEND:' + dtEndUTC,
         'BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:Wedding reminder','TRIGGER:' + trigger,'END:VALARM',
         'END:VEVENT','END:VCALENDAR'
-      ].join('\\r\\n');
+      ].join('\r\n');
     }
 
     function downloadICS(ics, filename) {
