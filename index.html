@@ -66,19 +66,27 @@
       <div class="max-w-3xl mx-auto px-6 py-10 text-center">
         <!-- Scripture -->
         <blockquote class="verse text-white text-base md:text-lg leading-relaxed">
-          “Place me like a seal over your heart… for love is as strong as death…<br/>
-          Many waters cannot quench love; rivers cannot sweep it away.”
-          <small>— Song of Solomon 8:6–7</small>
+          "Place me like a seal over your heart... for love is as strong as death... Many waters cannot quench love; rivers cannot sweep it away"
+          <small>Song of Solomon 8:6-7</small>
         </blockquote>
 
         <!-- Main Card -->
         <div class="card mt-8">
+
+          <p class="text-gray-600">You are cordially invited together with their families to the</p>
+          <h2 class="mt-1 text-3xl md:text-5xl font-bold text-gray-700">WEDDING CEREMONY</h2>
+
+          <div class="mt-5 text-gray-700">
+            <p class="text-sm">s/o Samson Nicholas D’Costa and Suni Samson D’Costa,</p>
+            <h1 class="mt-1 text-5xl md:text-7xl font-bold tracking-wide">NIKOLAS &amp; KAVITA</h1>
+
           <p class="text-gray-600">You are cordially invited, together with their families, to the</p>
           <h2 class="mt-1 text-2xl md:text-3xl font-bold text-gray-700">WEDDING CEREMONY</h2>
 
           <div class="mt-5 text-gray-700">
             <p class="text-sm">s/o Samson Nicholas D’Costa and Suni Samson D’Costa,</p>
             <h1 class="mt-1 text-4xl md:text-6xl font-bold tracking-wide">NIKOLAS &amp; KAVITA</h1>
+
             <p class="text-sm mt-1">d/o Kevin Thomas Fernandes and Annie Kevin Fernandes.</p>
           </div>
 
@@ -90,15 +98,9 @@
               <div class="text-xl md:text-2xl">Monday, 27 October 2025</div>
             </div>
 
-            <div>
-              <div class="smallcaps text-xs text-gray-500">Time</div>
-              <div>3:00 PM — Santa Cruz Cathedral Basilica, Fort Kochi</div>
-            </div>
+            <div>3:00 PM — Santa Cruz Cathedral Basilica, Fort Kochi</div>
 
-            <div>
-              <div class="smallcaps text-xs text-gray-500">Reception</div>
-              <div>To follow at RAAS Residency, Thoppumpady, Kochi</div>
-            </div>
+            <div>Reception to follow at RAAS Residency, Thoppumpady, Kochi</div>
           </div>
 
           <!-- Action buttons -->
@@ -180,6 +182,7 @@
           const seconds = Math.floor((diff / 1000) % 60);
           el.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s to go!`;
 
+
       function update(){
         const eventDate = new Date('2025-10-27T15:00:00+05:30');
         const diff = eventDate - new Date();
@@ -195,7 +198,11 @@
 
       setInterval(update, 1000);
 
+
+      setInterval(update, 1000);
+
       setInterval(update, 86400000);
+
 
     })();
 
