@@ -67,7 +67,21 @@
   .btn:hover::after{ opacity:1; }
   .btn:active{ transform:translateY(1px) scale(.99); }
   .btn-primary{ background:var(--wine); color:#fff; border:1px solid rgba(0,0,0,.05); }
-  .btn-outline{ background:transparent; border:1px solid rgba(255,255,255,.7); color:#fff; }
+
+  /* Keep white outline only inside the intro overlay */
+  #reel .btn-outline{
+    background:transparent;
+    border:1px solid rgba(255,255,255,.7);
+    color:#fff;
+  }
+  /* New: outline for buttons on the white card */
+  .btn-outline-dark{
+    background:#fff;
+    border:1px solid rgba(123,23,51,.35);
+    color:var(--wine);
+  }
+  .btn-outline-dark:hover{ filter:brightness(.98); }
+
 
   /* Music toggle (optional) */
   #musicToggle{
@@ -172,7 +186,7 @@
 
           <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
             <button id="btnYes" class="btn btn-primary">I’m coming</button>
-            <button id="btnMaybe" class="btn btn-outline">Save the date</button>
+            <button id="btnMaybe" class="btn btn-outline-dark">Save the date</button>
           </div>
 
           <p class="mt-6 text-sm text-gray-700">
@@ -261,6 +275,35 @@ musicToggle.addEventListener('click', async ()=>{
   setMusic(!musicOn);
   if(musicOn){ try{ await bgm.play(); }catch{} } else { bgm.pause(); }
 });
+
+// Ensure a sensible volume
+bgm.volume = 0.7;
+
+// Try to play when we know the file is ready
+bgm.addEventListener('canplaythrough', () => {
+  if (musicOn) bgm.play().catch(()=>{});
+});
+
+// Tell you if the file path is wrong / missing
+bgm.addEventListener('error', () => {
+  console.warn('Could not load /assets/music.mp3');
+  // Optional: quick heads-up for you during testing
+  const n = document.createElement('div');
+  n.textContent = 'Music file not found: /assets/music.mp3';
+  Object.assign(n.style, {
+    position:'fixed', left:'50%', transform:'translateX(-50%)',
+    bottom:'12px', background:'#111', color:'#fff', padding:'8px 12px',
+    borderRadius:'10px', fontSize:'12px', zIndex:9999, opacity:.9
+  });
+  document.body.appendChild(n); setTimeout(()=>n.remove(), 3200);
+});
+
+// If user clicks anywhere first, try to start playback (helps some browsers)
+function userStartAudio(){
+  if (musicOn) bgm.play().catch(()=>{});
+  document.removeEventListener('pointerdown', userStartAudio);
+}
+document.addEventListener('pointerdown', userStartAudio);
 
 /* ---------- RSVP -> Google Sheet + ICS ---------- */
 async function logToSheet(payload){
