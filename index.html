@@ -530,15 +530,18 @@
   </style>
 </head>
 <body class="bg-white antialiased">
+  <!-- Background elements -->
   <div class="hero-bg"></div>
   <div class="wine-overlay"></div>
   <canvas id="petalsCanvas"></canvas>
 
+  <!-- Background music -->
   <audio id="bgm" preload="auto" loop>
     <source src="/assets/music.mp3" type="audio/mpeg" />
   </audio>
   <button id="musicToggle" class="music-control">Music: Off</button>
 
+  <!-- Reel-style intro overlay -->
   <div id="intro-sequence" class="intro-sequence" role="dialog" aria-modal="true" aria-label="Intro">
     <div class="intro-text">
         <span class="intro-names">Nikolas & Kavita</span><br>
@@ -614,6 +617,7 @@
     invite.nikagenyx.com · Kochi, Kerala
   </footer>
 
+  <!-- RSVP Modal -->
   <div id="modalOverlay" class="modal-overlay" aria-hidden="true">
     <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <h3 id="modalTitle" class="modal-title">Save your reminder</h3>
