@@ -1,4 +1,4 @@
-v<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
@@ -46,7 +46,7 @@ v<!DOCTYPE html>
   }
   
   /* Petals layer */
-  #fxCanvas{ position:fixed; inset:0; z-index:40; pointer-events:none; transition: opacity .6s ease; } /* Z-index is now behind all content layers */
+  #fxCanvas{ position:fixed; inset:0; z-index:20; pointer-events:none; transition: opacity .6s ease; } /* Z-index is now behind the card */
 
   /* Touch-to-begin overlay */
   #touchIntro {
@@ -155,6 +155,8 @@ v<!DOCTYPE html>
     box-shadow:0 25px 50px rgba(0,0,0,.28);
     background-image:radial-gradient(80% 60% at 5% 0%, var(--wine-soft), transparent 40%);
     transform: translateY(10px); opacity:0; transition: transform .8s ease, opacity .8s ease;
+    z-index: 30; /* Ensure card is above petals */
+    position: relative; /* Needed for z-index to work */
   }
   .card.in{ transform:none; opacity:1; }
   .underline-link{ color:var(--wine); text-decoration:underline; }
@@ -497,7 +499,7 @@ form.addEventListener('submit', async (e)=>{
     if(isBlasting) return;
     isBlasting = true;
     petalOverlay.style.opacity = '0';
-    document.getElementById('fxCanvas').style.zIndex = '40'; // Lower z-index after blast
+    document.getElementById('fxCanvas').style.zIndex = '20'; // Keep z-index behind the card
     petals.forEach(p => {
       const dx = p.x - originX, dy = p.y - originY, angle = Math.atan2(dy, dx), speed = 5 + Math.random()*8;
       p.vx = Math.cos(angle)*speed; p.vy = Math.sin(angle)*speed; p.state='blasting'; p.opacity=.4;
