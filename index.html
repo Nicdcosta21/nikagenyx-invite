@@ -121,13 +121,13 @@
       line-height:1.2; letter-spacing:.01em; text-shadow:0 2px 14px rgba(0,0,0,.45);
       opacity:0; transform:translateY(16px); margin-bottom:20px;
     }
-    .fx-fadeUp  { animation: fadeUp .55s ease forwards; }
-    .fx-zoomOut  { animation: zoomOut .7s ease forwards; transform:scale(1.08); }
+    .fx-fadeUp  { animation: fadeUp .55s ease forwards; }
+    .fx-zoomOut  { animation: zoomOut .7s ease forwards; transform:scale(1.08); }
     .fx-wipeLeft { animation: wipeLeft .55s ease forwards; }
     .fx-words .word{ display:inline-block; opacity:0; transform:translateY(10px); animation: wordUp .45s ease forwards; }
-    @keyframes zoomOut  { to { opacity:1; transform:scale(1); } }
+    @keyframes zoomOut  { to { opacity:1; transform:scale(1); } }
     @keyframes wipeLeft { from { clip-path:inset(0 0 0 100%); opacity:.2 } to { clip-path:inset(0 0 0 0); opacity:1 } }
-    @keyframes wordUp   { to { opacity:1; transform:none; } }
+    @keyframes wordUp   { to { opacity:1; transform:none; } }
 
     .intro-controls{ margin-top:1rem; display:flex; gap:.75rem; flex-wrap:wrap; justify-content:center; }
     .btn{ display:inline-flex; align-items:center; justify-content:center; padding:.8rem 1.15rem; border-radius:.75rem; font-weight:600; position:relative; overflow:hidden; }
@@ -267,13 +267,13 @@
             Ceremony map:
             <a class="underline-link" target="_blank" rel="noopener"
                href="https://www.google.com/maps/place/X67V%2BW4G+Santa+Cruz+Cathedral+Basilica,+Kochi,+Bastian+St,+Fort+Nagar,+Fort+Kochi,+Kochi,+Kerala+682001/@9.9609796,76.2523107,16z/data=!3m1!1e3!4m14!1m7!3m6!1s0x3b086dccada9f3f1:0x4c980457c575174c!2sRAAS+Residency,+No+11%2F3319+B,+junction,+near+Thoppumpady,+Thoppumpady,+Kochi,+Kerala+682005!8m2!3d9.9347732!4d76.2641605!16s%2Fg%2F11sgr8ht9l!3m5!1s0x3b086d36b7ff0567:0x4ed899ce06f39a3b!8m2!3d9.9648197!4d76.2428293!16zL20vMDkwamtf?g_ep=Eg1tbF8yMDI1MDgyN18wIJvbDyoASAJQAQ%3D%3D">
-               Santa Cruz Cathedral Basilica
+                Santa Cruz Cathedral Basilica
             </a>
               | 
             Reception map:
             <a class="underline-link" target="_blank" rel="noopener"
                href="https://maps.app.goo.gl/9cyw9KrJKpffT3fw5">
-               The Croft
+                The Croft
             </a>
           </p>
 
@@ -297,13 +297,13 @@
         <div>
           <label for="guestName" class="block text-sm font-medium text-gray-700">Full name</label>
           <input id="guestName" name="guestName" type="text" required
-                   class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-300"
-                   placeholder="e.g., John Fernandes">
+                       class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-300"
+                       placeholder="e.g., John Fernandes">
         </div>
         <div id="countGroup" class="hidden">
           <label for="guestCount" class="block text-sm font-medium text-gray-700">Number of people</label>
           <select id="guestCount" name="guestCount"
-                   class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-300">
+                       class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-300">
             <option value="" disabled selected>Select</option>
             <option>1</option><option>2</option><option>3</option>
             <option>4</option><option>5</option><option>6</option>
@@ -327,7 +327,7 @@
     const now = Date.now();
     let diff = Math.max(0, target - now);
     const d = Math.floor(diff / (1000*60*60*24)); diff -= d*24*60*60*1000;
-    const h = Math.floor(diff / (1000*60*60));      diff -= h*60*60*1000;
+    const h = Math.floor(diff / (1000*60*60));     diff -= h*60*60*1000;
     const m = Math.floor(diff / (1000*60));         diff -= m*60*1000;
     const s = Math.floor(diff / 1000);
     el.textContent = `${d} days ${pad(h)}:${pad(m)}:${pad(s)}`;
@@ -464,7 +464,7 @@ form.addEventListener('submit', async (e)=>{
         v:.5+Math.random()*1.2, 
         swing:.8+Math.random()*1.2, 
         opacity:.6 + Math.random() * .3,
-        state:'falling' 
+        state:'falling'  
       });
     }
   }
@@ -526,12 +526,12 @@ const mainCard = document.getElementById('mainCard');
 let hasStarted = false;
 
 const scenes = [
-  { text: "With great joy and gratitude,",     effect: "fx-fadeUp",   duration: 1100 },
-  { text: "Nikolas & Kavita",                   effect: "fx-zoomOut",  duration: 1200 },
-  { text: "Invite you to celebrate their wedding",  effect: "fx-wipeLeft", duration: 1000 },
-  { text: "On Monday, 27 October 2025",         effect: "fx-words",    duration: 1200 },
-  { text: "At Santa Cruz Cathedral Basilica",   effect: "fx-fadeUp",   duration: 1100 },
-  { text: "Reception to follow at The Croft",   effect: "fx-words",    duration: 1300 }
+  { text: "With great joy and gratitude,",    effect: "fx-fadeUp",   duration: 1100 },
+  { text: "Nikolas & Kavita",                effect: "fx-zoomOut",  duration: 1200 },
+  { text: "Invite you to celebrate their wedding", effect: "fx-wipeLeft", duration: 1000 },
+  { text: "On Monday, 27 October 2025",        effect: "fx-words",    duration: 1200 },
+  { text: "At Santa Cruz Cathedral Basilica",  effect: "fx-fadeUp",   duration: 1100 },
+  { text: "Reception to follow at The Croft",  effect: "fx-words",    duration: 1300 }
 ];
 const gap = 160;
 
