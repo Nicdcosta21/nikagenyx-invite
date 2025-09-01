@@ -65,14 +65,22 @@
   .name-right{ transform: translateX(40px); animation-delay: .2s; }
   .name-merge .name-left, .name-merge .name-right { transform: translateX(0); }
 
-  .connect-text{
-    font-family:"Playfair Display", Georgia, serif;
-    font-size:clamp(18px, 4vw, 36px);
-    margin: 0 15px;
-    opacity:0; transform:translateY(16px); animation: fadeUp 1s ease forwards; animation-delay: .4s;
-    transition: opacity 1s ease;
+  .heart-btn{
+    background: none; border: none; padding: 0 15px; cursor: pointer;
+    opacity: 0; animation: fadeUp 1s ease forwards; animation-delay: .4s;
   }
-  .connect-text.fade-out { opacity: 0; }
+  .heart-btn span{
+    font-size: clamp(36px, 8vw, 70px);
+    line-height: 1;
+    text-shadow: 0 2px 14px rgba(0,0,0,.45);
+    color: #fff;
+    animation: pulse 1.5s infinite;
+  }
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+  }
 
 
   /* Reel/Short style intro overlay */
@@ -170,7 +178,9 @@
   <div id="touchIntro" role="dialog" aria-modal="true" aria-label="Intro">
     <div class="flex gap-4 items-center">
       <div class="name-text name-left">NIKOLAS</div>
-      <div class="connect-text">Connect our paths</div>
+      <button class="heart-btn" id="heartButton">
+        <span>❤️</span>
+      </button>
       <div class="name-text name-right">KAVITA</div>
     </div>
   </div>
@@ -487,7 +497,7 @@ form.addEventListener('submit', async (e)=>{
 const touchIntro = document.getElementById('touchIntro');
 const nameLeftEl = document.querySelector('.name-left');
 const nameRightEl = document.querySelector('.name-right');
-const connectTextEl = document.querySelector('.connect-text');
+const heartButton = document.getElementById('heartButton');
 const reel = document.getElementById('reel');
 const stage = document.getElementById('reelStage');
 const introSkip = document.getElementById('introSkip');
@@ -544,10 +554,10 @@ function startExperience(){
 
   try{ bgm.play(); }catch{}
 
-  // Animate names to merge and fade out connect text
+  // Animate names to merge and hide heart button
   nameLeftEl.classList.add('name-merge');
   nameRightEl.classList.add('name-merge');
-  connectTextEl.classList.add('fade-out');
+  heartButton.style.opacity = '0';
   
   // Blast petals
   window.blastAllPetals();
@@ -555,13 +565,13 @@ function startExperience(){
   // Transition to the main intro after a brief delay for animations
   setTimeout(()=>{
     touchIntro.classList.add('hidden');
-    reel.classList.add('visible'); // Make reel visible
+    reel.classList.add('visible');
     playScenes();
-  }, 1500); // Increased delay to allow petal blast and name merge
+  }, 1500);
 }
 
-// Start the experience on the first user interaction
-document.addEventListener('pointerdown', startExperience);
+// Start the experience on click of the heart button
+heartButton.addEventListener('click', startExperience);
 
 introSkip.addEventListener('click', endIntro);
 /* Respect reduced motion */
