@@ -418,33 +418,38 @@ form.addEventListener('submit', async (e)=>{
 (function(){
   const canvas=document.getElementById('fxCanvas'), ctx=canvas.getContext('2d');
   let w,h, petals=[], confetti=[];
-  const numStaticPetals = 4500000; // Increased number of static petals by 10000x
+  const numStaticPetals = 10000;
   let isBlasting = false;
 
   function resize(){ w=canvas.width=innerWidth; h=canvas.height=innerHeight; }
   addEventListener('resize',resize); resize();
 
-  // Function to draw a more realistic, 3D-looking petal shape
-  function drawPetal(ctx, x, y, r, angle) {
+  function drawPetal(ctx, x, y, r, angle, opacity) {
     ctx.save();
     ctx.translate(x, y);
     ctx.rotate(angle);
     ctx.beginPath();
     ctx.ellipse(0, 0, r * 0.7, r * 1.5, Math.PI / 2, 0, Math.PI * 2);
-    ctx.shadowColor = 'rgba(0,0,0,0.2)'; // Add a subtle shadow
+    ctx.fillStyle = `rgba(123,23,51,${opacity})`;
+    ctx.shadowColor = 'rgba(0,0,0,0.2)';
     ctx.shadowBlur = 4;
     ctx.shadowOffsetY = 2;
     ctx.fill();
-    ctx.shadowColor = 'transparent'; // Reset shadow for other drawings
+    ctx.shadowColor = 'transparent';
     ctx.restore();
   }
 
   function createStaticPetals(){
     petals = [];
     for(let i=0; i<numStaticPetals; i++){
-      petals.push({ x: Math.random()*w, y: Math.random()*h, r: 6+Math.random()*10, a: Math.random()*Math.PI*2, opacity: .4, state:'static' });
+      const x = Math.random() * w * 1.5 - w * 0.25;
+      const y = Math.random() * h * 1.5 - h * 0.25;
+      const r = 6 + Math.random() * 10;
+      const a = Math.random() * Math.PI * 2;
+      petals.push({ x, y, r, a, opacity: .4, state: 'static' });
     }
   }
+
   function createFallingPetals(){
     const newPetal = () => ({ x:Math.random()*w, y:-20-Math.random()*h, r:6+Math.random()*10, a:Math.random()*Math.PI*2, v:.5+Math.random()*1.2, swing:.8+Math.random()*1.2, opacity:.4, state:'falling' });
     for(let i=0; i<30; i++) petals.push(newPetal());
@@ -462,8 +467,7 @@ form.addEventListener('submit', async (e)=>{
         if(p.opacity <= 0) p.state = 'done';
       }
       if(p.state !== 'done'){
-        ctx.fillStyle=`rgba(123,23,51,${p.opacity})`;
-        drawPetal(ctx, p.x, p.y, p.r, p.a);
+        drawPetal(ctx, p.x, p.y, p.r, p.a, p.opacity);
       }
     });
 
