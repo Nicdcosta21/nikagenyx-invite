@@ -63,11 +63,20 @@
   .heart-btn{
     background: none; border: none; padding: 0 15px; cursor: pointer;
     opacity: 0; animation: fadeUp 1s ease forwards; animation-delay: .4s;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     position: relative;
     width: clamp(80px, 16vw, 120px);
     height: clamp(80px, 16vw, 120px);
+    transition: transform 0.2s ease-in-out;
+    /* 3D effect on hover */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
   }
+
+  .heart-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+  }
+  
   .heart-btn .heart-svg-wrapper {
     position: absolute; inset:0; display:flex; align-items:center; justify-content:center;
     animation: pulse 1.5s infinite;
@@ -77,7 +86,7 @@
     filter: drop-shadow(0 2px 8px rgba(0,0,0,.4));
   }
   .heart-btn .touch-text {
-    position:absolute; bottom:-12px; left:50%; transform:translateX(-50%);
+    position:absolute;
     font-size:clamp(10px, 2.5vw, 18px); font-weight:600; color:#fff; opacity:.7; line-height:1;
     text-shadow:0 1px 4px rgba(0,0,0,.5); font-family:Inter, sans-serif;
   }
@@ -100,7 +109,7 @@
     line-height:1.2; letter-spacing:.01em; text-shadow:0 2px 14px rgba(0,0,0,.45);
     opacity:0; transform:translateY(16px); margin-bottom:20px;
   }
-  .fx-fadeUp   { animation: fadeUp .55s ease forwards; }
+  .fx-fadeUp  { animation: fadeUp .55s ease forwards; }
   .fx-zoomOut  { animation: zoomOut .7s ease forwards; transform:scale(1.08); }
   .fx-wipeLeft { animation: wipeLeft .55s ease forwards; }
   .fx-words .word{ display:inline-block; opacity:0; transform:translateY(10px); animation: wordUp .45s ease forwards; }
@@ -162,7 +171,6 @@
   </audio>
   <button id="musicToggle" aria-pressed="false" aria-label="Toggle music">Music: Off</button>
 
-  <!-- Touch-to-begin -->
   <div id="touchIntro" role="dialog" aria-modal="true" aria-label="Intro">
     <div id="namesWrap" class="flex gap-4 items-center">
       <div class="name-text name-left">NIKOLAS</div>
@@ -178,7 +186,6 @@
     </div>
   </div>
 
-  <!-- Reel overlay -->
   <div id="reel" role="dialog" aria-modal="true" aria-label="Intro">
     <div class="reel-stage" id="reelStage"></div>
     <div class="intro-controls">
@@ -201,7 +208,7 @@
 
           <div class="mt-5 text-gray-700">
             <p class="text-base md:text-lg">s/o Samson Nicholas D’Costa and Suni Samson D’Costa,</p>
-            <h1 class="heading-elegant text-4xl md:text-6xl font-bold tracking-wide mt-1">NIKOLAS &amp; KAVITA</h1>
+            <h1 class="heading-elegant text-4xl md:text-6xl font-bold tracking-wide mt-1">NIKOLAS & KAVITA</h1>
             <p class="text-base md:text-lg mt-1">d/o Kevin Thomas Fernandes and Annie Kevin Fernandes.</p>
           </div>
 
@@ -246,7 +253,7 @@
                href="https://www.google.com/maps/place/X67V%2BW4G+Santa+Cruz+Cathedral+Basilica,+Kochi,+Bastian+St,+Fort+Nagar,+Fort+Kochi,+Kochi,+Kerala+682001/@9.9609796,76.2523107,16z/data=!3m1!1e3!4m14!1m7!3m6!1s0x3b086dccada9f3f1:0x4c980457c575174c!2sRAAS+Residency,+No+11%2F3319+B,+junction,+near+Thoppumpady,+Thoppumpady,+Kochi,+Kerala+682005!8m2!3d9.9347732!4d76.2641605!16s%2Fg%2F11sgr8ht9l!3m5!1s0x3b086d36b7ff0567:0x4ed899ce06f39a3b!8m2!3d9.9648197!4d76.2428293!16zL20vMDkwamtf?g_ep=Eg1tbF8yMDI1MDgyN18wIJvbDyoASAJQAQ%3D%3D">
                Santa Cruz Cathedral Basilica
             </a>
-              |
+              | 
             Reception map:
             <a class="underline-link" target="_blank" rel="noopener"
                href="https://maps.app.goo.gl/9cyw9KrJKpffT3fw5">
@@ -267,7 +274,6 @@
     invite.nikagenyx.com · Kochi, Kerala
   </footer>
 
-  <!-- RSVP Modal -->
   <div id="modalBg" class="modal-bg" aria-hidden="true">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <h3 id="modalTitle" class="text-xl font-semibold mb-3" style="color:var(--wine)">Save your reminder</h3>
@@ -275,13 +281,13 @@
         <div>
           <label for="guestName" class="block text-sm font-medium text-gray-700">Full name</label>
           <input id="guestName" name="guestName" type="text" required
-                 class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-300"
-                 placeholder="e.g., John Fernandes">
+                   class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-300"
+                   placeholder="e.g., John Fernandes">
         </div>
         <div id="countGroup" class="hidden">
           <label for="guestCount" class="block text-sm font-medium text-gray-700">Number of people</label>
           <select id="guestCount" name="guestCount"
-                  class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-300">
+                   class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-300">
             <option value="" disabled selected>Select</option>
             <option>1</option><option>2</option><option>3</option>
             <option>4</option><option>5</option><option>6</option>
@@ -344,7 +350,7 @@ async function logToSheet(payload){
   }catch(e){}
 }
 function icsWithReminder(status){
-  const dtStartUTC='20251027T093000Z', dtEndUTC='20251027T103000Z'; // 3–4 PM IST
+  const dtStartUTC='20251027T093000Z', dtEndUTC='20251027T103000Z';
   const trigger = (status==='sure')?'-P7D':'-P30D';
   const mapCeremony='https://www.google.com/maps/place/X67V%2BW4G+Santa+Cruz+Cathedral+Basilica,+Kochi,+Bastian+St,+Fort+Nagar,+Fort+Kochi,+Kochi,+Kerala+682001/@9.9609796,76.2523107,16z/data=!3m1!1e3!4m14!1m7!3m6!1s0x3b086dccada9f3f1:0x4c980457c575174c!2sRAAS+Residency,+No+11%2F3319+B,+junction,+near+Thoppumpady,+Thoppumpady,+Kochi,+Kerala+682005!8m2!3d9.9347732!4d76.2641605!16s%2Fg%2F11sgr8ht9l!3m5!1s0x3b086d36b7ff0567:0x4ed899ce06f39a3b!8m2!3d9.9648197!4d76.2428293!16zL20vMDkwamtf?g_ep=Eg1tbF8yMDI1MDgyN18wIJvbDyoASAJQAQ%3D%3D';
   const mapReception='https://maps.app.goo.gl/9cyw9KrJKpffT3fw5';
@@ -409,16 +415,25 @@ form.addEventListener('submit', async (e)=>{
 (function(){
   const canvas=document.getElementById('fxCanvas'), ctx=canvas.getContext('2d');
   let w,h, petals=[], confetti=[];
-  const numStaticPetals = 150;
+  const numStaticPetals = 450; // Increased number of static petals
   let isBlasting = false;
 
   function resize(){ w=canvas.width=innerWidth; h=canvas.height=innerHeight; }
   addEventListener('resize',resize); resize();
 
+  // Function to draw a more realistic, 3D-looking petal shape
   function drawPetal(ctx, x, y, r, angle) {
-    ctx.save(); ctx.translate(x, y); ctx.rotate(angle);
-    ctx.beginPath(); ctx.ellipse(0, 0, r * 0.7, r * 1.5, Math.PI / 2, 0, Math.PI * 2);
-    ctx.fill(); ctx.restore();
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(angle);
+    ctx.beginPath();
+    ctx.ellipse(0, 0, r * 0.7, r * 1.5, Math.PI / 2, 0, Math.PI * 2);
+    ctx.shadowColor = 'rgba(0,0,0,0.2)'; // Add a subtle shadow
+    ctx.shadowBlur = 4;
+    ctx.shadowOffsetY = 2;
+    ctx.fill();
+    ctx.shadowColor = 'transparent'; // Reset shadow for other drawings
+    ctx.restore();
   }
 
   function createStaticPetals(){
@@ -487,12 +502,12 @@ const introSkip = document.getElementById('introSkip');
 let hasStarted = false;
 
 const scenes = [
-  { text: "With great joy and gratitude,",          effect: "fx-fadeUp",   duration: 1100 },
-  { text: "Nikolas & Kavita",                        effect: "fx-zoomOut",  duration: 1200 },
-  { text: "Invite you to celebrate their wedding",   effect: "fx-wipeLeft", duration: 1000 },
-  { text: "On Monday, 27 October 2025",              effect: "fx-words",    duration: 1200 },
-  { text: "At Santa Cruz Cathedral Basilica",        effect: "fx-fadeUp",   duration: 1100 },
-  { text: "Reception to follow at The Croft",        effect: "fx-words",    duration: 1300 }
+  { text: "With great joy and gratitude,",     effect: "fx-fadeUp",   duration: 1100 },
+  { text: "Nikolas & Kavita",                   effect: "fx-zoomOut",  duration: 1200 },
+  { text: "Invite you to celebrate their wedding",  effect: "fx-wipeLeft", duration: 1000 },
+  { text: "On Monday, 27 October 2025",         effect: "fx-words",    duration: 1200 },
+  { text: "At Santa Cruz Cathedral Basilica",   effect: "fx-fadeUp",   duration: 1100 },
+  { text: "Reception to follow at The Croft",   effect: "fx-words",    duration: 1300 }
 ];
 const gap = 160;
 
@@ -528,7 +543,7 @@ function startExperience(e){
   if (hasStarted) return;
   hasStarted = true;
   try{ bgm.play(); }catch{}
-  namesWrap.classList.add('name-merge');   // merge animation on wrapper
+  namesWrap.classList.add('name-merge');
   heartButton.style.opacity = '0';
   window.blastAllPetals(e.clientX, e.clientY);
   setTimeout(()=>{ touchIntro.classList.add('hidden'); reel.classList.add('visible'); playScenes(); }, 1500);
