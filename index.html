@@ -22,13 +22,13 @@
   html, body { height: 100%; scroll-behavior: smooth; }
   body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; color: var(--ink); position: relative; }
 
-  /* Static, non-scrolling background */
+  /* Static background */
   body::before{
     content:""; position:fixed; inset:0; z-index:-3;
     background:url('/assets/hero.jpg') center / cover no-repeat;
     filter: saturate(.95) brightness(.9);
   }
-  /* Wine tint + vignette for contrast */
+  /* Wine tint + vignette */
   body::after{
     content:""; position:fixed; inset:0; z-index:-1;
     background:
@@ -36,14 +36,8 @@
       linear-gradient(180deg, rgba(20,6,10,.55), rgba(20,6,10,.65));
   }
 
-  /* Petals layer (z-index adjusted for effect) */
-  #fxCanvas{ position:fixed; inset:0; z-index:75; /* Increased z-index */ pointer-events:none; }
-  .petals-blast { animation: blastPetals 1.2s ease-out forwards; }
-  @keyframes blastPetals {
-    0% { transform: scale(1); opacity: 1; }
-    100% { transform: scale(1.5) translateY(-50px); opacity: 0; }
-  }
-
+  /* Petals layer (under overlays for readability) */
+  #fxCanvas{ position:fixed; inset:0; z-index:55; pointer-events:none; transition: opacity .6s ease; }
 
   /* Touch-to-begin overlay */
   #touchIntro {
@@ -63,63 +57,40 @@
   }
   .name-left{ transform: translateX(-40px); animation-delay: .2s; }
   .name-right{ transform: translateX(40px); animation-delay: .2s; }
+  /* Apply to the WRAPPER when merging */
   .name-merge .name-left, .name-merge .name-right { transform: translateX(0); }
-  
+
   .heart-btn{
     background: none; border: none; padding: 0 15px; cursor: pointer;
     opacity: 0; animation: fadeUp 1s ease forwards; animation-delay: .4s;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    position: relative; /* For absolute positioning of text */
-    width: clamp(80px, 16vw, 120px); /* Adjust size as needed */
+    position: relative;
+    width: clamp(80px, 16vw, 120px);
     height: clamp(80px, 16vw, 120px);
   }
-
-  /* Custom Heart SVG container */
   .heart-btn .heart-svg-wrapper {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: absolute; inset:0; display:flex; align-items:center; justify-content:center;
     animation: pulse 1.5s infinite;
   }
-
   .heart-btn .heart-svg {
-    width: 100%;
-    height: 100%;
-    fill: #E91E63; /* Red heart color */
-    stroke: #000; /* Black border */
-    stroke-width: 4px; /* Border thickness */
-    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4)); /* Shadow for depth */
+    width:100%; height:100%; fill:#E91E63; stroke:#000; stroke-width:4px;
+    filter: drop-shadow(0 2px 8px rgba(0,0,0,.4));
   }
-
   .heart-btn .touch-text {
-    position: absolute;
-    font-size: clamp(10px, 2.5vw, 18px);
-    font-weight: 600;
-    color: #fff; /* White text color */
-    opacity: 0.6; /* Faded effect */
-    font-family: Inter, sans-serif;
-    text-shadow: 0 1px 4px rgba(0,0,0,0.5); /* Text shadow for readability */
-    z-index: 1; /* Ensure text is above SVG */
-    line-height: 1; /* Prevent extra line height */
+    position:absolute; bottom:-12px; left:50%; transform:translateX(-50%);
+    font-size:clamp(10px, 2.5vw, 18px); font-weight:600; color:#fff; opacity:.7; line-height:1;
+    text-shadow:0 1px 4px rgba(0,0,0,.5); font-family:Inter, sans-serif;
   }
+  @keyframes pulse { 0%{transform:scale(1)} 50%{transform:scale(1.1)} 100%{transform:scale(1)} }
+  @keyframes fadeUp { to { opacity:1; transform:none; } }
 
-  @keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); } /* Slightly less aggressive pulse */
-    100% { transform: scale(1); }
-  }
-
-
-  /* Reel/Short style intro overlay */
+  /* Reel/Short overlay */
   #reel {
     position:fixed; inset:0; z-index:60; display:none; align-items:center; justify-content:center; flex-direction:column;
     padding:2rem; text-align:center; color:#fff; background:rgba(10,4,6,.55); backdrop-filter: blur(2px);
     transition:opacity .4s ease, visibility .4s ease;
   }
-  #reel.visible{ display:flex; } /* Use a class to manage display property */
+  #reel.visible{ display:flex; }
   #reel.hidden{ opacity:0; visibility:hidden; }
 
   .reel-stage{ width:min(92vw, 900px); display:flex; align-items:center; justify-content:center; flex-direction:column; }
@@ -127,14 +98,12 @@
     font-family:"Playfair Display", Georgia, serif;
     font-size:clamp(22px, 5vw, 48px);
     line-height:1.2; letter-spacing:.01em; text-shadow:0 2px 14px rgba(0,0,0,.45);
-    opacity:0; transform:translateY(16px); margin-bottom: 20px;
+    opacity:0; transform:translateY(16px); margin-bottom:20px;
   }
-  /* Effects */
   .fx-fadeUp   { animation: fadeUp .55s ease forwards; }
   .fx-zoomOut  { animation: zoomOut .7s ease forwards; transform:scale(1.08); }
   .fx-wipeLeft { animation: wipeLeft .55s ease forwards; }
   .fx-words .word{ display:inline-block; opacity:0; transform:translateY(10px); animation: wordUp .45s ease forwards; }
-  @keyframes fadeUp   { to { opacity:1; transform:none; } }
   @keyframes zoomOut  { to { opacity:1; transform:scale(1); } }
   @keyframes wipeLeft { from { clip-path:inset(0 0 0 100%); opacity:.2 } to { clip-path:inset(0 0 0 0); opacity:1 } }
   @keyframes wordUp   { to { opacity:1; transform:none; } }
@@ -145,23 +114,11 @@
   .btn:hover::after{ opacity:1; }
   .btn:active{ transform:translateY(1px) scale(.99); }
   .btn-primary{ background:var(--wine); color:#fff; border:1px solid rgba(0,0,0,.05); }
-
-  /* Keep white outline only inside the intro overlay */
-  #reel .btn-outline{
-    background:transparent;
-    border:1px solid rgba(255,255,255,.7);
-    color:#fff;
-  }
-  /* New: outline for buttons on the white card */
-  .btn-outline-dark{
-    background:#fff;
-    border:1px solid rgba(123,23,51,.35);
-    color:var(--wine);
-  }
+  #reel .btn-outline{ background:transparent; border:1px solid rgba(255,255,255,.7); color:#fff; }
+  .btn-outline-dark{ background:#fff; border:1px solid rgba(123,23,51,.35); color:var(--wine); }
   .btn-outline-dark:hover{ filter:brightness(.98); }
 
-
-  /* Music toggle (optional) */
+  /* Music toggle */
   #musicToggle{
     position:fixed; right:.75rem; top:.75rem; z-index:65;
     background:rgba(255,255,255,.9); color:#111; border-radius:.65rem;
@@ -205,14 +162,15 @@
   </audio>
   <button id="musicToggle" aria-pressed="false" aria-label="Toggle music">Music: Off</button>
 
+  <!-- Touch-to-begin -->
   <div id="touchIntro" role="dialog" aria-modal="true" aria-label="Intro">
-    <div class="flex gap-4 items-center">
+    <div id="namesWrap" class="flex gap-4 items-center">
       <div class="name-text name-left">NIKOLAS</div>
       <button class="heart-btn" id="heartButton">
         <div class="heart-svg-wrapper">
-            <svg class="heart-svg" viewBox="0 0 24 24">
-                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-            </svg>
+          <svg class="heart-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          </svg>
         </div>
         <span class="touch-text">touch me</span>
       </button>
@@ -220,6 +178,7 @@
     </div>
   </div>
 
+  <!-- Reel overlay -->
   <div id="reel" role="dialog" aria-modal="true" aria-label="Intro">
     <div class="reel-stage" id="reelStage"></div>
     <div class="intro-controls">
@@ -242,7 +201,7 @@
 
           <div class="mt-5 text-gray-700">
             <p class="text-base md:text-lg">s/o Samson Nicholas D’Costa and Suni Samson D’Costa,</p>
-            <h1 class="heading-elegant text-4xl md:text-6xl font-bold tracking-wide mt-1">NIKOLAS & KAVITA</h1>
+            <h1 class="heading-elegant text-4xl md:text-6xl font-bold tracking-wide mt-1">NIKOLAS &amp; KAVITA</h1>
             <p class="text-base md:text-lg mt-1">d/o Kevin Thomas Fernandes and Annie Kevin Fernandes.</p>
           </div>
 
@@ -287,7 +246,7 @@
                href="https://www.google.com/maps/place/X67V%2BW4G+Santa+Cruz+Cathedral+Basilica,+Kochi,+Bastian+St,+Fort+Nagar,+Fort+Kochi,+Kochi,+Kerala+682001/@9.9609796,76.2523107,16z/data=!3m1!1e3!4m14!1m7!3m6!1s0x3b086dccada9f3f1:0x4c980457c575174c!2sRAAS+Residency,+No+11%2F3319+B,+junction,+near+Thoppumpady,+Thoppumpady,+Kochi,+Kerala+682005!8m2!3d9.9347732!4d76.2641605!16s%2Fg%2F11sgr8ht9l!3m5!1s0x3b086d36b7ff0567:0x4ed899ce06f39a3b!8m2!3d9.9648197!4d76.2428293!16zL20vMDkwamtf?g_ep=Eg1tbF8yMDI1MDgyN18wIJvbDyoASAJQAQ%3D%3D">
                Santa Cruz Cathedral Basilica
             </a>
-              | 
+              |
             Reception map:
             <a class="underline-link" target="_blank" rel="noopener"
                href="https://maps.app.goo.gl/9cyw9KrJKpffT3fw5">
@@ -308,6 +267,7 @@
     invite.nikagenyx.com · Kochi, Kerala
   </footer>
 
+  <!-- RSVP Modal -->
   <div id="modalBg" class="modal-bg" aria-hidden="true">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <h3 id="modalTitle" class="text-xl font-semibold mb-3" style="color:var(--wine)">Save your reminder</h3>
@@ -315,13 +275,13 @@
         <div>
           <label for="guestName" class="block text-sm font-medium text-gray-700">Full name</label>
           <input id="guestName" name="guestName" type="text" required
-                   class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-300"
-                   placeholder="e.g., John Fernandes">
+                 class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-300"
+                 placeholder="e.g., John Fernandes">
         </div>
         <div id="countGroup" class="hidden">
           <label for="guestCount" class="block text-sm font-medium text-gray-700">Number of people</label>
           <select id="guestCount" name="guestCount"
-                   class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-300">
+                  class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-300">
             <option value="" disabled selected>Select</option>
             <option>1</option><option>2</option><option>3</option>
             <option>4</option><option>5</option><option>6</option>
@@ -353,7 +313,7 @@
   tick(); setInterval(tick, 1000);
 })();
 
-/* ---------- Music toggle (optional) ---------- */
+/* ---------- Music toggle ---------- */
 const bgm = document.getElementById('bgm');
 const musicToggle = document.getElementById('musicToggle');
 let musicOn = true;
@@ -363,44 +323,28 @@ function setMusic(on){
   musicToggle.textContent = musicOn ? 'Music: On' : 'Music: Off';
 }
 setMusic(true);
-
 musicToggle.addEventListener('click', async ()=>{
   setMusic(!musicOn);
   if(musicOn){ try{ await bgm.play(); }catch{} } else { bgm.pause(); }
 });
-
-// Ensure a sensible volume
 bgm.volume = 0.7;
-
-// Try to play when we know the file is ready
-bgm.addEventListener('canplaythrough', () => {
-  if (musicOn) bgm.play().catch(()=>{});
-});
-
-// Tell you if the file path is wrong / missing
+bgm.addEventListener('canplaythrough', () => { if (musicOn) bgm.play().catch(()=>{}); });
 bgm.addEventListener('error', () => {
   console.warn('Could not load /assets/music.mp3');
-  // Optional: quick heads-up for you during testing
   const n = document.createElement('div');
   n.textContent = 'Music file not found: /assets/music.mp3';
-  Object.assign(n.style, {
-    position:'fixed', left:'50%', transform:'translateX(-50%)',
-    bottom:'12px', background:'#111', color:'#fff', padding:'8px 12px',
-    borderRadius:'10px', fontSize:'12px', zIndex:9999, opacity:.9
-  });
+  Object.assign(n.style, { position:'fixed', left:'50%', transform:'translateX(-50%)', bottom:'12px', background:'#111', color:'#fff', padding:'8px 12px', borderRadius:'10px', fontSize:'12px', zIndex:9999, opacity:.9 });
   document.body.appendChild(n); setTimeout(()=>n.remove(), 3200);
 });
 
 /* ---------- RSVP -> Google Sheet + ICS ---------- */
 async function logToSheet(payload){
   try{
-    await fetch('/.netlify/functions/log_event',{
-      method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)
-    });
+    await fetch('/.netlify/functions/log_event',{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
   }catch(e){}
 }
 function icsWithReminder(status){
-  const dtStartUTC='20251027T093000Z', dtEndUTC='20251027T153000Z';
+  const dtStartUTC='20251027T093000Z', dtEndUTC='20251027T103000Z'; // 3–4 PM IST
   const trigger = (status==='sure')?'-P7D':'-P30D';
   const mapCeremony='https://www.google.com/maps/place/X67V%2BW4G+Santa+Cruz+Cathedral+Basilica,+Kochi,+Bastian+St,+Fort+Nagar,+Fort+Kochi,+Kochi,+Kerala+682001/@9.9609796,76.2523107,16z/data=!3m1!1e3!4m14!1m7!3m6!1s0x3b086dccada9f3f1:0x4c980457c575174c!2sRAAS+Residency,+No+11%2F3319+B,+junction,+near+Thoppumpady,+Thoppumpady,+Kochi,+Kerala+682005!8m2!3d9.9347732!4d76.2641605!16s%2Fg%2F11sgr8ht9l!3m5!1s0x3b086d36b7ff0567:0x4ed899ce06f39a3b!8m2!3d9.9648197!4d76.2428293!16zL20vMDkwamtf?g_ep=Eg1tbF8yMDI1MDgyN18wIJvbDyoASAJQAQ%3D%3D';
   const mapReception='https://maps.app.goo.gl/9cyw9KrJKpffT3fw5';
@@ -465,53 +409,28 @@ form.addEventListener('submit', async (e)=>{
 (function(){
   const canvas=document.getElementById('fxCanvas'), ctx=canvas.getContext('2d');
   let w,h, petals=[], confetti=[];
-  const numStaticPetals = 150; // Increased number for better coverage
+  const numStaticPetals = 150;
   let isBlasting = false;
 
   function resize(){ w=canvas.width=innerWidth; h=canvas.height=innerHeight; }
   addEventListener('resize',resize); resize();
 
-  // Function to draw a more realistic petal shape
   function drawPetal(ctx, x, y, r, angle) {
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.rotate(angle);
-    ctx.beginPath();
-    // A more elongated, curved petal shape
-    ctx.ellipse(0, 0, r * 0.7, r * 1.5, Math.PI / 2, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
+    ctx.save(); ctx.translate(x, y); ctx.rotate(angle);
+    ctx.beginPath(); ctx.ellipse(0, 0, r * 0.7, r * 1.5, Math.PI / 2, 0, Math.PI * 2);
+    ctx.fill(); ctx.restore();
   }
 
   function createStaticPetals(){
     petals = [];
     for(let i=0; i<numStaticPetals; i++){
-      petals.push({
-        x: Math.random() * w,
-        y: Math.random() * h,
-        r: 6 + Math.random() * 10,
-        a: Math.random() * Math.PI * 2,
-        opacity: 0.4,
-        state: 'static'
-      });
+      petals.push({ x: Math.random()*w, y: Math.random()*h, r: 6+Math.random()*10, a: Math.random()*Math.PI*2, opacity: .4, state:'static' });
     }
   }
-
   function createFallingPetals(){
-    const newPetal = () => ({
-      x: Math.random() * w,
-      y: -20 - Math.random() * h,
-      r: 6 + Math.random() * 10,
-      a: Math.random() * Math.PI * 2,
-      v: .5 + Math.random() * 1.2,
-      swing: .8 + Math.random() * 1.2,
-      opacity: 0.4,
-      state: 'falling'
-    });
+    const newPetal = () => ({ x:Math.random()*w, y:-20-Math.random()*h, r:6+Math.random()*10, a:Math.random()*Math.PI*2, v:.5+Math.random()*1.2, swing:.8+Math.random()*1.2, opacity:.4, state:'falling' });
     for(let i=0; i<30; i++) petals.push(newPetal());
   }
-  
-  // Initially, fill the screen with static petals
   createStaticPetals();
 
   function draw(){
@@ -519,21 +438,11 @@ form.addEventListener('submit', async (e)=>{
     petals.forEach(p=>{
       if (p.state === 'falling') {
         p.a+=0.02; p.x+=Math.sin(p.a)*p.swing*0.3; p.y+=p.v;
-        if(p.y>h+40) {
-          p.x = Math.random() * w;
-          p.y = -20 - Math.random() * h;
-        }
+        if(p.y>h+40){ p.x=Math.random()*w; p.y=-20-Math.random()*h; }
       } else if (p.state === 'blasting') {
-        p.x += p.vx;
-        p.y += p.vy;
-        p.opacity -= 0.01;
-        if(p.opacity <= 0){
-          p.state = 'done';
-        }
-      } else if (p.state === 'static') {
-        // Just render, no movement
+        p.x += p.vx; p.y += p.vy; p.opacity -= 0.01;
+        if(p.opacity <= 0) p.state = 'done';
       }
-
       if(p.state !== 'done'){
         ctx.fillStyle=`rgba(123,23,51,${p.opacity})`;
         drawPetal(ctx, p.x, p.y, p.r, p.a);
@@ -553,61 +462,37 @@ form.addEventListener('submit', async (e)=>{
   window.blastAllPetals = function(originX, originY){
     if(isBlasting) return;
     isBlasting = true;
-
     petals.forEach(p => {
-      // Calculate a vector away from the origin of the touch
-      const dx = p.x - originX;
-      const dy = p.y - originY;
-      const angle = Math.atan2(dy, dx);
-      const speed = 5 + Math.random() * 8; // Random speed
-      
-      p.vx = Math.cos(angle) * speed;
-      p.vy = Math.sin(angle) * speed;
-      p.state = 'blasting';
-      p.opacity = 0.4;
+      const dx = p.x - originX, dy = p.y - originY, angle = Math.atan2(dy, dx), speed = 5 + Math.random()*8;
+      p.vx = Math.cos(angle)*speed; p.vy = Math.sin(angle)*speed; p.state='blasting'; p.opacity=.4;
     });
-
-    // Start falling petals after the blast animation
-    setTimeout(() => {
-      isBlasting = false;
-      petals = petals.filter(p => p.state !== 'done');
-      createFallingPetals();
-    }, 1200);
+    setTimeout(() => { isBlasting = false; petals = petals.filter(p => p.state !== 'done'); createFallingPetals(); }, 1200);
   };
 
   window.confettiBurst = function(){
     for(let i=0;i<80;i++){
-      confetti.push({
-        x: w/2 + (Math.random()-0.5)*120, y: h/2,
-        v: 2+Math.random()*3, wobbleSpeed: 1+Math.random()*2, phase: Math.random()*Math.PI*2,
-        rotation: Math.random()*Math.PI, spin: (Math.random()-.5)*0.2,
-        size: 6+Math.random()*8, color: ['#7b1733','#c92a50','#ffd3df','#ffffff'][Math.floor(Math.random()*4)],
-        life: 120+Math.random()*60
-      });
+      confetti.push({ x:w/2+(Math.random()-0.5)*120, y:h/2, v:2+Math.random()*3, wobbleSpeed:1+Math.random()*2, phase:Math.random()*Math.PI*2, rotation:Math.random()*Math.PI, spin:(Math.random()-.5)*0.2, size:6+Math.random()*8, color:['#7b1733','#c92a50','#ffd3df','#ffffff'][Math.floor(Math.random()*4)], life:120+Math.random()*60 });
     }
   };
 })();
 
-/* ---------- Reel Engine: script your lines like a Short ---------- */
+/* ---------- Reel Engine ---------- */
 const touchIntro = document.getElementById('touchIntro');
-const nameLeftEl = document.querySelector('.name-left');
-const nameRightEl = document.querySelector('.name-right');
+const namesWrap = document.getElementById('namesWrap');
 const heartButton = document.getElementById('heartButton');
 const reel = document.getElementById('reel');
 const stage = document.getElementById('reelStage');
 const introSkip = document.getElementById('introSkip');
-const fxCanvas = document.getElementById('fxCanvas');
 
 let hasStarted = false;
 
-/* Edit these lines and timings to match your reference Short */
 const scenes = [
-  { text: "With great joy and gratitude,",     effect: "fx-fadeUp",   duration: 1100 },
-  { text: "Nikolas & Kavita",                   effect: "fx-zoomOut",  duration: 1200 },
-  { text: "Invite you to celebrate their wedding",  effect: "fx-wipeLeft", duration: 1000 },
-  { text: "On Monday, 27 October 2025",         effect: "fx-words",    duration: 1200 },
-  { text: "At Santa Cruz Cathedral Basilica",   effect: "fx-fadeUp",   duration: 1100 },
-  { text: "Reception to follow at The Croft",   effect: "fx-words",    duration: 1300 }
+  { text: "With great joy and gratitude,",          effect: "fx-fadeUp",   duration: 1100 },
+  { text: "Nikolas & Kavita",                        effect: "fx-zoomOut",  duration: 1200 },
+  { text: "Invite you to celebrate their wedding",   effect: "fx-wipeLeft", duration: 1000 },
+  { text: "On Monday, 27 October 2025",              effect: "fx-words",    duration: 1200 },
+  { text: "At Santa Cruz Cathedral Basilica",        effect: "fx-fadeUp",   duration: 1100 },
+  { text: "Reception to follow at The Croft",        effect: "fx-words",    duration: 1300 }
 ];
 const gap = 160;
 
@@ -631,10 +516,7 @@ function makeLine(text, effect){
 }
 function playScenes(){
   let t = 0;
-  scenes.forEach(s=>{
-    setTimeout(()=>{ stage.appendChild(makeLine(s.text, s.effect)); }, t);
-    t += s.duration + gap;
-  });
+  scenes.forEach(s=>{ setTimeout(()=>{ stage.appendChild(makeLine(s.text, s.effect)); }, t); t += s.duration + gap; });
   setTimeout(endIntro, t - gap + 350);
 }
 function endIntro(){
@@ -642,34 +524,18 @@ function endIntro(){
   document.getElementById('mainCard')?.classList.add('in');
 }
 
-// Main logic to start the experience
 function startExperience(e){
   if (hasStarted) return;
   hasStarted = true;
-
   try{ bgm.play(); }catch{}
-
-  // Animate names to merge and hide heart button
-  nameLeftEl.classList.add('name-merge');
-  nameRightEl.classList.add('name-merge');
+  namesWrap.classList.add('name-merge');   // merge animation on wrapper
   heartButton.style.opacity = '0';
-  
-  // Blast petals from the click location
   window.blastAllPetals(e.clientX, e.clientY);
-
-  // Transition to the main intro after a brief delay for animations
-  setTimeout(()=>{
-    touchIntro.classList.add('hidden');
-    reel.classList.add('visible');
-    playScenes();
-  }, 1500);
+  setTimeout(()=>{ touchIntro.classList.add('hidden'); reel.classList.add('visible'); playScenes(); }, 1500);
 }
 
-// Start the experience on click of the heart button
 heartButton.addEventListener('click', startExperience);
-
 introSkip.addEventListener('click', endIntro);
-/* Respect reduced motion */
 if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) endIntro();
 </script>
 </body>
