@@ -465,6 +465,9 @@ form.addEventListener('submit', async (e)=>{
 (function(){
   const canvas=document.getElementById('fxCanvas'), ctx=canvas.getContext('2d');
   let w,h, petals=[], confetti=[];
+  const numStaticPetals = 150; // Increased number for better coverage
+  let isBlasting = false;
+
   function resize(){ w=canvas.width=innerWidth; h=canvas.height=innerHeight; }
   addEventListener('resize',resize); resize();
 
@@ -480,30 +483,63 @@ form.addEventListener('submit', async (e)=>{
     ctx.restore();
   }
 
-  function petal(){
-    const x = Math.random() * w;
-    const y = -20 - Math.random() * h; // Start above the screen
-    return { x, y, r:6+Math.random()*10, a:Math.random()*Math.PI*2, v:.5+Math.random()*1.2, swing:.8+Math.random()*1.2, blasted: false, opacity: 0.4 }; // Increased opacity
+  function createStaticPetals(){
+    petals = [];
+    for(let i=0; i<numStaticPetals; i++){
+      petals.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        r: 6 + Math.random() * 10,
+        a: Math.random() * Math.PI * 2,
+        opacity: 0.4,
+        state: 'static'
+      });
+    }
   }
-  for(let i=0;i<60;i++) petals.push(petal()); // More petals for a fuller cover and longer fall
+
+  function createFallingPetals(){
+    const newPetal = () => ({
+      x: Math.random() * w,
+      y: -20 - Math.random() * h,
+      r: 6 + Math.random() * 10,
+      a: Math.random() * Math.PI * 2,
+      v: .5 + Math.random() * 1.2,
+      swing: .8 + Math.random() * 1.2,
+      opacity: 0.4,
+      state: 'falling'
+    });
+    for(let i=0; i<30; i++) petals.push(newPetal());
+  }
+  
+  // Initially, fill the screen with static petals
+  createStaticPetals();
 
   function draw(){
     ctx.clearRect(0,0,w,h);
     petals.forEach(p=>{
-      if (!p.blasted) {
+      if (p.state === 'falling') {
         p.a+=0.02; p.x+=Math.sin(p.a)*p.swing*0.3; p.y+=p.v;
-        if(p.y>h+40) Object.assign(p,petal(),{y:-20});
-      } else {
-        // Petal blasting logic: move outwards and fade
-        p.x += (p.x - w/2) * 0.05; // Move horizontally away from center
-        p.y += (p.y - h/2) * 0.05 + 1; // Move vertically away from center + gravity
-        p.opacity -= 0.02;
-        if (p.opacity <= 0) p.y = h + 100; // Effectively remove from view
+        if(p.y>h+40) {
+          p.x = Math.random() * w;
+          p.y = -20 - Math.random() * h;
+        }
+      } else if (p.state === 'blasting') {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.opacity -= 0.01;
+        if(p.opacity <= 0){
+          p.state = 'done';
+        }
+      } else if (p.state === 'static') {
+        // Just render, no movement
       }
 
-      ctx.fillStyle=`rgba(123,23,51,${p.opacity})`; // Use petal's current opacity
-      drawPetal(ctx, p.x, p.y, p.r, p.a); // Use custom petal drawing function
+      if(p.state !== 'done'){
+        ctx.fillStyle=`rgba(123,23,51,${p.opacity})`;
+        drawPetal(ctx, p.x, p.y, p.r, p.a);
+      }
     });
+
     confetti.forEach(c=>{
       c.y+=c.v; c.x+=c.wobbleSpeed*Math.sin(c.y*0.05+c.phase); c.rotation+=c.spin; c.life-=1;
       ctx.save(); ctx.translate(c.x,c.y); ctx.rotate(c.rotation);
@@ -514,16 +550,29 @@ form.addEventListener('submit', async (e)=>{
   }
   draw();
 
-  window.blastAllPetals = function(){
+  window.blastAllPetals = function(originX, originY){
+    if(isBlasting) return;
+    isBlasting = true;
+
     petals.forEach(p => {
-      p.blasted = true;
-      p.opacity = 0.4; // Start fading from initial opacity
+      // Calculate a vector away from the origin of the touch
+      const dx = p.x - originX;
+      const dy = p.y - originY;
+      const angle = Math.atan2(dy, dx);
+      const speed = 5 + Math.random() * 8; // Random speed
+      
+      p.vx = Math.cos(angle) * speed;
+      p.vy = Math.sin(angle) * speed;
+      p.state = 'blasting';
+      p.opacity = 0.4;
     });
-    // Remove the canvas after the blast animation finishes
+
+    // Start falling petals after the blast animation
     setTimeout(() => {
-      fxCanvas.style.opacity = 0; // Fade out the canvas itself
-      setTimeout(() => fxCanvas.style.display = 'none', 1200); // Hide after fading
-    }, 1000); // Adjust timing based on blastPetals animation duration
+      isBlasting = false;
+      petals = petals.filter(p => p.state !== 'done');
+      createFallingPetals();
+    }, 1200);
   };
 
   window.confettiBurst = function(){
@@ -594,7 +643,7 @@ function endIntro(){
 }
 
 // Main logic to start the experience
-function startExperience(){
+function startExperience(e){
   if (hasStarted) return;
   hasStarted = true;
 
@@ -605,8 +654,8 @@ function startExperience(){
   nameRightEl.classList.add('name-merge');
   heartButton.style.opacity = '0';
   
-  // Blast petals
-  window.blastAllPetals();
+  // Blast petals from the click location
+  window.blastAllPetals(e.clientX, e.clientY);
 
   // Transition to the main intro after a brief delay for animations
   setTimeout(()=>{
