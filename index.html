@@ -22,29 +22,37 @@
   html, body { height: 100%; scroll-behavior: smooth; }
   body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; color: var(--ink); position: relative; }
 
-  /* Background (won't be visible at start because petals fully cover it) */
+  /* Static background - still present for later states if petals clear, but initially hidden by petals */
   body::before{
     content:""; position:fixed; inset:0; z-index:-3;
     background:url('/assets/hero.jpg') center / cover no-repeat;
-    filter:saturate(.95) brightness(.9);
+    filter: saturate(.95) brightness(.9);
   }
+  /* Wine tint + vignette */
   body::after{
-    content:""; position:fixed; inset:0; z-index:-2;
+    content:""; position:fixed; inset:0; z-index:-1;
     background:
-      radial-gradient(80% 70% at 50% -10%, rgba(123,23,51,.25), transparent 60%),
+      radial-gradient(80% 70% at 50% -10%, rgba(123,23,51,0.25), transparent 60%),
       linear-gradient(180deg, rgba(20,6,10,.55), rgba(20,6,10,.65));
   }
+  
+  /* Static petal overlay */
+  #petalOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50; /* Remains below the animated petals for initial view */
+    background: rgba(123, 23, 51, 0.95);
+    transition: opacity 0.6s ease;
+  }
+  
+  /* Petals layer */
+  #fxCanvas{ position:fixed; inset:0; z-index:80; pointer-events:none; transition: opacity .6s ease; } /* Z-index increased to be on top */
 
-  /* PETAL LAYERS */
-  /* Static carpet (drawn once) */
-  #fxStatic{ position:fixed; inset:0; z-index:60; pointer-events:none; }
-  /* Light animation layer on top of carpet */
-  #fxAnim{ position:fixed; inset:0; z-index:61; pointer-events:none; }
-
-  /* Touch-to-begin overlay (names + heart ABOVE petals) */
+  /* Touch-to-begin overlay */
   #touchIntro {
-    position:fixed; inset:0; z-index:70; display:flex; align-items:center; justify-content:center; flex-direction:column;
-    padding:2rem; text-align:center; color:#fff; background:transparent; backdrop-filter:none;
+    position:fixed; inset:0; z-index:70; /* Lower than fxCanvas so petals are on top of names/heart */
+    display:flex; align-items:center; justify-content:center; flex-direction:column;
+    padding:2rem; text-align:center; color:#fff; background:rgba(10,4,6,.0); backdrop-filter: blur(0px);
     transition:opacity .6s ease, visibility .6s ease;
   }
   #touchIntro.hidden{ opacity:0; visibility:hidden; }
@@ -55,34 +63,51 @@
     font-weight:700;
     line-height:1.2; letter-spacing:.01em; text-shadow:0 2px 14px rgba(0,0,0,.45);
     opacity:0; transform:translateY(16px); animation: fadeUp 1s ease forwards;
+    transition: transform 1s ease, opacity 1s ease;
   }
-  .name-left{ transform: translateX(-40px); animation-delay:.2s; }
-  .name-right{ transform: translateX(40px);  animation-delay:.2s; }
+  .name-left{ transform: translateX(-40px); animation-delay: .2s; }
+  .name-right{ transform: translateX(40px); animation-delay: .2s; }
+  /* Apply to the WRAPPER when merging */
   .name-merge .name-left, .name-merge .name-right { transform: translateX(0); }
 
-  /* 3D heart button */
   .heart-btn{
-    background:none; border:none; cursor:pointer; margin:0 12px;
-    width:clamp(88px, 16vw, 128px); aspect-ratio:1/1;
-    display:grid; place-items:center; opacity:0; animation:fadeUp 1s ease .4s forwards;
-    transform:translateZ(0); /* GPU */
-  }
-  .heart-svg{
-    width:100%; height:100%;
-    filter: drop-shadow(0 10px 14px rgba(0,0,0,.35));
-    transition: transform .2s ease;
-  }
-  .heart-btn:hover .heart-svg{ transform: translateY(-2px) scale(1.03); }
-  .touch-text{
-    position:absolute; font-size:clamp(10px,2.5vw,16px); font-weight:600; color:#fff; opacity:.75;
-    text-shadow:0 1px 4px rgba(0,0,0,.55);
+    background: none; border: none; padding: 0 15px; cursor: pointer;
+    opacity: 0; animation: fadeUp 1s ease forwards; animation-delay: .4s;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    width: clamp(80px, 16vw, 120px);
+    height: clamp(80px, 16vw, 120px);
+    transition: transform 0.2s ease-in-out;
   }
 
+  .heart-btn:hover {
+    transform: translateY(-2px);
+  }
+  
+  .heart-btn .heart-svg-wrapper {
+    position: absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    animation: pulse 1.5s infinite;
+  }
+  .heart-btn .heart-svg {
+    width:100%; height:100%; fill:#960018; /* Blood red color */
+    stroke: #7b0013; /* Darker outline for 3D effect */
+    stroke-width: 1px;
+    filter: drop-shadow(0 4px 10px rgba(0,0,0,.5)); /* Stronger shadow for 3D */
+  }
+  .heart-btn .touch-text {
+    position:absolute;
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Adjust for its own size */
+    font-size:clamp(10px, 2.5vw, 18px); font-weight:600; color:#fff; opacity:.7; line-height:1;
+    text-shadow:0 1px 4px rgba(0,0,0,.5); font-family:Inter, sans-serif;
+  }
+  @keyframes pulse { 0%{transform:scale(1)} 50%{transform:scale(1.1)} 100%{transform:scale(1)} }
   @keyframes fadeUp { to { opacity:1; transform:none; } }
 
-  /* Reel overlay (unchanged) */
+  /* Reel/Short overlay */
   #reel {
-    position:fixed; inset:0; z-index:65; display:none; align-items:center; justify-content:center; flex-direction:column;
+    position:fixed; inset:0; z-index:60; display:none; align-items:center; justify-content:center; flex-direction:column;
     padding:2rem; text-align:center; color:#fff; background:rgba(10,4,6,.55); backdrop-filter: blur(2px);
     transition:opacity .4s ease, visibility .4s ease;
   }
@@ -91,22 +116,37 @@
 
   .reel-stage{ width:min(92vw, 900px); display:flex; align-items:center; justify-content:center; flex-direction:column; }
   .reel-line{
-    font-family:"Playfair Display", Georgia, serif; text-shadow:0 2px 14px rgba(0,0,0,.45);
-    font-size:clamp(22px,5vw,48px); line-height:1.2; opacity:0; transform:translateY(16px); margin-bottom:20px;
+    font-family:"Playfair Display", Georgia, serif;
+    font-size:clamp(22px, 5vw, 48px);
+    line-height:1.2; letter-spacing:.01em; text-shadow:0 2px 14px rgba(0,0,0,.45);
+    opacity:0; transform:translateY(16px); margin-bottom:20px;
   }
-  .fx-fadeUp{ animation: fadeUp .55s ease forwards; }
-  .fx-zoomOut{ animation: zoomOut .7s ease forwards; transform:scale(1.08); }
-  .fx-wipeLeft{ animation: wipeLeft .55s ease forwards; }
+  .fx-fadeUp  { animation: fadeUp .55s ease forwards; }
+  .fx-zoomOut  { animation: zoomOut .7s ease forwards; transform:scale(1.08); }
+  .fx-wipeLeft { animation: wipeLeft .55s ease forwards; }
   .fx-words .word{ display:inline-block; opacity:0; transform:translateY(10px); animation: wordUp .45s ease forwards; }
-  @keyframes zoomOut{ to{ opacity:1; transform:scale(1); } }
-  @keyframes wipeLeft{ from{ clip-path:inset(0 0 0 100%); opacity:.2 } to{ clip-path:inset(0 0 0 0); opacity:1 } }
-  @keyframes wordUp{ to{ opacity:1; transform:none; } }
+  @keyframes zoomOut  { to { opacity:1; transform:scale(1); } }
+  @keyframes wipeLeft { from { clip-path:inset(0 0 0 100%); opacity:.2 } to { clip-path:inset(0 0 0 0); opacity:1 } }
+  @keyframes wordUp   { to { opacity:1; transform:none; } }
 
+  .intro-controls{ margin-top:1rem; display:flex; gap:.75rem; flex-wrap:wrap; justify-content:center; }
   .btn{ display:inline-flex; align-items:center; justify-content:center; padding:.8rem 1.15rem; border-radius:.75rem; font-weight:600; position:relative; overflow:hidden; }
+  .btn::after{ content:""; position:absolute; inset:0; background:radial-gradient(circle at 30% 30%, rgba(255,255,255,.25), transparent 40%); opacity:0; transition:opacity .25s ease; }
+  .btn:hover::after{ opacity:1; }
+  .btn:active{ transform:translateY(1px) scale(.99); }
   .btn-primary{ background:var(--wine); color:#fff; border:1px solid rgba(0,0,0,.05); }
   #reel .btn-outline{ background:transparent; border:1px solid rgba(255,255,255,.7); color:#fff; }
+  .btn-outline-dark{ background:#fff; border:1px solid rgba(123,23,51,.35); color:var(--wine); }
+  .btn-outline-dark:hover{ filter:brightness(.98); }
 
-  /* Main card/content (unchanged) */
+  /* Music toggle */
+  #musicToggle{
+    position:fixed; right:.75rem; top:.75rem; z-index:65;
+    background:rgba(255,255,255,.9); color:#111; border-radius:.65rem;
+    padding:.45rem .7rem; font-weight:600; border:1px solid rgba(0,0,0,.08);
+  }
+
+  /* Main content */
   h1,h2,h3 { font-family: "Playfair Display", Georgia, serif; }
   .heading-elegant{ letter-spacing:.01em; }
   .hero{ min-height:100vh; display:flex; align-items:center; }
@@ -122,57 +162,44 @@
   blockquote.verse{ font-style:italic; color:#f8e7ec; text-shadow:0 1px 0 rgba(0,0,0,.1); }
   blockquote.verse small{ display:block; margin-top:.35rem; opacity:.9; }
 
+  /* Modal */
+  .modal-bg{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; padding:1rem; z-index:50; }
+  .modal{ width:100%; max-width:480px; background:#fff; border-radius:1rem; padding:1.25rem; box-shadow:0 25px 50px rgba(0,0,0,.3); transform:scale(.96); opacity:0; transition:transform .18s ease, opacity .18s ease; }
+  .modal-bg[aria-hidden="false"] .modal{ transform:scale(1); opacity:1; }
+
   /* Reduced motion */
   @media (prefers-reduced-motion: reduce){
     #reel, #touchIntro{ display:none; }
     .card{ opacity:1; transform:none; }
-    #fxStatic, #fxAnim{ display:none; }
+    #fxCanvas{ display:none; }
+    #petalOverlay{ display:none; } /* Also hide the static overlay for reduced motion */
   }
 </style>
 </head>
 <body class="bg-white antialiased">
+  <div id="petalOverlay"></div>
+  <canvas id="fxCanvas"></canvas>
 
-  <!-- PETAL LAYERS -->
-  <canvas id="fxStatic"></canvas>
-  <canvas id="fxAnim"></canvas>
-
-  <!-- Audio -->
   <audio id="bgm" preload="auto" loop>
     <source src="/assets/music.mp3" type="audio/mpeg" />
   </audio>
-  <button id="musicToggle" aria-pressed="false" aria-label="Toggle music" style="position:fixed; right:.75rem; top:.75rem; z-index:75; background:rgba(255,255,255,.9); color:#111; border-radius:.65rem; padding:.45rem .7rem; font-weight:600; border:1px solid rgba(0,0,0,.08);">Music: Off</button>
+  <button id="musicToggle" aria-pressed="false" aria-label="Toggle music">Music: Off</button>
 
-  <!-- Names + Heart (above petals) -->
   <div id="touchIntro" role="dialog" aria-modal="true" aria-label="Intro">
     <div id="namesWrap" class="flex gap-4 items-center">
       <div class="name-text name-left">NIKOLAS</div>
-
-      <button class="heart-btn" id="heartButton" aria-label="Begin">
-        <!-- 3D SVG Heart: gradient + highlight -->
-        <svg class="heart-svg" viewBox="0 0 24 24" aria-hidden="true">
-          <defs>
-            <linearGradient id="heartGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%"  stop-color="#ff6b8f"/>
-              <stop offset="45%" stop-color="#e91e63"/>
-              <stop offset="100%" stop-color="#a71235"/>
-            </linearGradient>
-            <radialGradient id="heartShine" cx="30%" cy="25%" r="60%">
-              <stop offset="0%" stop-color="rgba(255,255,255,.9)"/>
-              <stop offset="60%" stop-color="rgba(255,255,255,.0)"/>
-            </radialGradient>
-          </defs>
-          <path fill="url(#heartGrad)" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-          <!-- glossy highlight -->
-          <path fill="url(#heartShine)" d="M12 4.8c-1.6-2-5.8-2.2-7.8.3-2.2 2.8-.6 6.4 1.7 8.7 2.6 2.7 5.3 4.8 6.1 5.4 0 0 3.2-2.7 5.7-5.2 1.8-1.8 3.7-4.9 2-7.6-2.2-3.4-6.4-2.6-7.7-1.6-.7.6-1.3.6-2 0z" opacity=".5"/>
-        </svg>
+      <button class="heart-btn" id="heartButton">
+        <div class="heart-svg-wrapper">
+          <svg class="heart-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          </svg>
+        </div>
         <span class="touch-text">touch me</span>
       </button>
-
       <div class="name-text name-right">KAVITA</div>
     </div>
   </div>
 
-  <!-- Reel overlay (kept) -->
   <div id="reel" role="dialog" aria-modal="true" aria-label="Intro">
     <div class="reel-stage" id="reelStage"></div>
     <div class="intro-controls">
@@ -180,24 +207,75 @@
     </div>
   </div>
 
-  <!-- Main content (same as yours; trimmed here for brevity) -->
   <header class="hero">
     <div class="w-full">
       <div class="max-w-3xl mx-auto px-6 py-10 text-center">
         <blockquote class="verse text-white text-base md:text-lg leading-relaxed">
-          “Place me like a seal over your heart… for love is as strong as death… Many waters cannot quench love; rivers cannot sweep it away”
+          “Place me like a seal over your heart… for love is as strong as death…
+          Many waters cannot quench love; rivers cannot sweep it away”
           <small>— Song of Solomon 8:6–7</small>
         </blockquote>
 
         <div class="card mt-8" id="mainCard">
           <p class="text-gray-600">You are cordially invited, together with their families, to the</p>
           <h2 class="heading-elegant text-4xl md:text-6xl font-bold mt-2">WEDDING CEREMONY</h2>
+
           <div class="mt-5 text-gray-700">
             <p class="text-base md:text-lg">s/o Samson Nicholas D’Costa and Suni Samson D’Costa,</p>
-            <h1 class="heading-elegant text-4xl md:text-6xl font-bold tracking-wide mt-1">NIKOLAS &amp; KAVITA</h1>
+            <h1 class="heading-elegant text-4xl md:text-6xl font-bold tracking-wide mt-1">NIKOLAS & KAVITA</h1>
             <p class="text-base md:text-lg mt-1">d/o Kevin Thomas Fernandes and Annie Kevin Fernandes.</p>
           </div>
-          <!-- ... (rest of your content unchanged) ... -->
+
+          <hr class="my-6"/>
+
+          <div class="grid gap-3 text-base">
+            <div>
+              <div class="smallcaps text-xs text-gray-500">On</div>
+              <div class="text-xl md:text-2xl">Monday, 27 October 2025</div>
+            </div>
+            <div>
+              <div class="smallcaps text-xs text-gray-500">Time</div>
+              <div>3:00 PM — Santa Cruz Cathedral Basilica, Fort Kochi</div>
+            </div>
+            <div>
+              <div class="smallcaps text-xs text-gray-500">Reception</div>
+              <div>To follow at The Croft, Kochi</div>
+            </div>
+          </div>
+
+          <hr class="my-6"/>
+          <div class="grid gap-2 text-base text-gray-700">
+            <div>
+              <div class="smallcaps text-xs text-gray-500">Home Address</div>
+              <div>Zion Villa, MLA Road, Pallurthy, Kochi 682006</div>
+            </div>
+            <div class="mt-2">
+              <div class="smallcaps text-xs text-gray-500">Travel</div>
+              <div>Nearest Railway Station: <strong>Ernakulam Junction (ERS)</strong></div>
+              <div>Nearest Airport: <strong>Cochin International Airport</strong></div>
+            </div>
+          </div>
+
+          <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+            <button id="btnYes" class="btn btn-primary">I’m coming</button>
+            <button id="btnMaybe" class="btn btn-outline-dark">Save the date</button>
+          </div>
+
+          <p class="mt-6 text-sm text-gray-700">
+            Ceremony map:
+            <a class="underline-link" target="_blank" rel="noopener"
+               href="https://www.google.com/maps/place/X67V%2BW4G+Santa+Cruz+Cathedral+Basilica,+Kochi,+Bastian+St,+Fort+Nagar,+Fort+Kochi,+Kochi,+Kerala+682001/@9.9609796,76.2523107,16z/data=!3m1!1e3!4m14!1m7!3m6!1s0x3b086dccada9f3f1:0x4c980457c575174c!2sRAAS+Residency,+No+11%2F3319+B,+junction,+near+Thoppumpady,+Thoppumpady,+Kochi,+Kerala+682005!8m2!3d9.9347732!4d76.2641605!16s%2Fg%2F11sgr8ht9l!3m5!1s0x3b086d36b7ff0567:0x4ed899ce06f39a3b!8m2!3d9.9648197!4d76.2428293!16zL20vMDkwamtf?g_ep=Eg1tbF8yMDI1MDgyN18wIJvbDyoASAJQAQ%3D%3D">
+               Santa Cruz Cathedral Basilica
+            </a>
+              | 
+            Reception map:
+            <a class="underline-link" target="_blank" rel="noopener"
+               href="https://maps.app.goo.gl/9cyw9KrJKpffT3fw5">
+               The Croft
+            </a>
+          </p>
+
+          <p class="mt-6 text-base font-bold text-gray-700">Colour of the day: Wine Red</p>
         </div>
 
         <p class="mt-6 text-sm uppercase tracking-widest text-white">Countdown</p>
@@ -210,8 +288,35 @@
     invite.nikagenyx.com · Kochi, Kerala
   </footer>
 
+  <div id="modalBg" class="modal-bg" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <h3 id="modalTitle" class="text-xl font-semibold mb-3" style="color:var(--wine)">Save your reminder</h3>
+      <form id="rsvpForm" class="space-y-4">
+        <div>
+          <label for="guestName" class="block text-sm font-medium text-gray-700">Full name</label>
+          <input id="guestName" name="guestName" type="text" required
+                   class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-300"
+                   placeholder="e.g., John Fernandes">
+        </div>
+        <div id="countGroup" class="hidden">
+          <label for="guestCount" class="block text-sm font-medium text-gray-700">Number of people</label>
+          <select id="guestCount" name="guestCount"
+                   class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-300">
+            <option value="" disabled selected>Select</option>
+            <option>1</option><option>2</option><option>3</option>
+            <option>4</option><option>5</option><option>6</option>
+          </select>
+        </div>
+        <div class="flex gap-2 justify-end pt-2">
+          <button type="button" id="cancelBtn" class="btn btn-outline">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save & Add to Calendar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
 <script>
-/* ---------- Countdown (unchanged) ---------- */
+/* ---------- Countdown ---------- */
 (function(){
   const target = new Date('2025-10-27T15:00:00+05:30').getTime();
   const el = document.getElementById('countdown');
@@ -219,16 +324,16 @@
   function tick(){
     const now = Date.now();
     let diff = Math.max(0, target - now);
-    const d = Math.floor(diff / 86400000); diff -= d*86400000;
-    const h = Math.floor(diff / 3600000);  diff -= h*3600000;
-    const m = Math.floor(diff / 60000);    diff -= m*60000;
+    const d = Math.floor(diff / (1000*60*60*24)); diff -= d*24*60*60*1000;
+    const h = Math.floor(diff / (1000*60*60));      diff -= h*60*60*1000;
+    const m = Math.floor(diff / (1000*60));         diff -= m*60*1000;
     const s = Math.floor(diff / 1000);
     el.textContent = `${d} days ${pad(h)}:${pad(m)}:${pad(s)}`;
   }
   tick(); setInterval(tick, 1000);
 })();
 
-/* ---------- Music toggle (unchanged) ---------- */
+/* ---------- Music toggle ---------- */
 const bgm = document.getElementById('bgm');
 const musicToggle = document.getElementById('musicToggle');
 let musicOn = true;
@@ -243,144 +348,171 @@ musicToggle.addEventListener('click', async ()=>{
   if(musicOn){ try{ await bgm.play(); }catch{} } else { bgm.pause(); }
 });
 bgm.volume = 0.7;
+bgm.addEventListener('canplaythrough', () => { if (musicOn) bgm.play().catch(()=>{}); });
+bgm.addEventListener('error', () => {
+  console.warn('Could not load /assets/music.mp3');
+  const n = document.createElement('div');
+  n.textContent = 'Music file not found: /assets/music.mp3';
+  Object.assign(n.style, { position:'fixed', left:'50%', transform:'translateX(-50%)', bottom:'12px', background:'#111', color:'#fff', padding:'8px 12px', borderRadius:'10px', fontSize:'12px', zIndex:9999, opacity:.9 });
+  document.body.appendChild(n); setTimeout(()=>n.remove(), 3200);
+});
 
-/* ---------- 3D Petal Engine (carpet + light animation) ---------- */
+/* ---------- RSVP -> Google Sheet + ICS ---------- */
+async function logToSheet(payload){
+  try{
+    await fetch('/.netlify/functions/log_event',{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+  }catch(e){}
+}
+function icsWithReminder(status){
+  const dtStartUTC='20251027T093000Z', dtEndUTC='20251027T103000Z';
+  const trigger = (status==='sure')?'-P7D':'-P30D';
+  const mapCeremony='https://www.google.com/maps/place/X67V%2BW4G+Santa+Cruz+Cathedral+Basilica,+Kochi,+Bastian+St,+Fort+Nagar,+Fort+Kochi,+Kochi,+Kerala+682001/@9.9609796,76.2523107,16z/data=!3m1!1e3!4m14!1m7!3m6!1s0x3b086dccada9f3f1:0x4c980457c575174c!2sRAAS+Residency,+No+11%2F3319+B,+junction,+near+Thoppumpady,+Thoppumpady,+Kochi,+Kerala+682005!8m2!3d9.9347732!4d76.2641605!16s%2Fg%2F11sgr8ht9l!3m5!1s0x3b086d36b7ff0567:0x4ed899ce06f39a3b!8m2!3d9.9648197!4d76.2428293!16zL20vMDkwamtf?g_ep=Eg1tbF8yMDI1MDgyN18wIJvbDyoASAJQAQ%3D%3D';
+  const mapReception='https://maps.app.goo.gl/9cyw9KrJKpffT3fw5';
+  const desc=[
+    'Wedding Ceremony of Nikolas & Kavita.',
+    'Time: 3:00 PM IST at Santa Cruz Cathedral Basilica, Fort Kochi.',
+    'Reception to follow at The Croft, Kochi.',
+    'Home address: Zion Villa, MLA Road, Pallurthy, Kochi 682006.',
+    'Nearest Railway Station: Ernakulam Junction (ERS).',
+    'Nearest Airport: Cochin International Airport.',
+    'Maps:', mapCeremony, mapReception
+  ].join('\n');
+  return [
+    'BEGIN:VCALENDAR','VERSION:2.0','CALSCALE:GREGORIAN','METHOD:PUBLISH','BEGIN:VEVENT',
+    'UID:'+(crypto.randomUUID?crypto.randomUUID():(Date.now()+'@invite.nikagenyx.com')),
+    'DTSTAMP:'+new Date().toISOString().replace(/[-:]/g,'').split('.')[0]+'Z',
+    'SUMMARY:NIKOLAS & KAVITA — Wedding Ceremony',
+    'DESCRIPTION:'+desc,
+    'LOCATION:Santa Cruz Cathedral Basilica, Fort Kochi; Reception: The Croft, Kochi',
+    'DTSTART:'+dtStartUTC,'DTEND:'+dtEndUTC,
+    'BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:Wedding reminder','TRIGGER:'+trigger,'END:VALARM',
+    'END:VEVENT','END:VCALENDAR'
+  ].join('\r\n');
+}
+function downloadICS(ics, filename){
+  const blob=new Blob([ics],{type:'text/calendar;charset=utf-8'});
+  const url=URL.createObjectURL(blob); const a=document.createElement('a');
+  a.href=url; a.download=filename; document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+}
+const modalBg=document.getElementById('modalBg');
+const form=document.getElementById('rsvpForm');
+const nameEl=document.getElementById('guestName');
+const countWrap=document.getElementById('countGroup');
+const countEl=document.getElementById('guestCount');
+const cancelBtn=document.getElementById('cancelBtn');
+let pendingStatus=null;
+function openModal(status){
+  pendingStatus=status; nameEl.value=''; countEl.value='';
+  if(status==='sure'){ countWrap.classList.remove('hidden'); countEl.setAttribute('required','required'); }
+  else{ countWrap.classList.add('hidden'); countEl.removeAttribute('required'); }
+  modalBg.style.display='flex'; modalBg.setAttribute('aria-hidden','false'); nameEl.focus();
+}
+function closeModal(){ modalBg.style.display='none'; modalBg.setAttribute('aria-hidden','true'); }
+document.getElementById('btnYes').addEventListener('click',()=>openModal('sure'));
+document.getElementById('btnMaybe').addEventListener('click',()=>openModal('not_sure'));
+cancelBtn.addEventListener('click',closeModal);
+modalBg.addEventListener('click',(e)=>{ if(e.target===modalBg) closeModal(); });
+form.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const name=nameEl.value.trim();
+  const count=(pendingStatus==='sure')?countEl.value:'';
+  if(!name||!pendingStatus) return;
+  if(pendingStatus==='sure'&&!count) return;
+  await logToSheet({name, status:pendingStatus, count});
+  if(pendingStatus==='sure') confettiBurst?.();
+  downloadICS(icsWithReminder(pendingStatus), `Nikolas_Kavita_Wedding_2025-10-27_${pendingStatus}.ics`);
+  closeModal();
+});
+
+/* ---------- Petals + confetti ---------- */
 (function(){
-  const staticCanvas = document.getElementById('fxStatic');
-  const animCanvas   = document.getElementById('fxAnim');
-  const sctx = staticCanvas.getContext('2d');
-  const actx = animCanvas.getContext('2d');
+  const canvas=document.getElementById('fxCanvas'), ctx=canvas.getContext('2d');
+  const petalOverlay = document.getElementById('petalOverlay');
+  let w,h, petals=[], confetti=[];
+  const numFallingPetals = 200;
+  let isBlasting = false;
 
-  // cap DPR for low-end phones
-  const DPR_CAP = 1.25;
-  function fitCanvas(c){
-    const dpr = Math.min(window.devicePixelRatio || 1, DPR_CAP);
-    c.width  = Math.floor(innerWidth  * dpr);
-    c.height = Math.floor(innerHeight * dpr);
-    c.style.width  = innerWidth + 'px';
-    c.style.height = innerHeight + 'px';
-    const ctx = c.getContext('2d');
-    ctx.setTransform(dpr,0,0,dpr,0,0);
-    return dpr;
-  }
+  function resize(){ w=canvas.width=innerWidth; h=canvas.height=innerHeight; }
+  addEventListener('resize',resize); resize();
 
-  let dpr = fitCanvas(staticCanvas); fitCanvas(animCanvas);
-  addEventListener('resize', () => { dpr = fitCanvas(staticCanvas); fitCanvas(animCanvas); drawStaticCarpet(); });
-
-  /* --- Make shaded petal sprites (fast reuse) --- */
-  function makePetalSprite(scale=1, hue=345){
-    const w = Math.round(80*scale), h = Math.round(120*scale);
-    const cvs = document.createElement('canvas'); cvs.width=w; cvs.height=h;
-    const ctx = cvs.getContext('2d');
-
-    ctx.translate(w/2, h/2);
-    ctx.rotate(Math.PI/2); // long axis vertical in sprite space
-
-    // main body with gradient (gives 3D volume)
-    const grad = ctx.createLinearGradient(-w/2, -h/2, w/2, h/2);
-    grad.addColorStop(0,  `hsl(${hue},72%,80%)`);
-    grad.addColorStop(.45,`hsl(${hue},70%,60%)`);
-    grad.addColorStop(1,  `hsl(${hue},72%,40%)`);
-    ctx.fillStyle = grad;
-
+  function drawPetal(ctx, x, y, r, angle, opacity) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(angle);
     ctx.beginPath();
-    ctx.ellipse(0,0, w*0.28, h*0.46, 0, 0, Math.PI*2);
-    ctx.shadowColor = 'rgba(0,0,0,.18)'; ctx.shadowBlur = 6; ctx.shadowOffsetY = 2;
+    ctx.ellipse(0, 0, r * 0.7, r * 1.5, Math.PI / 2, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(123,23,51,${opacity})`;
+    ctx.shadowColor = 'rgba(0,0,0,0.2)';
+    ctx.shadowBlur = 4;
+    ctx.shadowOffsetY = 2;
     ctx.fill();
-
-    // rim + soft highlight
     ctx.shadowColor = 'transparent';
-    ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(0,0,0,.15)'; ctx.stroke();
-
-    const shine = ctx.createRadialGradient(-w*0.12, -h*0.18, 0, -w*0.12, -h*0.18, w*0.4);
-    shine.addColorStop(0,'rgba(255,255,255,.55)');
-    shine.addColorStop(1,'rgba(255,255,255,0)');
-    ctx.fillStyle = shine;
-    ctx.beginPath();
-    ctx.ellipse(-w*0.05,-h*0.18, w*0.18, h*0.22, 0, 0, Math.PI*2);
-    ctx.fill();
-
-    return cvs;
+    ctx.restore();
   }
 
-  const SPRITES = [
-    makePetalSprite(1.00, 345),
-    makePetalSprite(0.90, 350),
-    makePetalSprite(1.10, 340),
-  ];
-
-  /* --- Static petal carpet (grid with jitter so it fully covers) --- */
-  function drawStaticCarpet(){
-    sctx.clearRect(0,0,innerWidth,innerHeight);
-
-    // Step tuned to overlap; smaller step => denser carpet
-    const STEP = Math.max(40, Math.min(64, Math.floor(innerWidth/18)));
-    // Slightly overscan so edges are covered even on rotate/scroll bounce
-    const startX = -STEP, startY = -STEP;
-    const endX = innerWidth + STEP, endY = innerHeight + STEP;
-
-    for(let y=startY, row=0; y<endY; y+=STEP, row++){
-      for(let x=startX; x<endX; x+=STEP){
-        // pick a sprite, add jitter & rotation
-        const spr = SPRITES[(row + Math.floor(x/STEP)) % SPRITES.length];
-        const jx = x + (Math.random()*STEP*0.6 - STEP*0.3);
-        const jy = y + (Math.random()*STEP*0.6 - STEP*0.3);
-        const rot = (Math.random()*Math.PI*2);
-        const size = 0.85 + Math.random()*0.5;
-
-        sctx.save();
-        sctx.translate(jx, jy);
-        sctx.rotate(rot);
-        sctx.globalAlpha = 0.9; // denser look
-        const w = spr.width*size, h = spr.height*size;
-        sctx.drawImage(spr, -w/2, -h/2, w, h);
-        sctx.restore();
-      }
+  function createFallingPetals(){
+    petals = [];
+    for(let i=0; i<numFallingPetals; i++){
+      petals.push({ 
+        x:Math.random()*w, 
+        y:Math.random()*h, 
+        r:8+Math.random()*12,
+        a:Math.random()*Math.PI*2, 
+        v:.5+Math.random()*1.2, 
+        swing:.8+Math.random()*1.2, 
+        opacity:.6 + Math.random() * .3,
+        state:'falling' 
+      });
     }
   }
-  drawStaticCarpet();
+  createFallingPetals();
 
-  /* --- Light floating petals on top (low count = mobile friendly) --- */
-  const FLOATING_COUNT = /Mobi|Android/i.test(navigator.userAgent) ? 18 : 28;
-  const petals = [];
-  function makeFloating(){
-    const spr = SPRITES[Math.floor(Math.random()*SPRITES.length)];
-    return {
-      spr,
-      x: Math.random()*innerWidth,
-      y: -50 - Math.random()*innerHeight,
-      r: Math.random()*Math.PI*2,
-      v: 0.6 + Math.random()*0.9,
-      swing: 0.6 + Math.random()*1.2,
-      spin: (Math.random()-.5)*0.01,
-      size: 0.7 + Math.random()*0.7,
-      alpha: 0.85
-    };
-  }
-  for(let i=0;i<FLOATING_COUNT;i++) petals.push(makeFloating());
-
-  function tick(){
-    actx.clearRect(0,0,innerWidth,innerHeight);
+  function draw(){
+    ctx.clearRect(0,0,w,h);
     petals.forEach(p=>{
-      p.r += p.spin;
-      p.x += Math.sin(p.r*3)*p.swing*0.3;
-      p.y += p.v;
-      if(p.y > innerHeight+80){ Object.assign(p, makeFloating(), {y:-80}); }
-
-      actx.save();
-      actx.translate(p.x, p.y);
-      actx.rotate(p.r);
-      actx.globalAlpha = p.alpha;
-      const w = p.spr.width*p.size, h = p.spr.height*p.size;
-      actx.drawImage(p.spr, -w/2, -h/2, w, h);
-      actx.restore();
+      if (p.state === 'falling') {
+        p.a+=0.02; p.x+=Math.sin(p.a)*p.swing*0.3; p.y+=p.v;
+        if(p.y>h+40){ p.x=Math.random()*w; p.y=-20-Math.random()*h; }
+      } else if (p.state === 'blasting') {
+        p.x += p.vx; p.y += p.vy; p.opacity -= 0.01;
+        if(p.opacity <= 0) p.state = 'done';
+      }
+      if(p.state !== 'done'){
+        drawPetal(ctx, p.x, p.y, p.r, p.a, p.opacity);
+      }
     });
-    requestAnimationFrame(tick);
+
+    confetti.forEach(c=>{
+      c.y+=c.v; c.x+=c.wobbleSpeed*Math.sin(c.y*0.05+c.phase); c.rotation+=c.spin; c.life-=1;
+      ctx.save(); ctx.translate(c.x,c.y); ctx.rotate(c.rotation);
+      ctx.fillStyle=c.color; ctx.fillRect(-c.size/2,-c.size/2,c.size,c.size*0.6); ctx.restore();
+    });
+    confetti = confetti.filter(c=>c.life>0);
+    requestAnimationFrame(draw);
   }
-  tick();
+  draw();
+
+  window.blastAllPetals = function(originX, originY){
+    if(isBlasting) return;
+    isBlasting = true;
+    petalOverlay.style.opacity = '0';
+    document.getElementById('fxCanvas').style.zIndex = '40'; // Lower z-index after blast
+    petals.forEach(p => {
+      const dx = p.x - originX, dy = p.y - originY, angle = Math.atan2(dy, dx), speed = 5 + Math.random()*8;
+      p.vx = Math.cos(angle)*speed; p.vy = Math.sin(angle)*speed; p.state='blasting'; p.opacity=.4;
+    });
+    setTimeout(() => { isBlasting = false; petals = petals.filter(p => p.state !== 'done'); createFallingPetals(); }, 1200);
+  };
+
+  window.confettiBurst = function(){
+    for(let i=0;i<80;i++){
+      confetti.push({ x:w/2+(Math.random()-0.5)*120, y:h/2, v:2+Math.random()*3, wobbleSpeed:1+Math.random()*2, phase:Math.random()*Math.PI*2, rotation:Math.random()*Math.PI, spin:(Math.random()-.5)*0.2, size:6+Math.random()*8, color:['#7b1733','#c92a50','#ffd3df','#ffffff'][Math.floor(Math.random()*4)], life:120+Math.random()*60 });
+    }
+  };
 })();
 
-/* ---------- Intro (names/heart above petals) ---------- */
+/* ---------- Reel Engine ---------- */
 const touchIntro = document.getElementById('touchIntro');
 const namesWrap = document.getElementById('namesWrap');
 const heartButton = document.getElementById('heartButton');
@@ -389,15 +521,17 @@ const stage = document.getElementById('reelStage');
 const introSkip = document.getElementById('introSkip');
 
 let hasStarted = false;
+
 const scenes = [
-  { text: "With great joy and gratitude,",        effect: "fx-fadeUp",   duration: 1100 },
-  { text: "Nikolas & Kavita",                      effect: "fx-zoomOut",  duration: 1200 },
-  { text: "Invite you to celebrate their wedding", effect: "fx-wipeLeft", duration: 1000 },
-  { text: "On Monday, 27 October 2025",            effect: "fx-words",    duration: 1200 },
-  { text: "At Santa Cruz Cathedral Basilica",      effect: "fx-fadeUp",   duration: 1100 },
-  { text: "Reception to follow at The Croft",      effect: "fx-words",    duration: 1300 }
+  { text: "With great joy and gratitude,",     effect: "fx-fadeUp",   duration: 1100 },
+  { text: "Nikolas & Kavita",                   effect: "fx-zoomOut",  duration: 1200 },
+  { text: "Invite you to celebrate their wedding",  effect: "fx-wipeLeft", duration: 1000 },
+  { text: "On Monday, 27 October 2025",         effect: "fx-words",    duration: 1200 },
+  { text: "At Santa Cruz Cathedral Basilica",   effect: "fx-fadeUp",   duration: 1100 },
+  { text: "Reception to follow at The Croft",   effect: "fx-words",    duration: 1300 }
 ];
 const gap = 160;
+
 function makeLine(text, effect){
   const el = document.createElement('div');
   el.className = 'reel-line';
@@ -417,24 +551,28 @@ function makeLine(text, effect){
   return el;
 }
 function playScenes(){
-  stage.innerHTML = '';
   let t = 0;
   scenes.forEach(s=>{ setTimeout(()=>{ stage.appendChild(makeLine(s.text, s.effect)); }, t); t += s.duration + gap; });
   setTimeout(endIntro, t - gap + 350);
 }
 function endIntro(){
-  touchIntro.classList.add('hidden');
   reel.classList.add('hidden');
   document.getElementById('mainCard')?.classList.add('in');
 }
-function startExperience(){
-  if (hasStarted) return; hasStarted = true;
+
+function startExperience(e){
+  if (hasStarted) return;
+  hasStarted = true;
   try{ bgm.play(); }catch{}
   namesWrap.classList.add('name-merge');
-  setTimeout(()=>{ touchIntro.classList.add('hidden'); reel.classList.add('visible'); playScenes(); }, 900);
+  heartButton.style.opacity = '0';
+  window.blastAllPetals(e.clientX, e.clientY);
+  setTimeout(()=>{ touchIntro.classList.add('hidden'); reel.classList.add('visible'); playScenes(); }, 1500);
 }
+
 heartButton.addEventListener('click', startExperience);
 introSkip.addEventListener('click', endIntro);
+if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) endIntro();
 </script>
 </body>
 </html>
