@@ -44,12 +44,12 @@
           padding:2rem; text-align:center; color:#fff; background:rgba(10,4,6,.55); backdrop-filter: blur(2px);
           transition:opacity .4s ease, visibility .4s ease; }
   #reel.hidden{ opacity:0; visibility:hidden; }
-  .reel-stage{ width:min(92vw, 900px); min-height:34vh; display:flex; align-items:center; justify-content:center; }
+  .reel-stage{ width:min(92vw, 900px); display:flex; align-items:center; justify-content:center; flex-direction:column; }
   .reel-line{
     font-family:"Playfair Display", Georgia, serif;
     font-size:clamp(22px, 5vw, 48px);
     line-height:1.2; letter-spacing:.01em; text-shadow:0 2px 14px rgba(0,0,0,.45);
-    opacity:0; transform:translateY(16px);
+    opacity:0; transform:translateY(16px); margin-bottom: 20px;
   }
   /* Effects */
   .fx-fadeUp   { animation: fadeUp .55s ease forwards; }
@@ -130,7 +130,6 @@
   <div id="reel" role="dialog" aria-modal="true" aria-label="Intro">
     <div class="reel-stage" id="reelStage"></div>
     <div class="intro-controls">
-      <button id="introPlay" class="btn btn-primary">Play with sound</button>
       <button id="introSkip" class="btn btn-outline">Skip intro</button>
     </div>
   </div>
@@ -270,7 +269,9 @@ function setMusic(on){
   musicToggle.setAttribute('aria-pressed', String(musicOn));
   musicToggle.textContent = musicOn ? 'Music: On' : 'Music: Off';
 }
-setMusic(false);
+setMusic(true);
+bgm.play().catch(()=>{});
+
 musicToggle.addEventListener('click', async ()=>{
   setMusic(!musicOn);
   if(musicOn){ try{ await bgm.play(); }catch{} } else { bgm.pause(); }
@@ -416,16 +417,15 @@ form.addEventListener('submit', async (e)=>{
 /* ---------- Reel Engine: script your lines like a Short ---------- */
 const reel = document.getElementById('reel');
 const stage = document.getElementById('reelStage');
-const introPlay = document.getElementById('introPlay');
 const introSkip = document.getElementById('introSkip');
 
 /* Edit these lines and timings to match your reference Short */
 const scenes = [
   { text: "With great joy and gratitude,",     effect: "fx-fadeUp",   duration: 1100 },
   { text: "Nikolas & Kavita",                   effect: "fx-zoomOut",  duration: 1200 },
-  { text: "invite you to celebrate their wedding",  effect: "fx-wipeLeft", duration: 1000 },
-  { text: "on Monday, 27 October 2025",         effect: "fx-words",    duration: 1200 },
-  { text: "at Santa Cruz Cathedral Basilica",   effect: "fx-fadeUp",   duration: 1100 },
+  { text: "Invite you to celebrate their wedding",  effect: "fx-wipeLeft", duration: 1000 },
+  { text: "On Monday, 27 October 2025",         effect: "fx-words",    duration: 1200 },
+  { text: "At Santa Cruz Cathedral Basilica",   effect: "fx-fadeUp",   duration: 1100 },
   { text: "Reception to follow at The Croft",   effect: "fx-words",    duration: 1300 }
 ];
 const gap = 160;
@@ -449,10 +449,9 @@ function makeLine(text, effect){
   return el;
 }
 function playScenes(){
-  stage.innerHTML = '';
   let t = 0;
   scenes.forEach(s=>{
-    setTimeout(()=>{ stage.innerHTML=''; stage.appendChild(makeLine(s.text, s.effect)); }, t);
+    setTimeout(()=>{ stage.appendChild(makeLine(s.text, s.effect)); }, t);
     t += s.duration + gap;
   });
   setTimeout(endIntro, t - gap + 350);
@@ -461,15 +460,14 @@ function endIntro(){
   reel.classList.add('hidden');
   document.getElementById('mainCard')?.classList.add('in');
 }
-introPlay.addEventListener('click', async ()=>{
-  try{ await bgm.play(); setMusic(true); }catch{}
-  playScenes();
-});
+// Start the intro automatically
+playScenes();
 introSkip.addEventListener('click', endIntro);
 /* Tap anywhere else to start silently */
 document.addEventListener('click', (e)=>{
   if(reel.classList.contains('hidden')) return;
-  if(e.target === introPlay || e.target === introSkip) return;
+  if(e.target === introSkip) return;
+  // single tap anywhere will start intro silently
   if(stage.childElementCount === 0) playScenes();
 });
 /* Respect reduced motion */
