@@ -10,9 +10,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 
-  <meta name="description" content="Wedding Ceremony of Nikolas Samson D’Costa and Kavita Kevin Fernandes — 27 Oct 2025, 3:00 PM at Santa Cruz Cathedral Basilica, Fort Kochi. Reception at RAAS Residency, Thoppumpady. Home: Zion Villa, MLA Road, Pallurthy, Kochi 682006." />
+  <meta name="description" content="Wedding Ceremony of Nikolas Samson D’Costa and Kavita Kevin Fernandes — 27 Oct 2025, 3:00 PM at Santa Cruz Cathedral Basilica, Fort Kochi. Reception at The Croft, Kochi. Home: Zion Villa, MLA Road, Pallurthy, Kochi 682006." />
   <meta property="og:title" content="NIKOLAS & KAVITA — Wedding Ceremony" />
-  <meta property="og:description" content="27 Oct 2025 • 3:00 PM • Santa Cruz Cathedral Basilica, Fort Kochi • Reception at RAAS Residency." />
+  <meta property="og:description" content="27 Oct 2025 • 3:00 PM • Santa Cruz Cathedral Basilica, Fort Kochi • Reception at The Croft, Kochi." />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="/assets/hero.jpg" />
   <meta name="theme-color" content="#7b1733" />
@@ -22,7 +22,7 @@
     html, body { height: 100%; scroll-behavior: smooth; }
     body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; color: var(--ink); position: relative; }
 
-    /* Hero background with Ken Burns + tint */
+    /* Hero background with soft motion + tint */
     body::before{
       content:""; position:fixed; inset:0; z-index:-2;
       background:url('/assets/hero.jpg') center / cover no-repeat;
@@ -36,10 +36,7 @@
         radial-gradient(80% 70% at 50% -10%, rgba(123,23,51,0.28), transparent 60%),
         linear-gradient(180deg, rgba(20,6,10,.55), rgba(20,6,10,.65));
     }
-    @keyframes heroPan{
-      0%   { transform: scale(1.04) translate3d(0,0,0); }
-      100% { transform: scale(1.10) translate3d(0,-1.5%,0); }
-    }
+    @keyframes heroPan{ 0%{transform:scale(1.04) translate3d(0,0,0)} 100%{transform:scale(1.10) translate3d(0,-1.5%,0)} }
 
     h1,h2,h3 { font-family: "Playfair Display", Georgia, serif; }
     .heading-elegant{ letter-spacing:.01em; }
@@ -70,8 +67,44 @@
     .modal{ width:100%; max-width:480px; background:#fff; border-radius:1rem; padding:1.25rem; box-shadow:0 25px 50px rgba(0,0,0,.3); transform:scale(.96); opacity:0; transition:transform .18s ease, opacity .18s ease; }
     .modal-bg[aria-hidden="false"] .modal{ transform:scale(1); opacity:1; }
 
-    /* Floating petals canvas sits on top of hero */
+    /* Floating petals canvas */
     #fxCanvas{ position:fixed; inset:0; z-index:-1; pointer-events:none; }
+
+    /* Intro overlay for reel-style text */
+    #reelOverlay{
+      position:fixed; inset:0; z-index:60;
+      display:flex; align-items:center; justify-content:center; flex-direction:column;
+      background:rgba(10,4,6,.62);
+      backdrop-filter: blur(2px);
+      color:#fff; text-align:center; padding:2rem;
+      transition: opacity .4s ease, visibility .4s ease;
+    }
+    #reelOverlay.hidden{ opacity:0; visibility:hidden; }
+
+    #reelText{
+      max-width: 42rem;
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: clamp(20px, 4.3vw, 42px);
+      line-height: 1.25;
+      text-shadow: 0 2px 14px rgba(0,0,0,.45);
+      min-height: 5.5em; /* reserve space to avoid layout shift */
+    }
+    .reel-line{
+      opacity:0; transform: translateY(12px);
+      transition: opacity .45s ease, transform .45s ease;
+      will-change: opacity, transform;
+    }
+    .reel-line.show{ opacity:1; transform:none; }
+
+    .intro-controls{ margin-top:1.25rem; display:flex; gap:.75rem; flex-wrap:wrap; justify-content:center; }
+    .btn-link{ border:none; background:transparent; color:#fff; text-decoration:underline; padding:.65rem .9rem; }
+
+    /* Music toggle button */
+    #musicToggle{
+      position:fixed; right:.75rem; top:.75rem; z-index:65;
+      background:rgba(255,255,255,.9); color:#111; border-radius:.65rem;
+      padding:.45rem .7rem; font-weight:600; border:1px solid rgba(0,0,0,.08);
+    }
 
     /* Respect reduced motion */
     @media (prefers-reduced-motion: reduce){
@@ -84,6 +117,22 @@
   <!-- Subtle floating petals / confetti canvas -->
   <canvas id="fxCanvas"></canvas>
 
+  <!-- Background music -->
+  <audio id="bgm" preload="auto" loop>
+    <source src="/assets/music.mp3" type="audio/mpeg" />
+    <!-- <source src="/assets/music.ogg" type="audio/ogg" /> -->
+  </audio>
+  <button id="musicToggle" aria-pressed="false" aria-label="Toggle music">Music: Off</button>
+
+  <!-- Reel-style intro overlay -->
+  <div id="reelOverlay" role="dialog" aria-modal="true" aria-label="Intro">
+    <div id="reelText" aria-live="polite"></div>
+    <div class="intro-controls">
+      <button id="introPlay" class="btn btn-primary">Play with sound</button>
+      <button id="introSkip" class="btn btn-outline">Skip intro</button>
+    </div>
+  </div>
+
   <header class="hero">
     <div class="w-full">
       <div class="max-w-3xl mx-auto px-6 py-10 text-center">
@@ -95,7 +144,6 @@
 
         <div class="card mt-8 reveal">
           <p class="text-gray-600">You are cordially invited, together with their families, to the</p>
-          <!-- Headings aligned -->
           <h2 class="heading-elegant text-4xl md:text-6xl font-bold mt-2">WEDDING CEREMONY</h2>
 
           <div class="mt-5 text-gray-700">
@@ -117,7 +165,7 @@
             </div>
             <div>
               <div class="smallcaps text-xs text-gray-500">Reception</div>
-              <div>To follow at RAAS Residency, Thoppumpady, Kochi</div>
+              <div>To follow at The Croft, Kochi</div>
             </div>
           </div>
 
@@ -148,8 +196,8 @@
             &nbsp;|&nbsp;
             Reception map:
             <a class="underline-link" target="_blank" rel="noopener"
-               href="https://www.google.com/maps/place/RAAS+Residency,+No+11%2F3319+B,+junction,+near+Thoppumpady,+Thoppumpady,+Kochi,+Kerala+682005/@9.9347732,76.2641605,17z/data=!3m1!1e3!4m14!1m7!3m6!1s0x3b086dccada9f3f1:0x4c980457c575174c!2sRAAS+Residency,+No+11%2F3319+B,+junction,+near+Thoppumpady,+Thoppumpady,+Kochi,+Kerala+682005!8m2!3d9.9347732!4d76.2641605!16s%2Fg%2F11sgr8ht9l!3m5!1s0x3b086dccada9f3f1:0x4c980457c575174c!8m2!3d9.9347732!4d76.2641605!16s%2Fg%2F11sgr8ht9l?g_ep=Eg1tbF8yMDI1MDgyN18wIJvbDyoASAJQAQ%3D%3D">
-               RAAS Residency
+               href="https://maps.app.goo.gl/9cyw9KrJKpffT3fw5">
+               The Croft
             </a>
           </p>
 
@@ -207,7 +255,7 @@
       });
     })();
 
-    /* -------- Countdown (D days HH:MM:SS) -------- */
+    /* -------- Countdown -------- */
     (function(){
       const target = new Date('2025-10-27T15:00:00+05:30').getTime();
       const el = document.getElementById('countdown');
@@ -224,16 +272,16 @@
       tick(); setInterval(tick, 1000);
     })();
 
-    /* -------- ICS generation (7 days for sure, 30 days for save-the-date) -------- */
+    /* -------- ICS generation -------- */
     function icsWithReminder(status){
       const dtStartUTC='20251027T093000Z', dtEndUTC='20251027T153000Z';
       const trigger = (status==='sure')?'-P7D':'-P30D';
       const mapCeremony='https://www.google.com/maps/place/X67V%2BW4G+Santa+Cruz+Cathedral+Basilica,+Kochi,+Bastian+St,+Fort+Nagar,+Fort+Kochi,+Kochi,+Kerala+682001/@9.9609796,76.2523107,16z/data=!3m1!1e3!4m14!1m7!3m6!1s0x3b086dccada9f3f1:0x4c980457c575174c!2sRAAS+Residency,+No+11%2F3319+B,+junction,+near+Thoppumpady,+Thoppumpady,+Kochi,+Kerala+682005!8m2!3d9.9347732!4d76.2641605!16s%2Fg%2F11sgr8ht9l!3m5!1s0x3b086d36b7ff0567:0x4ed899ce06f39a3b!8m2!3d9.9648197!4d76.2428293!16zL20vMDkwamtf?g_ep=Eg1tbF8yMDI1MDgyN18wIJvbDyoASAJQAQ%3D%3D';
-      const mapReception='https://www.google.com/maps/place/RAAS+Residency,+No+11%2F3319+B,+junction,+near+Thoppumpady,+Thoppumpady,+Kochi,+Kerala+682005/@9.9347732,76.2641605,17z/data=!3m1!1e3!4m14!1m7!3m6!1s0x3b086dccada9f3f1:0x4c980457c575174c!2sRAAS+Residency,+No+11%2F3319+B,+junction,+near+Thoppumpady,+Thoppumpady,+Kochi,+Kerala+682005!8m2!3d9.9347732!4d76.2641605!16s%2Fg%2F11sgr8ht9l!3m5!1s0x3b086dccada9f3f1:0x4c980457c575174c!8m2!3d9.9347732!4d76.2641605!16s%2Fg%2F11sgr8ht9l?g_ep=Eg1tbF8yMDI1MDgyN18wIJvbDyoASAJQAQ%3D%3D';
+      const mapReception='https://maps.app.goo.gl/9cyw9KrJKpffT3fw5';
       const desc=[
         'Wedding Ceremony of Nikolas & Kavita.',
         'Time: 3:00 PM IST at Santa Cruz Cathedral Basilica, Fort Kochi.',
-        'Reception to follow at RAAS Residency, Thoppumpady, Kochi.',
+        'Reception to follow at The Croft, Kochi.',
         'Home address: Zion Villa, MLA Road, Pallurthy, Kochi 682006.',
         'Nearest Railway Station: Ernakulam Junction (ERS).',
         'Nearest Airport: Cochin International Airport.',
@@ -245,7 +293,7 @@
         'DTSTAMP:'+new Date().toISOString().replace(/[-:]/g,'').split('.')[0]+'Z',
         'SUMMARY:NIKOLAS & KAVITA — Wedding Ceremony',
         'DESCRIPTION:'+desc,
-        'LOCATION:Santa Cruz Cathedral Basilica, Fort Kochi; Reception: RAAS Residency, Thoppumpady, Kochi',
+        'LOCATION:Santa Cruz Cathedral Basilica, Fort Kochi; Reception: The Croft, Kochi',
         'DTSTART:'+dtStartUTC,'DTEND:'+dtEndUTC,
         'BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:Wedding reminder','TRIGGER:'+trigger,'END:VALARM',
         'END:VEVENT','END:VCALENDAR'
@@ -263,7 +311,7 @@
       }catch(e){}
     }
 
-    /* -------- Modal + RSVP + Confetti -------- */
+    /* -------- Modal + RSVP -------- */
     const modalBg=document.getElementById('modalBg');
     const form=document.getElementById('rsvpForm');
     const nameEl=document.getElementById('guestName');
@@ -291,7 +339,7 @@
       if(!name||!pendingStatus) return;
       if(pendingStatus==='sure'&&!count) return;
       await logToSheet({name, status:pendingStatus, count});
-      if(pendingStatus==='sure') confettiBurst(); // celebrate the Yes
+      if(pendingStatus==='sure') confettiBurst();
       downloadICS(icsWithReminder(pendingStatus), `Nikolas_Kavita_Wedding_2025-10-27_${pendingStatus}.ics`);
       closeModal();
     });
@@ -304,12 +352,7 @@
       window.addEventListener('resize',resize); resize();
 
       function makePetal(){
-        return {
-          x: Math.random()*w, y: -20-Math.random()*h,
-          r: 6+Math.random()*10, s: .4+.5*Math.random(),
-          a: Math.random()*Math.PI*2, v: .5+Math.random()*1.2,
-          swing: .8+Math.random()*1.2
-        };
+        return { x:Math.random()*w, y:-20-Math.random()*h, r:6+Math.random()*10, s:.4+.5*Math.random(), a:Math.random()*Math.PI*2, v:.5+Math.random()*1.2, swing:.8+Math.random()*1.2 };
       }
       for(let i=0;i<30;i++) petals.push(makePetal());
 
@@ -318,51 +361,114 @@
         petals.forEach(p=>{
           p.a+=0.02; p.x+=Math.sin(p.a)*p.swing*0.3; p.y+=p.v;
           if(p.y>h+40) Object.assign(p,makePetal(),{y:-20});
-          ctx.beginPath();
-          ctx.ellipse(p.x,p.y,p.r*0.6,p.r, p.a, 0, Math.PI*2);
-          ctx.fillStyle='rgba(123,23,51,0.18)';
-          ctx.fill();
+          ctx.beginPath(); ctx.ellipse(p.x,p.y,p.r*0.6,p.r,p.a,0,Math.PI*2);
+          ctx.fillStyle='rgba(123,23,51,0.18)'; ctx.fill();
         });
         ctx.restore();
       }
-
       function drawConfetti(){
         confetti.forEach(c=>{
-          c.y+=c.v; c.x+=c.wobbleSpeed*Math.sin(c.y*0.05+c.phase); c.rotation+=c.spin;
-          c.life-=1;
-          ctx.save();
-          ctx.translate(c.x,c.y); ctx.rotate(c.rotation);
-          ctx.fillStyle=c.color; ctx.fillRect(-c.size/2,-c.size/2,c.size,c.size*0.6);
-          ctx.restore();
+          c.y+=c.v; c.x+=c.wobbleSpeed*Math.sin(c.y*0.05+c.phase); c.rotation+=c.spin; c.life-=1;
+          ctx.save(); ctx.translate(c.x,c.y); ctx.rotate(c.rotation);
+          ctx.fillStyle=c.color; ctx.fillRect(-c.size/2,-c.size/2,c.size,c.size*0.6); ctx.restore();
         });
         confetti = confetti.filter(c=>c.life>0);
       }
-
-      function loop(){
-        ctx.clearRect(0,0,w,h);
-        drawPetals(); drawConfetti();
-        requestAnimationFrame(loop);
-      }
+      function loop(){ ctx.clearRect(0,0,w,h); drawPetals(); drawConfetti(); requestAnimationFrame(loop); }
       loop();
 
-      // expose confettiBurst
       window.confettiBurst = function(){
         for(let i=0;i<80;i++){
           confetti.push({
-            x: w/2 + (Math.random()-0.5)*120,
-            y: h/2,
-            v: 2+Math.random()*3,
-            wobbleSpeed: 1+Math.random()*2,
-            phase: Math.random()*Math.PI*2,
-            rotation: Math.random()*Math.PI,
-            spin: (Math.random()-.5)*0.2,
-            size: 6+Math.random()*8,
-            color: ['#7b1733','#c92a50','#ffd3df','#ffffff'][Math.floor(Math.random()*4)],
+            x: w/2 + (Math.random()-0.5)*120, y: h/2,
+            v: 2+Math.random()*3, wobbleSpeed: 1+Math.random()*2, phase: Math.random()*Math.PI*2,
+            rotation: Math.random()*Math.PI, spin: (Math.random()-.5)*0.2,
+            size: 6+Math.random()*8, color: ['#7b1733','#c92a50','#ffd3df','#ffffff'][Math.floor(Math.random()*4)],
             life: 120+Math.random()*60
           });
         }
       };
     })();
+
+    /* -------- Music controls + Intro playback -------- */
+    const bgm = document.getElementById('bgm');
+    const musicToggle = document.getElementById('musicToggle');
+    const overlay = document.getElementById('reelOverlay');
+    const introPlay = document.getElementById('introPlay');
+    const introSkip = document.getElementById('introSkip');
+    const reelText = document.getElementById('reelText');
+
+    // 1) Lines from your reel — replace these with the exact text (one string per screen)
+    const reelLines = [
+      "Two hearts. One promise.",
+      "With the blessings of our families,",
+      "Nikolas & Kavita",
+      "invite you to celebrate their wedding",
+      "27 October 2025 • 3:00 PM • Santa Cruz Cathedral Basilica",
+      "Reception to follow at The Croft, Kochi"
+    ];
+    const displayMs = 2200;     // how long each line stays visible
+    const gapMs = 250;          // gap between lines
+
+    let musicOn = false;
+    function setMusic(on){
+      musicOn = !!on;
+      bgm.muted = !musicOn;
+      musicToggle.setAttribute('aria-pressed', String(musicOn));
+      musicToggle.textContent = musicOn ? 'Music: On' : 'Music: Off';
+    }
+    setMusic(false); // start muted until user action
+
+    async function tryPlay(){
+      try { await bgm.play(); } catch(e) { /* ignored until user gesture */ }
+    }
+
+    musicToggle.addEventListener('click', async ()=>{
+      setMusic(!musicOn);
+      if(musicOn) await tryPlay(); else bgm.pause();
+    });
+
+    introPlay.addEventListener('click', async ()=>{
+      setMusic(true); await tryPlay();
+      startIntro();
+    });
+    introSkip.addEventListener('click', ()=>{
+      endIntro();
+    });
+
+    function startIntro(){
+      // sequentially show lines
+      reelText.innerHTML = '';
+      let i = 0;
+      function next(){
+        if(i >= reelLines.length) { setTimeout(endIntro, 400); return; }
+        const div = document.createElement('div');
+        div.className = 'reel-line';
+        div.textContent = reelLines[i++];
+        reelText.appendChild(div);
+        // force reflow then show
+        void div.offsetWidth; div.classList.add('show');
+        setTimeout(next, displayMs);
+      }
+      next();
+    }
+    function endIntro(){
+      overlay.classList.add('hidden');
+      document.querySelectorAll('.card, .reveal').forEach(el => el.classList.add('in'));
+    }
+
+    // If user interacts anywhere (fallback to start intro without sound)
+    document.addEventListener('click', (e)=>{
+      if(overlay.classList.contains('hidden')) return;
+      if(e.target === introPlay || e.target === introSkip) return;
+      // single tap anywhere will start intro silently
+      if(reelText.childElementCount === 0) startIntro();
+    });
+
+    // Auto-exit intro for reduced motion users
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      endIntro();
+    }
   </script>
 </body>
 </html>
