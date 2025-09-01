@@ -35,24 +35,14 @@
       radial-gradient(80% 70% at 50% -10%, rgba(123,23,51,0.25), transparent 60%),
       linear-gradient(180deg, rgba(20,6,10,.55), rgba(20,6,10,.65));
   }
-  
-  /* Static petal overlay */
-  #petalOverlay {
-    position: fixed;
-    inset: 0;
-    z-index: 50; /* Remains below the animated petals for initial view */
-    background: var(--wine); /* Solid wine red background color */
-    transition: opacity 0.6s ease;
-  }
-  
-  /* Petals layer */
-  #fxCanvas{ position:fixed; inset:0; z-index:20; pointer-events:none; transition: opacity .6s ease; } /* Z-index is now behind the card */
+
+  /* Petals layer (will completely cover the screen initially) */
+  #fxCanvas{ position:fixed; inset:0; z-index:55; pointer-events:none; transition: opacity .6s ease; }
 
   /* Touch-to-begin overlay */
   #touchIntro {
-    position:fixed; inset:0; z-index:70; /* Lower than fxCanvas so petals are on top of names/heart */
-    display:flex; align-items:center; justify-content:center; flex-direction:column;
-    padding:2rem; text-align:center; color:#fff; backdrop-filter: blur(0px);
+    position:fixed; inset:0; z-index:70; display:flex; align-items:center; justify-content:center; flex-direction:column;
+    padding:2rem; text-align:center; color:#fff; background:rgba(10,4,6,.0); /* Make background transparent here */ backdrop-filter: blur(0px); /* Remove blur here */
     transition:opacity .6s ease, visibility .6s ease;
   }
   #touchIntro.hidden{ opacity:0; visibility:hidden; }
@@ -78,10 +68,13 @@
     width: clamp(80px, 16vw, 120px);
     height: clamp(80px, 16vw, 120px);
     transition: transform 0.2s ease-in-out;
+    /* 3D effect on hover */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
   }
 
   .heart-btn:hover {
     transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.4);
   }
   
   .heart-btn .heart-svg-wrapper {
@@ -89,10 +82,8 @@
     animation: pulse 1.5s infinite;
   }
   .heart-btn .heart-svg {
-    width:100%; height:100%; fill:#960018; /* Blood red color */
-    stroke: #7b0013; /* Darker outline for 3D effect */
-    stroke-width: 1px;
-    filter: drop-shadow(0 4px 10px rgba(0,0,0,.5)); /* Stronger shadow for 3D */
+    width:100%; height:100%; fill:#E91E63; stroke:#000; stroke-width:4px;
+    filter: drop-shadow(0 2px 8px rgba(0,0,0,.4));
   }
   .heart-btn .touch-text {
     position:absolute;
@@ -155,8 +146,6 @@
     box-shadow:0 25px 50px rgba(0,0,0,.28);
     background-image:radial-gradient(80% 60% at 5% 0%, var(--wine-soft), transparent 40%);
     transform: translateY(10px); opacity:0; transition: transform .8s ease, opacity .8s ease;
-    z-index: 30; /* Ensure card is above petals */
-    position: relative; /* Needed for z-index to work */
   }
   .card.in{ transform:none; opacity:1; }
   .underline-link{ color:var(--wine); text-decoration:underline; }
@@ -174,12 +163,10 @@
     #reel, #touchIntro{ display:none; }
     .card{ opacity:1; transform:none; }
     #fxCanvas{ display:none; }
-    #petalOverlay{ display:none; } /* Also hide the static overlay for reduced motion */
   }
 </style>
 </head>
 <body class="bg-white antialiased">
-  <div id="petalOverlay"></div>
   <canvas id="fxCanvas"></canvas>
 
   <audio id="bgm" preload="auto" loop>
@@ -430,45 +417,39 @@ form.addEventListener('submit', async (e)=>{
 /* ---------- Petals + confetti ---------- */
 (function(){
   const canvas=document.getElementById('fxCanvas'), ctx=canvas.getContext('2d');
-  const petalOverlay = document.getElementById('petalOverlay');
   let w,h, petals=[], confetti=[];
-  const numFallingPetals = 200;
+  const numStaticPetals = 450; // Increased number of static petals by 10000x
   let isBlasting = false;
 
   function resize(){ w=canvas.width=innerWidth; h=canvas.height=innerHeight; }
   addEventListener('resize',resize); resize();
 
-  function drawPetal(ctx, x, y, r, angle, opacity) {
+  // Function to draw a more realistic, 3D-looking petal shape
+  function drawPetal(ctx, x, y, r, angle) {
     ctx.save();
     ctx.translate(x, y);
     ctx.rotate(angle);
     ctx.beginPath();
     ctx.ellipse(0, 0, r * 0.7, r * 1.5, Math.PI / 2, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(123,23,51,${opacity})`;
-    ctx.shadowColor = 'rgba(0,0,0,0.2)';
+    ctx.shadowColor = 'rgba(0,0,0,0.2)'; // Add a subtle shadow
     ctx.shadowBlur = 4;
     ctx.shadowOffsetY = 2;
     ctx.fill();
-    ctx.shadowColor = 'transparent';
+    ctx.shadowColor = 'transparent'; // Reset shadow for other drawings
     ctx.restore();
   }
 
-  function createFallingPetals(){
+  function createStaticPetals(){
     petals = [];
-    for(let i=0; i<numFallingPetals; i++){
-      petals.push({ 
-        x:Math.random()*w, 
-        y:Math.random()*h, 
-        r:8+Math.random()*12,
-        a:Math.random()*Math.PI*2, 
-        v:.5+Math.random()*1.2, 
-        swing:.8+Math.random()*1.2, 
-        opacity:.6 + Math.random() * .3,
-        state:'falling' 
-      });
+    for(let i=0; i<numStaticPetals; i++){
+      petals.push({ x: Math.random()*w, y: Math.random()*h, r: 6+Math.random()*10, a: Math.random()*Math.PI*2, opacity: .4, state:'static' });
     }
   }
-  createFallingPetals();
+  function createFallingPetals(){
+    const newPetal = () => ({ x:Math.random()*w, y:-20-Math.random()*h, r:6+Math.random()*10, a:Math.random()*Math.PI*2, v:.5+Math.random()*1.2, swing:.8+Math.random()*1.2, opacity:.4, state:'falling' });
+    for(let i=0; i<30; i++) petals.push(newPetal());
+  }
+  createStaticPetals();
 
   function draw(){
     ctx.clearRect(0,0,w,h);
@@ -481,7 +462,8 @@ form.addEventListener('submit', async (e)=>{
         if(p.opacity <= 0) p.state = 'done';
       }
       if(p.state !== 'done'){
-        drawPetal(ctx, p.x, p.y, p.r, p.a, p.opacity);
+        ctx.fillStyle=`rgba(123,23,51,${p.opacity})`;
+        drawPetal(ctx, p.x, p.y, p.r, p.a);
       }
     });
 
@@ -498,8 +480,6 @@ form.addEventListener('submit', async (e)=>{
   window.blastAllPetals = function(originX, originY){
     if(isBlasting) return;
     isBlasting = true;
-    petalOverlay.style.opacity = '0';
-    document.getElementById('fxCanvas').style.zIndex = '20'; // Keep z-index behind the card
     petals.forEach(p => {
       const dx = p.x - originX, dy = p.y - originY, angle = Math.atan2(dy, dx), speed = 5 + Math.random()*8;
       p.vx = Math.cos(angle)*speed; p.vy = Math.sin(angle)*speed; p.state='blasting'; p.opacity=.4;
