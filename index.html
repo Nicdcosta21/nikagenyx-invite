@@ -1,182 +1,182 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>NIKOLAS & KAVITA — 27 Oct 2025, Kochi</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>NIKOLAS & KAVITA — 27 Oct 2025, Kochi</title>
 
-  <link rel="icon" href="data:," />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<link rel="icon" href="data:," />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 
-  <meta name="description" content="Wedding Ceremony of Nikolas Samson D’Costa and Kavita Kevin Fernandes — 27 Oct 2025, 3:00 PM at Santa Cruz Cathedral Basilica, Fort Kochi. Reception at The Croft, Kochi. Home: Zion Villa, MLA Road, Pallurthy, Kochi 682006." />
-  <meta property="og:title" content="NIKOLAS & KAVITA — Wedding Ceremony" />
-  <meta property="og:description" content="27 Oct 2025 • 3:00 PM • Santa Cruz Cathedral Basilica, Fort Kochi • Reception at The Croft, Kochi." />
-  <meta property="og:type" content="website" />
-  <meta property="og:image" content="/assets/hero.jpg" />
-  <meta name="theme-color" content="#7b1733" />
+<meta name="description" content="Wedding Ceremony of Nikolas Samson D’Costa and Kavita Kevin Fernandes — 27 Oct 2025, 3:00 PM at Santa Cruz Cathedral Basilica, Fort Kochi. Reception at The Croft, Kochi. Home: Zion Villa, MLA Road, Pallurthy, Kochi 682006." />
+<meta property="og:title" content="NIKOLAS & KAVITA — Wedding Ceremony" />
+<meta property="og:description" content="27 Oct 2025 • 3:00 PM • Santa Cruz Cathedral Basilica, Fort Kochi • Reception at The Croft, Kochi." />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="/assets/hero.jpg" />
+<meta name="theme-color" content="#7b1733" />
 
-  <style>
-    :root { --wine:#7b1733; --wine-soft:#fdebef; --ink:#1f2937; }
-    html, body { height: 100%; scroll-behavior: smooth; }
-    body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; color: var(--ink); position: relative; }
+<style>
+  :root { --wine:#7b1733; --wine-soft:#fdebef; --ink:#1f2937; }
+  html, body { height: 100%; scroll-behavior: smooth; }
+  body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; color: var(--ink); position: relative; }
 
-    /* Static background - still present for later states if petals clear, but initially hidden by petals */
-    body::before{
-      content:""; position:fixed; inset:0; z-index:-3;
-      background:url('/assets/hero.jpg') center / cover no-repeat;
-      filter: saturate(.95) brightness(.9);
-    }
-    /* Wine tint + vignette */
-    body::after{
-      content:""; position:fixed; inset:0; z-index:-1;
-      background:
-        radial-gradient(80% 70% at 50% -10%, rgba(123,23,51,0.25), transparent 60%),
-        linear-gradient(180deg, rgba(20,6,10,.55), rgba(20,6,10,.65));
-    }
-    
-    /* Static petal overlay */
-    #petalOverlay {
-      position: fixed;
-      inset: 0;
-      z-index: 50; /* Remains below the animated petals for initial view */
-      background: var(--wine); /* Solid wine red background color */
-      transition: opacity 0.6s ease;
-    }
-    
-    /* Petals layer */
-    #fxCanvas{ position:fixed; inset:0; z-index:20; pointer-events:none; transition: opacity .6s ease; } /* Z-index is now behind the card */
+  /* Static background - still present for later states if petals clear, but initially hidden by petals */
+  body::before{
+    content:""; position:fixed; inset:0; z-index:-3;
+    background:url('/assets/hero.jpg') center / cover no-repeat;
+    filter: saturate(.95) brightness(.9);
+  }
+  /* Wine tint + vignette */
+  body::after{
+    content:""; position:fixed; inset:0; z-index:-1;
+    background:
+      radial-gradient(80% 70% at 50% -10%, rgba(123,23,51,0.25), transparent 60%),
+      linear-gradient(180deg, rgba(20,6,10,.55), rgba(20,6,10,.65));
+  }
+  
+  /* Static petal overlay */
+  #petalOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50; /* Remains below the animated petals for initial view */
+    background: var(--wine); /* Solid wine red background color */
+    transition: opacity 0.6s ease;
+  }
+  
+  /* Petals layer */
+  #fxCanvas{ position:fixed; inset:0; z-index:20; pointer-events:none; transition: opacity .6s ease; } /* Z-index is now behind the card */
 
-    /* Touch-to-begin overlay */
-    #touchIntro {
-      position:fixed; inset:0; z-index:70; /* Lower than fxCanvas so petals are on top of names/heart */
-      display:flex; align-items:center; justify-content:center; flex-direction:column;
-      padding:2rem; text-align:center; color:#fff; backdrop-filter: blur(0px);
-      transition:opacity .6s ease, visibility .6s ease;
-    }
-    #touchIntro.hidden{ opacity:0; visibility:hidden; }
+  /* Touch-to-begin overlay */
+  #touchIntro {
+    position:fixed; inset:0; z-index:70; /* Lower than fxCanvas so petals are on top of names/heart */
+    display:flex; align-items:center; justify-content:center; flex-direction:column;
+    padding:2rem; text-align:center; color:#fff; backdrop-filter: blur(0px);
+    transition:opacity .6s ease, visibility .6s ease;
+  }
+  #touchIntro.hidden{ opacity:0; visibility:hidden; }
 
-    .name-text{
-      font-family:"Playfair Display", Georgia, serif;
-      font-size:clamp(28px, 8vw, 60px);
-      font-weight:700;
-      line-height:1.2; letter-spacing:.01em; text-shadow:0 2px 14px rgba(0,0,0,.45);
-      opacity:0; transform:translateY(16px); animation: fadeUp 1s ease forwards;
-      transition: transform 1s ease, opacity 1s ease;
-    }
-    .name-left{ transform: translateX(-40px); animation-delay: .2s; }
-    .name-right{ transform: translateX(40px); animation-delay: .2s; }
-    /* Apply to the WRAPPER when merging */
-    .name-merge .name-left, .name-merge .name-right { transform: translateX(0); }
+  .name-text{
+    font-family:"Playfair Display", Georgia, serif;
+    font-size:clamp(28px, 8vw, 60px);
+    font-weight:700;
+    line-height:1.2; letter-spacing:.01em; text-shadow:0 2px 14px rgba(0,0,0,.45);
+    opacity:0; transform:translateY(16px); animation: fadeUp 1s ease forwards;
+    transition: transform 1s ease, opacity 1s ease;
+  }
+  .name-left{ transform: translateX(-40px); animation-delay: .2s; }
+  .name-right{ transform: translateX(40px); animation-delay: .2s; }
+  /* Apply to the WRAPPER when merging */
+  .name-merge .name-left, .name-merge .name-right { transform: translateX(0); }
 
-    .heart-btn{
-      background: none; border: none; padding: 0 15px; cursor: pointer;
-      opacity: 0; animation: fadeUp 1s ease forwards; animation-delay: .4s;
-      display: flex; align-items: center; justify-content: center;
-      position: relative;
-      width: clamp(80px, 16vw, 120px);
-      height: clamp(80px, 16vw, 120px);
-      transition: transform 0.2s ease-in-out;
-    }
+  .heart-btn{
+    background: none; border: none; padding: 0 15px; cursor: pointer;
+    opacity: 0; animation: fadeUp 1s ease forwards; animation-delay: .4s;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    width: clamp(80px, 16vw, 120px);
+    height: clamp(80px, 16vw, 120px);
+    transition: transform 0.2s ease-in-out;
+  }
 
-    .heart-btn:hover {
-      transform: translateY(-2px);
-    }
-    
-    .heart-btn .heart-svg-wrapper {
-      position: absolute; inset:0; display:flex; align-items:center; justify-content:center;
-      animation: pulse 1.5s infinite;
-    }
-    .heart-btn .heart-svg {
-      width:100%; height:100%; fill:#960018; /* Blood red color */
-      stroke: #7b0013; /* Darker outline for 3D effect */
-      stroke-width: 1px;
-      filter: drop-shadow(0 4px 10px rgba(0,0,0,.5)); /* Stronger shadow for 3D */
-    }
-    .heart-btn .touch-text {
-      position:absolute;
-      top: 50%; /* Center vertically */
-      left: 50%; /* Center horizontally */
-      transform: translate(-50%, -50%); /* Adjust for its own size */
-      font-size:clamp(10px, 2.5vw, 18px); font-weight:600; color:#fff; opacity:.7; line-height:1;
-      text-shadow:0 1px 4px rgba(0,0,0,.5); font-family:Inter, sans-serif;
-    }
-    @keyframes pulse { 0%{transform:scale(1)} 50%{transform:scale(1.1)} 100%{transform:scale(1)} }
-    @keyframes fadeUp { to { opacity:1; transform:none; } }
+  .heart-btn:hover {
+    transform: translateY(-2px);
+  }
+  
+  .heart-btn .heart-svg-wrapper {
+    position: absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    animation: pulse 1.5s infinite;
+  }
+  .heart-btn .heart-svg {
+    width:100%; height:100%; fill:#960018; /* Blood red color */
+    stroke: #7b0013; /* Darker outline for 3D effect */
+    stroke-width: 1px;
+    filter: drop-shadow(0 4px 10px rgba(0,0,0,.5)); /* Stronger shadow for 3D */
+  }
+  .heart-btn .touch-text {
+    position:absolute;
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Adjust for its own size */
+    font-size:clamp(10px, 2.5vw, 18px); font-weight:600; color:#fff; opacity:.7; line-height:1;
+    text-shadow:0 1px 4px rgba(0,0,0,.5); font-family:Inter, sans-serif;
+  }
+  @keyframes pulse { 0%{transform:scale(1)} 50%{transform:scale(1.1)} 100%{transform:scale(1)} }
+  @keyframes fadeUp { to { opacity:1; transform:none; } }
 
-    /* Reel/Short overlay */
-    #reel {
-      position:fixed; inset:0; z-index:60; display:none; align-items:center; justify-content:center; flex-direction:column;
-      padding:2rem; text-align:center; color:#fff; background:rgba(10,4,6,.55); backdrop-filter: blur(2px);
-      transition:opacity .4s ease, visibility .4s ease;
-    }
-    #reel.visible{ display:flex; }
-    #reel.hidden{ opacity:0; visibility:hidden; }
+  /* Reel/Short overlay */
+  #reel {
+    position:fixed; inset:0; z-index:60; display:none; align-items:center; justify-content:center; flex-direction:column;
+    padding:2rem; text-align:center; color:#fff; background:rgba(10,4,6,.55); backdrop-filter: blur(2px);
+    transition:opacity .4s ease, visibility .4s ease;
+  }
+  #reel.visible{ display:flex; }
+  #reel.hidden{ opacity:0; visibility:hidden; }
 
-    .reel-stage{ width:min(92vw, 900px); display:flex; align-items:center; justify-content:center; flex-direction:column; }
-    .reel-line{
-      font-family:"Playfair Display", Georgia, serif;
-      font-size:clamp(22px, 5vw, 48px);
-      line-height:1.2; letter-spacing:.01em; text-shadow:0 2px 14px rgba(0,0,0,.45);
-      opacity:0; transform:translateY(16px); margin-bottom:20px;
-    }
-    .fx-fadeUp  { animation: fadeUp .55s ease forwards; }
-    .fx-zoomOut  { animation: zoomOut .7s ease forwards; transform:scale(1.08); }
-    .fx-wipeLeft { animation: wipeLeft .55s ease forwards; }
-    .fx-words .word{ display:inline-block; opacity:0; transform:translateY(10px); animation: wordUp .45s ease forwards; }
-    @keyframes zoomOut  { to { opacity:1; transform:scale(1); } }
-    @keyframes wipeLeft { from { clip-path:inset(0 0 0 100%); opacity:.2 } to { clip-path:inset(0 0 0 0); opacity:1 } }
-    @keyframes wordUp   { to { opacity:1; transform:none; } }
+  .reel-stage{ width:min(92vw, 900px); display:flex; align-items:center; justify-content:center; flex-direction:column; }
+  .reel-line{
+    font-family:"Playfair Display", Georgia, serif;
+    font-size:clamp(22px, 5vw, 48px);
+    line-height:1.2; letter-spacing:.01em; text-shadow:0 2px 14px rgba(0,0,0,.45);
+    opacity:0; transform:translateY(16px); margin-bottom:20px;
+  }
+  .fx-fadeUp  { animation: fadeUp .55s ease forwards; }
+  .fx-zoomOut  { animation: zoomOut .7s ease forwards; transform:scale(1.08); }
+  .fx-wipeLeft { animation: wipeLeft .55s ease forwards; }
+  .fx-words .word{ display:inline-block; opacity:0; transform:translateY(10px); animation: wordUp .45s ease forwards; }
+  @keyframes zoomOut  { to { opacity:1; transform:scale(1); } }
+  @keyframes wipeLeft { from { clip-path:inset(0 0 0 100%); opacity:.2 } to { clip-path:inset(0 0 0 0); opacity:1 } }
+  @keyframes wordUp   { to { opacity:1; transform:none; } }
 
-    .intro-controls{ margin-top:1rem; display:flex; gap:.75rem; flex-wrap:wrap; justify-content:center; }
-    .btn{ display:inline-flex; align-items:center; justify-content:center; padding:.8rem 1.15rem; border-radius:.75rem; font-weight:600; position:relative; overflow:hidden; }
-    .btn::after{ content:""; position:absolute; inset:0; background:radial-gradient(circle at 30% 30%, rgba(255,255,255,.25), transparent 40%); opacity:0; transition:opacity .25s ease; }
-    .btn:hover::after{ opacity:1; }
-    .btn:active{ transform:translateY(1px) scale(.99); }
-    .btn-primary{ background:var(--wine); color:#fff; border:1px solid rgba(0,0,0,.05); }
-    #reel .btn-outline{ background:transparent; border:1px solid rgba(255,255,255,.7); color:#fff; }
-    .btn-outline-dark{ background:#fff; border:1px solid rgba(123,23,51,.35); color:var(--wine); }
-    .btn-outline-dark:hover{ filter:brightness(.98); }
+  .intro-controls{ margin-top:1rem; display:flex; gap:.75rem; flex-wrap:wrap; justify-content:center; }
+  .btn{ display:inline-flex; align-items:center; justify-content:center; padding:.8rem 1.15rem; border-radius:.75rem; font-weight:600; position:relative; overflow:hidden; }
+  .btn::after{ content:""; position:absolute; inset:0; background:radial-gradient(circle at 30% 30%, rgba(255,255,255,.25), transparent 40%); opacity:0; transition:opacity .25s ease; }
+  .btn:hover::after{ opacity:1; }
+  .btn:active{ transform:translateY(1px) scale(.99); }
+  .btn-primary{ background:var(--wine); color:#fff; border:1px solid rgba(0,0,0,.05); }
+  #reel .btn-outline{ background:transparent; border:1px solid rgba(255,255,255,.7); color:#fff; }
+  .btn-outline-dark{ background:#fff; border:1px solid rgba(123,23,51,.35); color:var(--wine); }
+  .btn-outline-dark:hover{ filter:brightness(.98); }
 
-    /* Music toggle */
-    #musicToggle{
-      position:fixed; right:.75rem; top:.75rem; z-index:65;
-      background:rgba(255,255,255,.9); color:#111; border-radius:.65rem;
-      padding:.45rem .7rem; font-weight:600; border:1px solid rgba(0,0,0,.08);
-    }
+  /* Music toggle */
+  #musicToggle{
+    position:fixed; right:.75rem; top:.75rem; z-index:65;
+    background:rgba(255,255,255,.9); color:#111; border-radius:.65rem;
+    padding:.45rem .7rem; font-weight:600; border:1px solid rgba(0,0,0,.08);
+  }
 
-    /* Main content */
-    h1,h2,h3 { font-family: "Playfair Display", Georgia, serif; }
-    .heading-elegant{ letter-spacing:.01em; }
-    .hero{ min-height:100vh; display:flex; align-items:center; }
-    .card{
-      background:#fff; color:var(--ink); border-radius:1.25rem; padding:2rem;
-      box-shadow:0 25px 50px rgba(0,0,0,.28);
-      background-image:radial-gradient(80% 60% at 5% 0%, var(--wine-soft), transparent 40%);
-      transform: translateY(10px); opacity:0; transition: transform .8s ease, opacity .8s ease;
-      z-index: 30; /* Ensure card is above petals */
-      position: relative; /* Needed for z-index to work */
-    }
-    .card.in{ transform:none; opacity:1; }
-    .underline-link{ color:var(--wine); text-decoration:underline; }
-    .smallcaps{ letter-spacing:.08em; text-transform:uppercase; }
-    blockquote.verse{ font-style:italic; color:#f8e7ec; text-shadow:0 1px 0 rgba(0,0,0,.1); }
-    blockquote.verse small{ display:block; margin-top:.35rem; opacity:.9; }
+  /* Main content */
+  h1,h2,h3 { font-family: "Playfair Display", Georgia, serif; }
+  .heading-elegant{ letter-spacing:.01em; }
+  .hero{ min-height:100vh; display:flex; align-items:center; }
+  .card{
+    background:#fff; color:var(--ink); border-radius:1.25rem; padding:2rem;
+    box-shadow:0 25px 50px rgba(0,0,0,.28);
+    background-image:radial-gradient(80% 60% at 5% 0%, var(--wine-soft), transparent 40%);
+    transform: translateY(10px); opacity:0; transition: transform .8s ease, opacity .8s ease;
+    z-index: 30; /* Ensure card is above petals */
+    position: relative; /* Needed for z-index to work */
+  }
+  .card.in{ transform:none; opacity:1; }
+  .underline-link{ color:var(--wine); text-decoration:underline; }
+  .smallcaps{ letter-spacing:.08em; text-transform:uppercase; }
+  blockquote.verse{ font-style:italic; color:#f8e7ec; text-shadow:0 1px 0 rgba(0,0,0,.1); }
+  blockquote.verse small{ display:block; margin-top:.35rem; opacity:.9; }
 
-    /* Modal */
-    .modal-bg{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; padding:1rem; z-index:50; }
-    .modal{ width:100%; max-width:480px; background:#fff; border-radius:1rem; padding:1.25rem; box-shadow:0 25px 50px rgba(0,0,0,.3); transform:scale(.96); opacity:0; transition:transform .18s ease, opacity .18s ease; }
-    .modal-bg[aria-hidden="false"] .modal{ transform:scale(1); opacity:1; }
+  /* Modal */
+  .modal-bg{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; padding:1rem; z-index:50; }
+  .modal{ width:100%; max-width:480px; background:#fff; border-radius:1rem; padding:1.25rem; box-shadow:0 25px 50px rgba(0,0,0,.3); transform:scale(.96); opacity:0; transition:transform .18s ease, opacity .18s ease; }
+  .modal-bg[aria-hidden="false"] .modal{ transform:scale(1); opacity:1; }
 
-    /* Reduced motion */
-    @media (prefers-reduced-motion: reduce){
-      #reel, #touchIntro{ display:none; }
-      .card{ opacity:1; transform:none; }
-      #fxCanvas{ display:none; }
-      #petalOverlay{ display:none; } /* Also hide the static overlay for reduced motion */
-    }
-  </style>
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce){
+    #reel, #touchIntro{ display:none; }
+    .card{ opacity:1; transform:none; }
+    #fxCanvas{ display:none; }
+    #petalOverlay{ display:none; } /* Also hide the static overlay for reduced motion */
+  }
+</style>
 </head>
 <body class="bg-white antialiased">
   <div id="petalOverlay"></div>
@@ -521,7 +521,6 @@ const heartButton = document.getElementById('heartButton');
 const reel = document.getElementById('reel');
 const stage = document.getElementById('reelStage');
 const introSkip = document.getElementById('introSkip');
-const mainCard = document.getElementById('mainCard');
 
 let hasStarted = false;
 
