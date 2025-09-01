@@ -46,11 +46,11 @@
     }
     
     /* Petals layer */
-    #fxCanvas{ position:fixed; inset:0; z-index:60; pointer-events:none; transition: opacity .6s ease; }
+    #fxCanvas{ position:fixed; inset:0; z-index:20; pointer-events:none; transition: opacity .6s ease; } /* Z-index is now behind the card */
 
     /* Touch-to-begin overlay */
     #touchIntro {
-      position:fixed; inset:0; z-index:70;
+      position:fixed; inset:0; z-index:70; /* Lower than fxCanvas so petals are on top of names/heart */
       display:flex; align-items:center; justify-content:center; flex-direction:column;
       padding:2rem; text-align:center; color:#fff; backdrop-filter: blur(0px);
       transition:opacity .6s ease, visibility .6s ease;
@@ -152,9 +152,11 @@
     .hero{ min-height:100vh; display:flex; align-items:center; }
     .card{
       background:#fff; color:var(--ink); border-radius:1.25rem; padding:2rem;
-      box-shadow:0 35px 70px rgba(0,0,0,.45), 0 15px 30px rgba(0,0,0,.28); /* Enhanced shadow for 3D */
+      box-shadow:0 25px 50px rgba(0,0,0,.28);
       background-image:radial-gradient(80% 60% at 5% 0%, var(--wine-soft), transparent 40%);
       transform: translateY(10px); opacity:0; transition: transform .8s ease, opacity .8s ease;
+      z-index: 30; /* Ensure card is above petals */
+      position: relative; /* Needed for z-index to work */
     }
     .card.in{ transform:none; opacity:1; }
     .underline-link{ color:var(--wine); text-decoration:underline; }
@@ -497,7 +499,7 @@ form.addEventListener('submit', async (e)=>{
     if(isBlasting) return;
     isBlasting = true;
     petalOverlay.style.opacity = '0';
-    document.getElementById('fxCanvas').style.zIndex = '60';
+    document.getElementById('fxCanvas').style.zIndex = '20'; // Keep z-index behind the card
     petals.forEach(p => {
       const dx = p.x - originX, dy = p.y - originY, angle = Math.atan2(dy, dx), speed = 5 + Math.random()*8;
       p.vx = Math.cos(angle)*speed; p.vy = Math.sin(angle)*speed; p.state='blasting'; p.opacity=.4;
@@ -523,7 +525,6 @@ const mainCard = document.getElementById('mainCard');
 
 let hasStarted = false;
 
-// Reel screen text and animation effects
 const scenes = [
   { text: "With great joy and gratitude,",     effect: "fx-fadeUp",   duration: 1100 },
   { text: "Nikolas & Kavita",                   effect: "fx-zoomOut",  duration: 1200 },
