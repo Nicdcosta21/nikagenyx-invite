@@ -106,16 +106,13 @@
 </style>
 </head>
 <body class="bg-white antialiased">
-  <!-- Optional petals/confetti -->
   <canvas id="fxCanvas"></canvas>
 
-  <!-- Optional background music -->
   <audio id="bgm" preload="auto" loop>
     <source src="/assets/music.mp3" type="audio/mpeg" />
   </audio>
   <button id="musicToggle" aria-pressed="false" aria-label="Toggle music">Music: Off</button>
 
-  <!-- Reel-style intro -->
   <div id="reel" role="dialog" aria-modal="true" aria-label="Intro">
     <div class="reel-stage" id="reelStage"></div>
     <div class="intro-controls">
@@ -124,7 +121,6 @@
     </div>
   </div>
 
-  <!-- Main content -->
   <header class="hero">
     <div class="w-full">
       <div class="max-w-3xl mx-auto px-6 py-10 text-center">
@@ -140,7 +136,7 @@
 
           <div class="mt-5 text-gray-700">
             <p class="text-base md:text-lg">s/o Samson Nicholas D’Costa and Suni Samson D’Costa,</p>
-            <h1 class="heading-elegant text-4xl md:text-6xl font-bold tracking-wide mt-1">NIKOLAS &amp; KAVITA</h1>
+            <h1 class="heading-elegant text-4xl md:text-6xl font-bold tracking-wide mt-1">NIKOLAS & KAVITA</h1>
             <p class="text-base md:text-lg mt-1">d/o Kevin Thomas Fernandes and Annie Kevin Fernandes.</p>
           </div>
 
@@ -185,7 +181,7 @@
                href="https://www.google.com/maps/place/X67V%2BW4G+Santa+Cruz+Cathedral+Basilica,+Kochi,+Bastian+St,+Fort+Nagar,+Fort+Kochi,+Kochi,+Kerala+682001/@9.9609796,76.2523107,16z/data=!3m1!1e3!4m14!1m7!3m6!1s0x3b086dccada9f3f1:0x4c980457c575174c!2sRAAS+Residency,+No+11%2F3319+B,+junction,+near+Thoppumpady,+Thoppumpady,+Kochi,+Kerala+682005!8m2!3d9.9347732!4d76.2641605!16s%2Fg%2F11sgr8ht9l!3m5!1s0x3b086d36b7ff0567:0x4ed899ce06f39a3b!8m2!3d9.9648197!4d76.2428293!16zL20vMDkwamtf?g_ep=Eg1tbF8yMDI1MDgyN18wIJvbDyoASAJQAQ%3D%3D">
                Santa Cruz Cathedral Basilica
             </a>
-            &nbsp;|&nbsp;
+              | 
             Reception map:
             <a class="underline-link" target="_blank" rel="noopener"
                href="https://maps.app.goo.gl/9cyw9KrJKpffT3fw5">
@@ -206,7 +202,6 @@
     invite.nikagenyx.com · Kochi, Kerala
   </footer>
 
-  <!-- Modal -->
   <div id="modalBg" class="modal-bg" aria-hidden="true">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <h3 id="modalTitle" class="text-xl font-semibold mb-3" style="color:var(--wine)">Save your reminder</h3>
@@ -214,13 +209,13 @@
         <div>
           <label for="guestName" class="block text-sm font-medium text-gray-700">Full name</label>
           <input id="guestName" name="guestName" type="text" required
-                 class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-300"
-                 placeholder="e.g., John Fernandes">
+                   class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-300"
+                   placeholder="e.g., John Fernandes">
         </div>
         <div id="countGroup" class="hidden">
           <label for="guestCount" class="block text-sm font-medium text-gray-700">Number of people</label>
           <select id="guestCount" name="guestCount"
-                  class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-300">
+                   class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-300">
             <option value="" disabled selected>Select</option>
             <option>1</option><option>2</option><option>3</option>
             <option>4</option><option>5</option><option>6</option>
@@ -244,8 +239,8 @@
     const now = Date.now();
     let diff = Math.max(0, target - now);
     const d = Math.floor(diff / (1000*60*60*24)); diff -= d*24*60*60*1000;
-    const h = Math.floor(diff / (1000*60*60));     diff -= h*60*60*1000;
-    const m = Math.floor(diff / (1000*60));        diff -= m*60*1000;
+    const h = Math.floor(diff / (1000*60*60));      diff -= h*60*60*1000;
+    const m = Math.floor(diff / (1000*60));         diff -= m*60*1000;
     const s = Math.floor(diff / 1000);
     el.textContent = `${d} days ${pad(h)}:${pad(m)}:${pad(s)}`;
   }
@@ -383,12 +378,12 @@ const introSkip = document.getElementById('introSkip');
 
 /* Edit these lines and timings to match your reference Short */
 const scenes = [
-  { text: "With the blessings of our families",         effect: "fx-fadeUp",  duration: 1100 },
-  { text: "Nikolas & Kavita",                           effect: "fx-zoomOut", duration: 1200 },
-  { text: "invite you to celebrate",                    effect: "fx-wipeLeft", duration: 1000 },
-  { text: "27 October 2025 • 3:00 PM",                  effect: "fx-words",   duration: 1200 },
-  { text: "Santa Cruz Cathedral Basilica • Fort Kochi", effect: "fx-fadeUp",  duration: 1100 },
-  { text: "Reception at The Croft, Kochi",              effect: "fx-words",   duration: 1300 }
+  { text: "With great joy and gratitude,",     effect: "fx-fadeUp",   duration: 1100 },
+  { text: "Nikolas & Kavita",                   effect: "fx-zoomOut",  duration: 1200 },
+  { text: "invite you to celebrate their wedding",  effect: "fx-wipeLeft", duration: 1000 },
+  { text: "on Monday, 27 October 2025",         effect: "fx-words",    duration: 1200 },
+  { text: "at Santa Cruz Cathedral Basilica",   effect: "fx-fadeUp",   duration: 1100 },
+  { text: "Reception to follow at The Croft",   effect: "fx-words",    duration: 1300 }
 ];
 const gap = 160;
 
