@@ -64,17 +64,24 @@
   .name-left{ transform: translateX(-40px); animation-delay: .2s; }
   .name-right{ transform: translateX(40px); animation-delay: .2s; }
   .name-merge .name-left, .name-merge .name-right { transform: translateX(0); }
-
+  
   .heart-btn{
     background: none; border: none; padding: 0 15px; cursor: pointer;
     opacity: 0; animation: fadeUp 1s ease forwards; animation-delay: .4s;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
   }
-  .heart-btn span{
+  .heart-btn .heart-emoji{
     font-size: clamp(36px, 8vw, 70px);
     line-height: 1;
     text-shadow: 0 2px 14px rgba(0,0,0,.45);
     color: #fff;
     animation: pulse 1.5s infinite;
+  }
+  .heart-btn .touch-text {
+    font-size: 14px;
+    opacity: 0.5;
+    margin-top: -10px;
+    font-family: Inter, sans-serif;
   }
   @keyframes pulse {
     0% { transform: scale(1); }
@@ -179,7 +186,8 @@
     <div class="flex gap-4 items-center">
       <div class="name-text name-left">NIKOLAS</div>
       <button class="heart-btn" id="heartButton">
-        <span>❤️</span>
+        <span class="heart-emoji">❤️</span>
+        <span class="touch-text">touch me</span>
       </button>
       <div class="name-text name-right">KAVITA</div>
     </div>
