@@ -263,14 +263,13 @@
 /* ---------- Music toggle (optional) ---------- */
 const bgm = document.getElementById('bgm');
 const musicToggle = document.getElementById('musicToggle');
-let musicOn = false;
+let musicOn = true;
 function setMusic(on){
   musicOn = !!on; bgm.muted = !musicOn;
   musicToggle.setAttribute('aria-pressed', String(musicOn));
   musicToggle.textContent = musicOn ? 'Music: On' : 'Music: Off';
 }
 setMusic(true);
-bgm.play().catch(()=>{});
 
 musicToggle.addEventListener('click', async ()=>{
   setMusic(!musicOn);
@@ -299,12 +298,15 @@ bgm.addEventListener('error', () => {
   document.body.appendChild(n); setTimeout(()=>n.remove(), 3200);
 });
 
-// If user clicks anywhere first, try to start playback (helps some browsers)
-function userStartAudio(){
-  if (musicOn) bgm.play().catch(()=>{});
-  document.removeEventListener('pointerdown', userStartAudio);
+// Start the intro and music on first user interaction
+let hasStarted = false;
+function startIntroAndMusic(){
+  if (hasStarted) return;
+  hasStarted = true;
+  try{ bgm.play(); }catch{}
+  playScenes();
 }
-document.addEventListener('pointerdown', userStartAudio);
+document.addEventListener('pointerdown', startIntroAndMusic);
 
 /* ---------- RSVP -> Google Sheet + ICS ---------- */
 async function logToSheet(payload){
@@ -460,16 +462,7 @@ function endIntro(){
   reel.classList.add('hidden');
   document.getElementById('mainCard')?.classList.add('in');
 }
-// Start the intro automatically
-playScenes();
 introSkip.addEventListener('click', endIntro);
-/* Tap anywhere else to start silently */
-document.addEventListener('click', (e)=>{
-  if(reel.classList.contains('hidden')) return;
-  if(e.target === introSkip) return;
-  // single tap anywhere will start intro silently
-  if(stage.childElementCount === 0) playScenes();
-});
 /* Respect reduced motion */
 if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) endIntro();
 </script>
