@@ -41,7 +41,7 @@
     position: fixed;
     inset: 0;
     z-index: 50; /* Remains below the animated petals for initial view */
-    background: rgba(123, 23, 51, 0.95);
+    background: var(--wine); /* Solid wine red background color */
     transition: opacity 0.6s ease;
   }
   
@@ -52,7 +52,7 @@
   #touchIntro {
     position:fixed; inset:0; z-index:70; /* Lower than fxCanvas so petals are on top of names/heart */
     display:flex; align-items:center; justify-content:center; flex-direction:column;
-    padding:2rem; text-align:center; color:#fff; background:rgba(10,4,6,.0); backdrop-filter: blur(0px);
+    padding:2rem; text-align:center; color:#fff; backdrop-filter: blur(0px);
     transition:opacity .6s ease, visibility .6s ease;
   }
   #touchIntro.hidden{ opacity:0; visibility:hidden; }
