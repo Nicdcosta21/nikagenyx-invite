@@ -37,7 +37,7 @@
   }
 
   /* Petals layer (z-index adjusted for effect) */
-  #fxCanvas{ position:fixed; inset:0; z-index:65; pointer-events:none; }
+  #fxCanvas{ position:fixed; inset:0; z-index:75; /* Increased z-index */ pointer-events:none; }
   .petals-blast { animation: blastPetals 1.2s ease-out forwards; }
   @keyframes blastPetals {
     0% { transform: scale(1); opacity: 1; }
@@ -69,23 +69,46 @@
     background: none; border: none; padding: 0 15px; cursor: pointer;
     opacity: 0; animation: fadeUp 1s ease forwards; animation-delay: .4s;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
+    position: relative; /* For absolute positioning of text */
+    width: clamp(80px, 16vw, 120px); /* Adjust size as needed */
+    height: clamp(80px, 16vw, 120px);
   }
-  .heart-btn .heart-emoji{
-    font-size: clamp(36px, 8vw, 70px);
-    line-height: 1;
-    text-shadow: 0 2px 14px rgba(0,0,0,.45);
-    color: #fff;
+
+  /* Custom Heart SVG container */
+  .heart-btn .heart-svg-wrapper {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     animation: pulse 1.5s infinite;
   }
-  .heart-btn .touch-text {
-    font-size: 14px;
-    opacity: 0.5;
-    margin-top: -10px;
-    font-family: Inter, sans-serif;
+
+  .heart-btn .heart-svg {
+    width: 100%;
+    height: 100%;
+    fill: #E91E63; /* Red heart color */
+    stroke: #000; /* Black border */
+    stroke-width: 4px; /* Border thickness */
+    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4)); /* Shadow for depth */
   }
+
+  .heart-btn .touch-text {
+    position: absolute;
+    font-size: clamp(10px, 2.5vw, 18px);
+    font-weight: 600;
+    color: #fff; /* White text color */
+    opacity: 0.6; /* Faded effect */
+    font-family: Inter, sans-serif;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.5); /* Text shadow for readability */
+    z-index: 1; /* Ensure text is above SVG */
+    line-height: 1; /* Prevent extra line height */
+  }
+
   @keyframes pulse {
     0% { transform: scale(1); }
-    50% { transform: scale(1.2); }
+    50% { transform: scale(1.1); } /* Slightly less aggressive pulse */
     100% { transform: scale(1); }
   }
 
@@ -186,7 +209,11 @@
     <div class="flex gap-4 items-center">
       <div class="name-text name-left">NIKOLAS</div>
       <button class="heart-btn" id="heartButton">
-        <span class="heart-emoji">❤️</span>
+        <div class="heart-svg-wrapper">
+            <svg class="heart-svg" viewBox="0 0 24 24">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+        </div>
         <span class="touch-text">touch me</span>
       </button>
       <div class="name-text name-right">KAVITA</div>
@@ -441,12 +468,24 @@ form.addEventListener('submit', async (e)=>{
   function resize(){ w=canvas.width=innerWidth; h=canvas.height=innerHeight; }
   addEventListener('resize',resize); resize();
 
+  // Function to draw a more realistic petal shape
+  function drawPetal(ctx, x, y, r, angle) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(angle);
+    ctx.beginPath();
+    // A more elongated, curved petal shape
+    ctx.ellipse(0, 0, r * 0.7, r * 1.5, Math.PI / 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
   function petal(){
     const x = Math.random() * w;
     const y = -20 - Math.random() * h; // Start above the screen
-    return { x, y, r:6+Math.random()*10, a:Math.random()*Math.PI*2, v:.5+Math.random()*1.2, swing:.8+Math.random()*1.2, blasted: false };
+    return { x, y, r:6+Math.random()*10, a:Math.random()*Math.PI*2, v:.5+Math.random()*1.2, swing:.8+Math.random()*1.2, blasted: false, opacity: 0.4 }; // Increased opacity
   }
-  for(let i=0;i<30;i++) petals.push(petal()); // More petals for a fuller cover
+  for(let i=0;i<60;i++) petals.push(petal()); // More petals for a fuller cover and longer fall
 
   function draw(){
     ctx.clearRect(0,0,w,h);
@@ -462,9 +501,8 @@ form.addEventListener('submit', async (e)=>{
         if (p.opacity <= 0) p.y = h + 100; // Effectively remove from view
       }
 
-      ctx.beginPath(); ctx.ellipse(p.x,p.y,p.r*0.6,p.r,p.a,0,Math.PI*2);
-      ctx.fillStyle=`rgba(123,23,51,${p.blasted ? (p.opacity || 0.16) : 0.16})`;
-      ctx.fill();
+      ctx.fillStyle=`rgba(123,23,51,${p.opacity})`; // Use petal's current opacity
+      drawPetal(ctx, p.x, p.y, p.r, p.a); // Use custom petal drawing function
     });
     confetti.forEach(c=>{
       c.y+=c.v; c.x+=c.wobbleSpeed*Math.sin(c.y*0.05+c.phase); c.rotation+=c.spin; c.life-=1;
@@ -479,7 +517,7 @@ form.addEventListener('submit', async (e)=>{
   window.blastAllPetals = function(){
     petals.forEach(p => {
       p.blasted = true;
-      p.opacity = 0.16; // Start fading from current opacity
+      p.opacity = 0.4; // Start fading from initial opacity
     });
     // Remove the canvas after the blast animation finishes
     setTimeout(() => {
