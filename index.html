@@ -22,7 +22,7 @@
   html, body { height: 100%; scroll-behavior: smooth; }
   body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; color: var(--ink); position: relative; }
 
-  /* Static background */
+  /* Static background - still present for later states if petals clear, but initially hidden by petals */
   body::before{
     content:""; position:fixed; inset:0; z-index:-3;
     background:url('/assets/hero.jpg') center / cover no-repeat;
@@ -36,13 +36,13 @@
       linear-gradient(180deg, rgba(20,6,10,.55), rgba(20,6,10,.65));
   }
 
-  /* Petals layer (under overlays for readability) */
+  /* Petals layer (will completely cover the screen initially) */
   #fxCanvas{ position:fixed; inset:0; z-index:55; pointer-events:none; transition: opacity .6s ease; }
 
   /* Touch-to-begin overlay */
   #touchIntro {
     position:fixed; inset:0; z-index:70; display:flex; align-items:center; justify-content:center; flex-direction:column;
-    padding:2rem; text-align:center; color:#fff; background:rgba(10,4,6,.55); backdrop-filter: blur(2px);
+    padding:2rem; text-align:center; color:#fff; background:rgba(10,4,6,.0); /* Make background transparent here */ backdrop-filter: blur(0px); /* Remove blur here */
     transition:opacity .6s ease, visibility .6s ease;
   }
   #touchIntro.hidden{ opacity:0; visibility:hidden; }
@@ -87,6 +87,9 @@
   }
   .heart-btn .touch-text {
     position:absolute;
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Adjust for its own size */
     font-size:clamp(10px, 2.5vw, 18px); font-weight:600; color:#fff; opacity:.7; line-height:1;
     text-shadow:0 1px 4px rgba(0,0,0,.5); font-family:Inter, sans-serif;
   }
@@ -415,7 +418,7 @@ form.addEventListener('submit', async (e)=>{
 (function(){
   const canvas=document.getElementById('fxCanvas'), ctx=canvas.getContext('2d');
   let w,h, petals=[], confetti=[];
-  const numStaticPetals = 450; // Increased number of static petals
+  const numStaticPetals = 4500000; // Increased number of static petals by 10000x
   let isBlasting = false;
 
   function resize(){ w=canvas.width=innerWidth; h=canvas.height=innerHeight; }
