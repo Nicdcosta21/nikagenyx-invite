@@ -36,37 +36,43 @@
       linear-gradient(180deg, rgba(20,6,10,.55), rgba(20,6,10,.65));
   }
 
-  /* Optional petals layer */
-  #fxCanvas{ position:fixed; inset:0; z-index:-2; pointer-events:none; }
-  .petals-fade { transition: opacity .8s ease; }
-  .petals-fade.out { opacity: 0; }
-  .petals-blast { transform: scale(2); transition: transform .8s ease, opacity .8s ease; }
+  /* Petals layer (z-index adjusted for effect) */
+  #fxCanvas{ position:fixed; inset:0; z-index:65; pointer-events:none; }
+  .petals-blast { animation: blastPetals 1.2s ease-out forwards; }
+  @keyframes blastPetals {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(1.5) translateY(-50px); opacity: 0; }
+  }
 
 
   /* Touch-to-begin overlay */
   #touchIntro {
     position:fixed; inset:0; z-index:70; display:flex; align-items:center; justify-content:center; flex-direction:column;
     padding:2rem; text-align:center; color:#fff; background:rgba(10,4,6,.55); backdrop-filter: blur(2px);
-    transition:opacity .4s ease, visibility .4s ease;
+    transition:opacity .6s ease, visibility .6s ease;
   }
   #touchIntro.hidden{ opacity:0; visibility:hidden; }
-  .touch-text{
+
+  .name-text{
     font-family:"Playfair Display", Georgia, serif;
-    font-size:clamp(24px, 6vw, 52px);
+    font-size:clamp(28px, 8vw, 60px);
+    font-weight:700;
     line-height:1.2; letter-spacing:.01em; text-shadow:0 2px 14px rgba(0,0,0,.45);
     opacity:0; transform:translateY(16px); animation: fadeUp 1s ease forwards;
-  }
-  .heart-icon{
-    width: clamp(50px, 15vw, 150px);
-    height: clamp(50px, 15vw, 150px);
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23fff"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5A5.5 5.5 0 0 1 7.5 3a5.5 5.5 0 0 1 5.5 5.25A5.5 5.5 0 0 1 18.5 3a5.5 5.5 0 0 1 5.5 5.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>');
-    background-size: contain; background-repeat: no-repeat;
-    opacity:0; animation: fadeUp 1s ease forwards;
     transition: transform 1s ease, opacity 1s ease;
   }
-  .heart-left{ transform: translateX(-40px); animation-delay: .2s; }
-  .heart-right{ transform: translateX(40px); animation-delay: .2s; }
-  .heart-merge .heart-left, .heart-merge .heart-right { transform: translateX(0); }
+  .name-left{ transform: translateX(-40px); animation-delay: .2s; }
+  .name-right{ transform: translateX(40px); animation-delay: .2s; }
+  .name-merge .name-left, .name-merge .name-right { transform: translateX(0); }
+
+  .connect-text{
+    font-family:"Playfair Display", Georgia, serif;
+    font-size:clamp(18px, 4vw, 36px);
+    margin: 0 15px;
+    opacity:0; transform:translateY(16px); animation: fadeUp 1s ease forwards; animation-delay: .4s;
+    transition: opacity 1s ease;
+  }
+  .connect-text.fade-out { opacity: 0; }
 
 
   /* Reel/Short style intro overlay */
@@ -75,7 +81,9 @@
     padding:2rem; text-align:center; color:#fff; background:rgba(10,4,6,.55); backdrop-filter: blur(2px);
     transition:opacity .4s ease, visibility .4s ease;
   }
+  #reel.visible{ display:flex; } /* Use a class to manage display property */
   #reel.hidden{ opacity:0; visibility:hidden; }
+
   .reel-stage{ width:min(92vw, 900px); display:flex; align-items:center; justify-content:center; flex-direction:column; }
   .reel-line{
     font-family:"Playfair Display", Georgia, serif;
@@ -161,9 +169,9 @@
 
   <div id="touchIntro" role="dialog" aria-modal="true" aria-label="Intro">
     <div class="flex gap-4 items-center">
-      <div class="heart-icon heart-left"></div>
-      <div class="touch-text">Connect our paths</div>
-      <div class="heart-icon heart-right"></div>
+      <div class="name-text name-left">NIKOLAS</div>
+      <div class="connect-text">Connect our paths</div>
+      <div class="name-text name-right">KAVITA</div>
     </div>
   </div>
 
@@ -415,16 +423,30 @@ form.addEventListener('submit', async (e)=>{
   function resize(){ w=canvas.width=innerWidth; h=canvas.height=innerHeight; }
   addEventListener('resize',resize); resize();
 
-  function petal(){ return { x:Math.random()*w, y:-20-Math.random()*h, r:6+Math.random()*10, a:Math.random()*Math.PI*2, v:.5+Math.random()*1.2, swing:.8+Math.random()*1.2 }; }
-  for(let i=0;i<22;i++) petals.push(petal());
+  function petal(){
+    const x = Math.random() * w;
+    const y = -20 - Math.random() * h; // Start above the screen
+    return { x, y, r:6+Math.random()*10, a:Math.random()*Math.PI*2, v:.5+Math.random()*1.2, swing:.8+Math.random()*1.2, blasted: false };
+  }
+  for(let i=0;i<30;i++) petals.push(petal()); // More petals for a fuller cover
 
   function draw(){
     ctx.clearRect(0,0,w,h);
     petals.forEach(p=>{
-      p.a+=0.02; p.x+=Math.sin(p.a)*p.swing*0.3; p.y+=p.v;
-      if(p.y>h+40) Object.assign(p,petal(),{y:-20});
+      if (!p.blasted) {
+        p.a+=0.02; p.x+=Math.sin(p.a)*p.swing*0.3; p.y+=p.v;
+        if(p.y>h+40) Object.assign(p,petal(),{y:-20});
+      } else {
+        // Petal blasting logic: move outwards and fade
+        p.x += (p.x - w/2) * 0.05; // Move horizontally away from center
+        p.y += (p.y - h/2) * 0.05 + 1; // Move vertically away from center + gravity
+        p.opacity -= 0.02;
+        if (p.opacity <= 0) p.y = h + 100; // Effectively remove from view
+      }
+
       ctx.beginPath(); ctx.ellipse(p.x,p.y,p.r*0.6,p.r,p.a,0,Math.PI*2);
-      ctx.fillStyle='rgba(123,23,51,0.16)'; ctx.fill();
+      ctx.fillStyle=`rgba(123,23,51,${p.blasted ? (p.opacity || 0.16) : 0.16})`;
+      ctx.fill();
     });
     confetti.forEach(c=>{
       c.y+=c.v; c.x+=c.wobbleSpeed*Math.sin(c.y*0.05+c.phase); c.rotation+=c.spin; c.life-=1;
@@ -435,6 +457,19 @@ form.addEventListener('submit', async (e)=>{
     requestAnimationFrame(draw);
   }
   draw();
+
+  window.blastAllPetals = function(){
+    petals.forEach(p => {
+      p.blasted = true;
+      p.opacity = 0.16; // Start fading from current opacity
+    });
+    // Remove the canvas after the blast animation finishes
+    setTimeout(() => {
+      fxCanvas.style.opacity = 0; // Fade out the canvas itself
+      setTimeout(() => fxCanvas.style.display = 'none', 1200); // Hide after fading
+    }, 1000); // Adjust timing based on blastPetals animation duration
+  };
+
   window.confettiBurst = function(){
     for(let i=0;i<80;i++){
       confetti.push({
@@ -450,7 +485,9 @@ form.addEventListener('submit', async (e)=>{
 
 /* ---------- Reel Engine: script your lines like a Short ---------- */
 const touchIntro = document.getElementById('touchIntro');
-const touchHearts = document.querySelectorAll('.heart-icon');
+const nameLeftEl = document.querySelector('.name-left');
+const nameRightEl = document.querySelector('.name-right');
+const connectTextEl = document.querySelector('.connect-text');
 const reel = document.getElementById('reel');
 const stage = document.getElementById('reelStage');
 const introSkip = document.getElementById('introSkip');
@@ -507,15 +544,20 @@ function startExperience(){
 
   try{ bgm.play(); }catch{}
 
-  // Animate the hearts to merge
-  touchHearts.forEach(h => h.classList.add('heart-merge'));
+  // Animate names to merge and fade out connect text
+  nameLeftEl.classList.add('name-merge');
+  nameRightEl.classList.add('name-merge');
+  connectTextEl.classList.add('fade-out');
   
-  // Transition to the main intro after a brief delay
+  // Blast petals
+  window.blastAllPetals();
+
+  // Transition to the main intro after a brief delay for animations
   setTimeout(()=>{
     touchIntro.classList.add('hidden');
-    reel.style.display = 'flex';
+    reel.classList.add('visible'); // Make reel visible
     playScenes();
-  }, 1000);
+  }, 1500); // Increased delay to allow petal blast and name merge
 }
 
 // Start the experience on the first user interaction
