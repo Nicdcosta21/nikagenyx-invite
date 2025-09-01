@@ -10,10 +10,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 
-  <meta name="description" content="Wedding Ceremony of Nikolas Samson D’Costa and Kavita Kevin Fernandes — 27 Oct 2025, 3:00 PM at Santa Cruz Cathedral Basilica, Fort Kochi." />
+  <meta name="description" content="Wedding Ceremony of Nikolas Samson D’Costa and Kavita Kevin Fernandes — 27 Oct 2025, 3:00 PM at Santa Cruz Cathedral Basilica, Fort Kochi. Reception at The Croft, Kochi." />
   <meta property="og:title" content="NIKOLAS & KAVITA — Wedding Ceremony" />
   <meta property="og:description" content="27 Oct 2025 • 3:00 PM • Santa Cruz Cathedral Basilica, Fort Kochi • Reception at The Croft, Kochi." />
   <meta property="og:type" content="website" />
+  <meta property="og:image" content="/assets/hero.jpg" />
   <meta name="theme-color" content="#7b1733" />
 
   <style>
@@ -159,6 +160,66 @@
 
     .main-content.visible {
       opacity: 1;
+    }
+    
+    .names-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem; /* Space between names and heart */
+    }
+
+    /* Heart icon */
+    .heart-icon {
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      position: relative;
+      animation: heartbeat 1.5s infinite;
+    }
+
+    .heart-icon::before,
+    .heart-icon::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      height: 100%;
+      background: var(--wine);
+      border-radius: 50%;
+    }
+
+    .heart-icon::before {
+      transform: translate(-50%, -50%) rotate(45deg);
+      background: rgba(255, 255, 255, 0.9);
+      width: 30px;
+      height: 30px;
+    }
+
+    .heart-icon::after {
+      transform: translate(-50%, -50%) rotate(45deg);
+      background: rgba(255, 255, 255, 0.9);
+      width: 30px;
+      height: 30px;
+      left: calc(50% + 15px);
+    }
+    
+    /* Make the heart clickable */
+    .heart-touch-area {
+        position: absolute;
+        inset: -10px;
+        z-index: 10;
+    }
+
+    .heart-icon:hover {
+        animation: none;
+    }
+
+    @keyframes heartbeat {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
     }
 
     /* Bible verse */
@@ -432,6 +493,21 @@
       outline: none;
       border-color: var(--wine);
     }
+    
+    .form-select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 16px;
+      transition: border-color 0.3s ease;
+      box-sizing: border-box;
+    }
+
+    .form-select:focus {
+      outline: none;
+      border-color: var(--wine);
+    }
 
     .modal-buttons {
       display: flex;
@@ -535,8 +611,21 @@
   </audio>
 
   <div class="intro-screen" id="introScreen">
-    <div class="intro-title">NIKOLAS & KAVITA</div>
-    <button class="intro-cta" id="introCta">Touch to begin</button>
+    <div class="intro-title">
+      <div class="parents-info">
+        s/o Samson Nicholas D’Costa and Suni Samson D’Costa,
+      </div>
+      <div class="names-container">
+        <span>NIKOLAS</span>
+        <div class="heart-icon" id="heartCta">
+          <div class="heart-touch-area"></div>
+        </div>
+        <span>KAVITA</span>
+      </div>
+      <div class="parents-info">
+        d/o Kevin Thomas Fernandes and Annie Kevin Fernandes.
+      </div>
+    </div>
   </div>
 
   <div class="main-content" id="mainContent">
@@ -612,7 +701,18 @@
         </div>
         <div class="form-group" id="guestCountGroup" style="display: none;">
           <label class="form-label" for="guestCount">Number of Guests</label>
-          <input type="number" id="guestCount" class="form-input" min="1" max="10" value="1">
+          <select id="guestCount" name="guestCount" class="form-select">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+          </select>
         </div>
         <div class="modal-buttons">
           <button type="button" class="btn-cancel" onclick="closeRSVP()">Cancel</button>
@@ -826,6 +926,19 @@
       document.getElementById('rsvpModal').classList.remove('visible');
       document.getElementById('rsvpForm').reset();
     }
+    
+    // Log RSVP event to the serverless function
+    async function logToSheet(name, guestCount, type) {
+      try {
+        await fetch('/.netlify/functions/log_event', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: name, status: type, count: guestCount })
+        });
+      } catch (e) {
+        console.error("Failed to log RSVP:", e);
+      }
+    }
 
     // Calendar file generation
     function generateICS(name, guestCount, type) {
@@ -925,6 +1038,8 @@ END:VCALENDAR`;
       const name = document.getElementById('fullName').value;
       const guestCount = document.getElementById('guestCount').value || 1;
       
+      logToSheet(name, guestCount, currentRSVPType);
+      
       createConfetti();
       generateICS(name, guestCount, currentRSVPType);
       
@@ -938,8 +1053,8 @@ END:VCALENDAR`;
 
     // Initialize everything
     document.addEventListener('DOMContentLoaded', function() {
-      const introCtaButton = document.getElementById('introCta');
-      introCtaButton.addEventListener('click', handleIntroCta);
+      const heartCta = document.getElementById('heartCta');
+      heartCta.addEventListener('click', handleIntroCta);
       
       // Check for reduced motion
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
