@@ -176,6 +176,13 @@
       #fxCanvas{ display:none; }
       #petalOverlay{ display:none; } /* Also hide the static overlay for reduced motion */
     }
+
+/* Stack names cleanly and respect \n in reel text */
+.names-stack { line-height: 1.1 }
+.reel-line { white-space: pre-line; }  /* lets \n become real line breaks */
+
+.names-stack .amp { font-size:.85em; letter-spacing:.05em; display:block; margin:.1em 0; }
+
   </style>
 </head>
 <body class="bg-white antialiased">
@@ -224,7 +231,11 @@
 
           <div class="mt-5 text-gray-700">
             <p class="text-base md:text-lg">s/o Samson Nicholas D’Costa and Suni Samson D’Costa,</p>
-            <h1 class="heading-elegant text-4xl md:text-6xl font-bold tracking-wide mt-1">NIKOLAS & KAVITA</h1>
+           <h1 class="heading-elegant names-stack text-4xl md:text-6xl font-bold tracking-wide mt-1">
+  <span class="block">NIKOLAS</span>
+  <span class="amp">&</span>
+  <span class="block">KAVITA</span>
+</h1>
             <p class="text-base md:text-lg mt-1">d/o Kevin Thomas Fernandes and Annie Kevin Fernandes.</p>
           </div>
 
@@ -527,7 +538,7 @@ let hasStarted = false;
 
 const scenes = [
   { text: "With great joy and gratitude,",     effect: "fx-fadeUp",   duration: 1100 },
-  { text: "Nikolas & Kavita",                   effect: "fx-zoomOut",  duration: 1200 },
+  { text: "Nikolas\n&\nKavita", effect: "fx-zoomOut", duration: 1200 },
   { text: "Invite you to celebrate their wedding",  effect: "fx-wipeLeft", duration: 1000 },
   { text: "On Monday, 27 October 2025",         effect: "fx-words",    duration: 1200 },
   { text: "At Santa Cruz Cathedral Basilica",   effect: "fx-fadeUp",   duration: 1100 },
