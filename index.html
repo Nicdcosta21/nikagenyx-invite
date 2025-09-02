@@ -30,8 +30,17 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
 .heart-btn:hover{transform:translateY(-2px)}
 .heart-svg-wrapper{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;animation:pulse 1.5s infinite}
 .heart-svg{width:100%;height:100%;filter:drop-shadow(0 8px 16px rgba(0,0,0,.45))}
-.heart-svg path{fill:#ffffff;stroke:#ffffff;stroke-width:1px}
-.heart-btn .touch-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:clamp(11px,2.4vw,16px);font-weight:800;color:#7b1733;text-shadow:0 1px 2px rgba(255,255,255,.9);pointer-events:none}
+/* Heart color — deep blood red with darker outline */
+.heart-svg path{
+  fill:#960018;          /* blood red */
+  stroke:#7b0013;        /* darker rim for 3D pop */
+  stroke-width:1.2px;
+}
+/* Label on top of the red heart needs to be white for contrast */
+.heart-btn .touch-text{
+  color:#ffffff;
+  text-shadow:0 1px 3px rgba(0,0,0,.6);
+}
 .heart-btn.floating{animation:float 3s ease-in-out infinite}
 @keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.08)}100%{transform:scale(1)}}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
@@ -233,8 +242,11 @@ const petals=new PetalsSystem();
 /* ---------- Intro reel ---------- */
 const introTexts=[
   "With great joy and gratitude",
+  "Samson & Suni D'Costa",
+  "Along With",
+  "Kevin & Annie Fernandes",
+  "Invite you to celebrate the wedding of",
   "Nikolas & Kavita",
-  "Invite you to celebrate their wedding",
   "On Monday, 27 Oct 2025",
   "At Santa Cruz Cathedral Basilica",
   "Reception to follow at The Croft"
