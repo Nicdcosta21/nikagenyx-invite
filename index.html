@@ -146,18 +146,33 @@
       padding:.45rem .7rem; font-weight:600; border:1px solid rgba(0,0,0,.08);
     }
 
+
+    :root{
+  --display-font: "Playfair Display", Georgia, serif;
+  --body-font: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+body{ font-family: var(--body-font); }
+h1, h2, h3, .heading-elegant, .reel-line { font-family: var(--display-font); }
+
+
     /* Main content */
-    h1,h2,h3 { font-family: "Playfair Display", Georgia, serif; }
     .heading-elegant{ letter-spacing:.01em; }
     .hero{ min-height:100vh; display:flex; align-items:center; }
     .card{
-      background:#fff; color:var(--ink); border-radius:1.25rem; padding:2rem;
-      box-shadow:0 25px 50px rgba(0,0,0,.28);
-      background-image:radial-gradient(80% 60% at 5% 0%, var(--wine-soft), transparent 40%);
-      transform: translateY(10px); opacity:0; transition: transform .8s ease, opacity .8s ease;
-      z-index: 30; /* Ensure card is above petals */
-      position: relative; /* Needed for z-index to work */
-    }
+  color: var(--ink);
+  border-radius: 20px;
+  padding: 2rem;
+  background: rgba(255,255,255,.96);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 20px 40px rgba(0,0,0,.2);
+  background-image: radial-gradient(80% 60% at 5% 0%, var(--wine-soft), transparent 40%);
+  transform: translateY(10px);
+  opacity: 0;
+  transition: transform .8s ease, opacity .8s ease;
+  z-index: 30;           /* Keep above petals */
+  position: relative;     /* Required for z-index */
+}
+
     .card.in{ transform:none; opacity:1; }
     .underline-link{ color:var(--wine); text-decoration:underline; }
     .smallcaps{ letter-spacing:.08em; text-transform:uppercase; }
@@ -183,6 +198,10 @@
 
 .names-stack .amp { font-size:.85em; letter-spacing:.05em; display:block; margin:.1em 0; }
 
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+.heart-btn.floating { animation: float 3s ease-in-out infinite; }
+
+
   </style>
 </head>
 <body class="bg-white antialiased">
@@ -203,7 +222,7 @@
             <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
           </svg>
         </div>
-        <span class="touch-text">touch me</span>
+        <span class="touch-text">Touch Me</span>
       </button>
       <div class="name-text name-right">KAVITA</div>
     </div>
@@ -329,6 +348,8 @@
   </div>
 
 <script>
+
+
 /* ---------- Countdown ---------- */
 (function(){
   const target = new Date('2025-10-27T15:00:00+05:30').getTime();
@@ -439,6 +460,36 @@ form.addEventListener('submit', async (e)=>{
 });
 
 /* ---------- Petals + confetti ---------- */
+
+  function petalHSL(){                 // Canva-like bright reds with variation
+  const h = 340 + Math.random()*20;  // 340–360
+  const s = 70;                      // 70%
+  const l = 70 + Math.random()*20;   // 70–90%
+  return `hsl(${h}deg, ${s}%, ${l}%)`;
+}
+
+function drawPetal(ctx, x, y, r, angle, opacity) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(angle);
+
+  // shape (keep your nice elongated ellipse)
+  ctx.beginPath();
+  ctx.ellipse(0, 0, r * 0.7, r * 1.5, Math.PI / 2, 0, Math.PI * 2);
+
+  // color & subtle shadow
+  ctx.globalAlpha = opacity;                // opacity from your particle
+  ctx.fillStyle = petalHSL();               // <-- Canva-style color flow
+  ctx.shadowColor = 'rgba(0,0,0,0.18)';
+  ctx.shadowBlur = 4;
+  ctx.shadowOffsetY = 2;
+
+  ctx.fill();
+  ctx.globalAlpha = 1;
+  ctx.shadowColor = 'transparent';
+  ctx.restore();
+}
+
 (function(){
   const canvas=document.getElementById('fxCanvas'), ctx=canvas.getContext('2d');
   const petalOverlay = document.getElementById('petalOverlay');
@@ -449,20 +500,7 @@ form.addEventListener('submit', async (e)=>{
   function resize(){ w=canvas.width=innerWidth; h=canvas.height=innerHeight; }
   addEventListener('resize',resize); resize();
 
-  function drawPetal(ctx, x, y, r, angle, opacity) {
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.rotate(angle);
-    ctx.beginPath();
-    ctx.ellipse(0, 0, r * 0.7, r * 1.5, Math.PI / 2, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(123,23,51,${opacity})`;
-    ctx.shadowColor = 'rgba(0,0,0,0.2)';
-    ctx.shadowBlur = 4;
-    ctx.shadowOffsetY = 2;
-    ctx.fill();
-    ctx.shadowColor = 'transparent';
-    ctx.restore();
-  }
+  
 
   function createFallingPetals(){
     petals = [];
@@ -520,7 +558,8 @@ form.addEventListener('submit', async (e)=>{
 
   window.confettiBurst = function(){
     for(let i=0;i<80;i++){
-      confetti.push({ x:w/2+(Math.random()-0.5)*120, y:h/2, v:2+Math.random()*3, wobbleSpeed:1+Math.random()*2, phase:Math.random()*Math.PI*2, rotation:Math.random()*Math.PI, spin:(Math.random()-.5)*0.2, size:6+Math.random()*8, color:['#7b1733','#c92a50','#ffd3df','#ffffff'][Math.floor(Math.random()*4)], life:120+Math.random()*60 });
+      confetti.push({ x:w/2+(Math.random()-0.5)*120, y:h/2, v:2+Math.random()*3, wobbleSpeed:1+Math.random()*2, phase:Math.random()*Math.PI*2, rotation:Math.random()*Math.PI, spin:(Math.random()-.5)*0.2, size:6+Math.random()*8, color: (Math.random() < 0.85 ? petalHSL() : '#ffffff')
+, life:120+Math.random()*60 });
     }
   };
 })();
@@ -529,6 +568,7 @@ form.addEventListener('submit', async (e)=>{
 const touchIntro = document.getElementById('touchIntro');
 const namesWrap = document.getElementById('namesWrap');
 const heartButton = document.getElementById('heartButton');
+  setTimeout(()=> heartButton.classList.add('floating'), 1000);
 const reel = document.getElementById('reel');
 const stage = document.getElementById('reelStage');
 const introSkip = document.getElementById('introSkip');
