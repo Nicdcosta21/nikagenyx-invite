@@ -88,12 +88,22 @@
       position: absolute; inset:0; display:flex; align-items:center; justify-content:center;
       animation: pulse 1.5s infinite;
     }
-    .heart-btn .heart-svg {
-      width:100%; height:100%; fill:#960018; /* Blood red color */
-      stroke: #7b0013; /* Darker outline for 3D effect */
-      stroke-width: 1px;
-      filter: drop-shadow(0 4px 10px rgba(0,0,0,.5)); /* Stronger shadow for 3D */
-    }
+    .heart-btn .heart-svg{
+  width:100%; height:100%;
+  fill:#fff;               /* high contrast */
+  stroke:#fff;
+  stroke-width: 1px;
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,.45));
+}
+
+    /* optional soft halo */
+.heart-btn::before{
+  content:"";
+  position:absolute; inset:-8px;
+  border-radius:50%;
+  background: radial-gradient(rgba(255,255,255,.18), rgba(255,255,255,0) 60%);
+  pointer-events:none;
+}
     .heart-btn .touch-text {
       position:absolute;
       top: 50%; /* Center vertically */
@@ -201,7 +211,12 @@ h1, h2, h3, .heading-elegant, .reel-line { font-family: var(--display-font); }
     @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
 .heart-btn.floating { animation: float 3s ease-in-out infinite; }
 
+#petalOverlay.hidden{
+  opacity:0;
+  pointer-events:none;   /* lets clicks pass through */
+}
 
+    
   </style>
 </head>
 <body class="bg-white antialiased">
@@ -251,9 +266,9 @@ h1, h2, h3, .heading-elegant, .reel-line { font-family: var(--display-font); }
           <div class="mt-5 text-gray-700">
             <p class="text-base md:text-lg">s/o Samson Nicholas D’Costa and Suni Samson D’Costa,</p>
            <h1 class="heading-elegant names-stack text-4xl md:text-6xl font-bold tracking-wide mt-1">
-  <span class="block">NIKOLAS</span>
-  <span class="amp">&</span>
-  <span class="block">KAVITA</span>
+  <span class="block">Samson & Suni D'Costa</span>
+  <span class="amp">Along With</span>
+  <span class="block">Kevin & Annie Fernandes</span>
 </h1>
             <p class="text-base md:text-lg mt-1">d/o Kevin Thomas Fernandes and Annie Kevin Fernandes.</p>
           </div>
@@ -478,8 +493,8 @@ function drawPetal(ctx, x, y, r, angle, opacity) {
   ctx.ellipse(0, 0, r * 0.7, r * 1.5, Math.PI / 2, 0, Math.PI * 2);
 
   // color & subtle shadow
-  ctx.globalAlpha = opacity;                // opacity from your particle
-  ctx.fillStyle = petalHSL();               // <-- Canva-style color flow
+  ctx.globalAlpha = opacity;               
+  ctx.fillStyle = color;              
   ctx.shadowColor = 'rgba(0,0,0,0.18)';
   ctx.shadowBlur = 4;
   ctx.shadowOffsetY = 2;
@@ -513,6 +528,7 @@ function drawPetal(ctx, x, y, r, angle, opacity) {
         v:.5+Math.random()*1.2, 
         swing:.8+Math.random()*1.2, 
         opacity:.6 + Math.random() * .3,
+        color: petalHSL(), 
         state:'falling' 
       });
     }
@@ -530,7 +546,8 @@ function drawPetal(ctx, x, y, r, angle, opacity) {
         if(p.opacity <= 0) p.state = 'done';
       }
       if(p.state !== 'done'){
-        drawPetal(ctx, p.x, p.y, p.r, p.a, p.opacity);
+        drawPetal(ctx, p.x, p.y, p.r, p.a, p.opacity, p.color);
+
       }
     });
 
@@ -547,7 +564,8 @@ function drawPetal(ctx, x, y, r, angle, opacity) {
   window.blastAllPetals = function(originX, originY){
     if(isBlasting) return;
     isBlasting = true;
-    petalOverlay.style.opacity = '0';
+    petalOverlay.classList.add('hidden');
+
     document.getElementById('fxCanvas').style.zIndex = '20'; // Keep z-index behind the card
     petals.forEach(p => {
       const dx = p.x - originX, dy = p.y - originY, angle = Math.atan2(dy, dx), speed = 5 + Math.random()*8;
