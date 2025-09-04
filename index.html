@@ -301,11 +301,14 @@ if (REDUCED){
 
   playMusic();
 
-  if (!REDUCED){
+   if (!REDUCED){
     petals.start(); petals.burst();
-    setTimeout(()=> startIntroBeatSynced(4), 300);
+    setTimeout(()=> {
+      startIntroBeatSynced(4);
+      // now hide the intro wrapper smoothly
+      document.getElementById('touchIntro').classList.add('hidden');
+    }, 1200);
   } else {
-    // go straight to main content without slides
     document.getElementById('introSequence').classList.add('hidden');
     document.getElementById('mainContent').classList.add('visible');
   }
