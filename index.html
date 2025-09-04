@@ -87,11 +87,12 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
 .form-input:focus{outline:none;border-color:var(--wine)}
 .btn-cancel{background:#6b7280;color:#fff;border:none;border-radius:24px;padding:10px 18px;font-weight:700;cursor:pointer}
 /* Reduced motion */
-@media (prefers-reduced-motion:reduce){
-  #touchIntro,.intro-sequence{display:none!important}
+@media (prefers-reduced-motion: reduce){
+  .intro-sequence{display:none!important}
   #petalsCanvas{display:none!important}
   .main-content{opacity:1!important}
 }
+
 @media (max-width:640px){
   .wedding-card{padding:2rem 1.25rem;margin:0 1rem}
   .event-row{flex-direction:column;text-align:center}
@@ -201,7 +202,14 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
 </div>
 
 <script>
-  const SHEET_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwSn0c0fdDKytyj2ssqMBvNTRq9K3MKoeIWtRL0swQhxDmmndOZ8ni2HsTbMKT5oUY/exec';
+  const SHEET_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwIaarQPjPOiNuyaBjpPXyU8pDrHtMNp6vcGVnRY3JY5eiPcEKKP41jB9W8KmlMviB2/exec';
+
+// respect reduced-motion, but keep the heart (touch intro) visible
+const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+if (REDUCED){
+  document.getElementById('introSequence').style.display = 'none';
+  document.getElementById('petalsCanvas').style.display = 'none';
+}
 
   /* ---------- Music (robust unlock) ---------- */
   const bgm=document.getElementById('bgm');
@@ -289,15 +297,23 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
   const heartBtn=document.getElementById('heartButton');
   const namesWrap=document.getElementById('namesWrap');
   function begin(){
-    namesWrap.classList.add('name-merge');
-    heartBtn.style.opacity='0';
-    document.getElementById('touchIntro').classList.add('hidden');
+  namesWrap.classList.add('name-merge');
+  heartBtn.style.opacity = '0';
+  document.getElementById('touchIntro').classList.add('hidden');
+
+  playMusic();
+
+  if (!REDUCED){
     petals.start(); petals.burst();
-    playMusic();
-    setTimeout(()=> startIntroBeatSynced(4), 300); // 4 beats per slide
+    setTimeout(()=> startIntroBeatSynced(4), 300);
+  } else {
+    // go straight to main content without slides
+    document.getElementById('introSequence').classList.add('hidden');
+    document.getElementById('mainContent').classList.add('visible');
   }
-  heartBtn.addEventListener('click', begin, {passive:true});
-  heartBtn.addEventListener('touchstart', begin, {passive:true});
+}
+heartBtn.addEventListener('pointerup', begin, {passive:true});
+
   setTimeout(()=>heartBtn.classList.add('floating'), 900);
 
   /* ---------- Maps ---------- */
@@ -387,21 +403,33 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
     }
   });
 
-  function sendToSheet(payload) {
-    try {
-      if (navigator.sendBeacon) {
-        const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
-        navigator.sendBeacon(SHEET_ENDPOINT, blob);
-      } else {
-        fetch(SHEET_ENDPOINT, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        }).catch(() => {});
-      }
-    } catch (_) { /* ignore */ }
-  }
+ async function sendToSheet(payload) {
+  // Try beacon first (no CORS preflight, reliable for fire-and-forget)
+  try {
+    if (navigator.sendBeacon) {
+      const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+      if (navigator.sendBeacon(SHEET_ENDPOINT, blob)) return;
+    }
+  } catch (_) {}
+
+  // Fallback: POST without preflight (text/plain + no-cors)
+  try {
+    await fetch(SHEET_ENDPOINT, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // avoids OPTIONS preflight
+      body: JSON.stringify(payload),
+      keepalive: true
+    });
+    return;
+  } catch (_) {}
+
+  // Last-resort: GET pixel (requires doGet handler on GAS)
+  try {
+    new Image().src = SHEET_ENDPOINT + '?' + new URLSearchParams(payload).toString();
+  } catch (_) {}
+}
+
 
   function makeICS(type){
     const start='20251027T093000Z', end='20251027T103000Z';
@@ -435,19 +463,15 @@ END:VEVENT
 END:VCALENDAR`;
   }
 
-  function downloadICS(content,filename){
-    const blob=new Blob([content],{type:'text/calendar;charset=utf-8'});
-    const url=URL.createObjectURL(blob); const a=document.createElement('a');
-    a.href=url; a.download=filename; document.body.appendChild(a); a.click();
-    a.remove(); URL.revokeObjectURL(url);
-  }
+ const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* ---------- Reduced motion ---------- */
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-    document.getElementById('touchIntro').style.display='none';
-    document.getElementById('introSequence').style.display='none';
-    document.getElementById('mainContent').classList.add('visible');
-  }
+if (REDUCED){
+  // skip the slide show and petals, but keep the heart visible
+  document.getElementById('introSequence').style.display = 'none';
+  document.getElementById('petalsCanvas').style.display = 'none';
+}
+
+
 </script>
 
 </body>
