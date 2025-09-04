@@ -201,134 +201,178 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
 </div>
 
 <script>
-/* ---------- Music (robust unlock) ---------- */
-const bgm=document.getElementById('bgm');
-const musicBtn=document.getElementById('musicControl');
-let musicOn=false;
-function uiMusic(on){ musicBtn.textContent=on?'Music: On':'Music: Off'; musicBtn.setAttribute('aria-pressed',String(on)); }
-async function playMusic(){ try{ bgm.volume=.35; bgm.loop=true; await bgm.play(); musicOn=true; uiMusic(true);}catch{ musicBtn.textContent='🔈 Tap to play'; } }
-function pauseMusic(){ bgm.pause(); musicOn=false; uiMusic(false); }
-musicBtn.addEventListener('click',()=> musicOn?pauseMusic():playMusic());
-(function unlockOnce(){ const once=()=>{ playMusic(); removeEventListener('pointerdown',once); removeEventListener('keydown',once); }; addEventListener('pointerdown',once,{passive:true}); addEventListener('keydown',once); })();
-bgm.addEventListener('error',()=>{ musicBtn.textContent='🎵 Music unavailable'; });
+  const SHEET_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwSn0c0fdDKytyj2ssqMBvNTRq9K3MKoeIWtRL0swQhxDmmndOZ8ni2HsTbMKT5oUY/exec';
 
-/* ---------- Petals (fixed color per petal) ---------- */
-class PetalsSystem{
-  constructor(){ this.canvas=document.getElementById('petalsCanvas'); this.ctx=this.canvas.getContext('2d'); this.petals=[]; this.isActive=false; this.colors=['#7b1733','#a91d47','#c92a5a','#ff6b7a']; this.resize(); addEventListener('resize',()=>this.resize()); }
-  resize(){ this.canvas.width=innerWidth; this.canvas.height=innerHeight; }
-  createPetal(){ return { x:Math.random()*(this.canvas.width+200)-100, y:-30, size:Math.random()*8+4, speed:Math.random()*2+1, rotation:Math.random()*360, rotationSpeed:(Math.random()-.5)*4, opacity:.35+Math.random()*.45, color:this.colors[(Math.random()*this.colors.length)|0], drift:Math.random()*1.5-.75 }; }
-  update(){ if(!this.isActive) return; if(Math.random()<0.3) this.petals.push(this.createPetal()); this.petals=this.petals.filter(p=>{ p.y+=p.speed; p.x+=Math.sin(p.y*.01)*p.drift; p.rotation+=p.rotationSpeed; return p.y<this.canvas.height+50; }); }
-  draw(){ const c=this.ctx; c.clearRect(0,0,this.canvas.width,this.canvas.height); for(const p of this.petals){ c.save(); c.translate(p.x,p.y); c.rotate(p.rotation*Math.PI/180); c.globalAlpha=p.opacity; c.fillStyle=p.color; c.beginPath(); c.ellipse(0,0,p.size,p.size*.6,0,0,Math.PI*2); c.fill(); c.restore(); } }
-  animate(){ this.update(); this.draw(); if(this.isActive) requestAnimationFrame(()=>this.animate()); }
-  start(){ this.isActive=true; this.canvas.classList.add('active'); this.animate(); }
-  burst(){ for(let i=0;i<50;i++) setTimeout(()=>this.petals.push(this.createPetal()), i*20); }
-}
-const petals=new PetalsSystem();
+  /* ---------- Music (robust unlock) ---------- */
+  const bgm=document.getElementById('bgm');
+  const musicBtn=document.getElementById('musicControl');
+  let musicOn=false;
+  function uiMusic(on){ musicBtn.textContent=on?'Music: On':'Music: Off'; musicBtn.setAttribute('aria-pressed',String(on)); }
+  async function playMusic(){ try{ bgm.volume=.35; bgm.loop=true; await bgm.play(); musicOn=true; uiMusic(true);}catch{ musicBtn.textContent='🔈 Tap to play'; } }
+  function pauseMusic(){ bgm.pause(); musicOn=false; uiMusic(false); }
+  musicBtn.addEventListener('click',()=> musicOn?pauseMusic():playMusic());
+  (function unlockOnce(){ const once=()=>{ playMusic(); removeEventListener('pointerdown',once); removeEventListener('keydown',once); }; addEventListener('pointerdown',once,{passive:true}); addEventListener('keydown',once); })();
+  bgm.addEventListener('error',()=>{ musicBtn.textContent='🎵 Music unavailable'; });
 
-/* ---------- Intro text ---------- */
-const introTexts=[
-  "With great joy and gratitude",
-  "Samson & Suni D'Costa",
-  "Along With",
-  "Kevin & Annie Fernandes",
-  "Invite you to celebrate the wedding of",
-  "Nikolas & Kavita",
-  "On Monday, 27 Oct 2025",
-  "At Santa Cruz Cathedral Basilica",
-  "Reception to follow at Rose Garden"
-];
-let introStep=0, introTimer;
-function startIntro(){ const seq=document.getElementById('introSequence'); const t=document.getElementById('introText'); seq.classList.remove('hidden'); introStep=0; introTimer=setInterval(()=>{ if(introStep<introTexts.length){ t.style.opacity='0'; setTimeout(()=>{ t.textContent=introTexts[introStep]; t.classList.toggle('intro-names', introStep===5); t.style.opacity='1'; introStep++; }, 400);} else { endIntro(); } }, 2200); }
-function endIntro(){ clearInterval(introTimer); document.getElementById('introSequence').classList.add('hidden'); document.getElementById('mainContent').classList.add('visible'); }
-document.getElementById('skipIntro').addEventListener('click', endIntro);
-
-/* ---------- Heart gesture ---------- */
-const heartBtn=document.getElementById('heartButton');
-const namesWrap=document.getElementById('namesWrap');
-function begin(){
-  namesWrap.classList.add('name-merge');
-  heartBtn.style.opacity='0';
-  document.getElementById('touchIntro').classList.add('hidden');
-  petals.start(); petals.burst();
-  playMusic();               // definitely a gesture
-  setTimeout(startIntro, 300);
-}
-heartBtn.addEventListener('click', begin, {passive:true});
-heartBtn.addEventListener('touchstart', begin, {passive:true});
-setTimeout(()=>heartBtn.classList.add('floating'), 900);
-
-/* ---------- Maps ---------- */
-function openMap(k){
-  const m={
-    cathedral:'https://maps.google.com/?q=Santa+Cruz+Cathedral+Basilica+Fort+Kochi',
-    rose:'https://www.google.com/maps/place/Rose+Gardens+Function+Hall/@9.9189187,76.2647579,159m/data=!3m1!1e3!4m6!3m5!1s0x3b086d85e7dd2f4b:0xf685b03397b85806!8m2!3d9.9192535!4d76.2646839!16s%2Fg%2F11f00md17k?entry=ttu&g_ep=EgoyMDI1MDgzMC4wIKXMDSoASAFQAw%3D%3D'
-  };
-  window.open(m[k],'_blank');
-}
-
-/* ---------- Countdown ---------- */
-function updateCountdown(){
-  const target=new Date('2025-10-27T15:00:00+05:30').getTime();
-  const now=Date.now(), diff=Math.max(0,target-now);
-  const d=Math.floor(diff/86400000);
-  const h=String(Math.floor(diff%86400000/3600000)).padStart(2,'0');
-  const m=String(Math.floor(diff%3600000/60000)).padStart(2,'0');
-  const s=String(Math.floor(diff%60000/1000)).padStart(2,'0');
-  document.getElementById('countdownTimer').textContent = diff ? `${d} days ${h}:${m}:${s}` : "The big day is here! 🎉";
-}
-setInterval(updateCountdown,1000); updateCountdown();
-
-/* ---------- RSVP + ICS (Reception updated to Rose Garden) ---------- */
-let currentRSVPType = '';
-
-function openRSVP(type){
-  currentRSVPType = type;
-  const group = document.getElementById('guestCountGroup');
-  const select = document.getElementById('guestCount');
-
-  if (type === 'coming') {
-    group.style.display = 'block';
-    select.required = true;
-    select.value = '';               // force user to choose
-  } else {
-    group.style.display = 'none';
-    select.required = false;
-    select.value = '';
+  /* ---------- Petals (fixed color per petal) ---------- */
+  class PetalsSystem{
+    constructor(){ this.canvas=document.getElementById('petalsCanvas'); this.ctx=this.canvas.getContext('2d'); this.petals=[]; this.isActive=false; this.colors=['#7b1733','#a91d47','#c92a5a','#ff6b7a']; this.resize(); addEventListener('resize',()=>this.resize()); }
+    resize(){ this.canvas.width=innerWidth; this.canvas.height=innerHeight; }
+    createPetal(){ return { x:Math.random()*(this.canvas.width+200)-100, y:-30, size:Math.random()*8+4, speed:Math.random()*2+1, rotation:Math.random()*360, rotationSpeed:(Math.random()-.5)*4, opacity:.35+Math.random()*.45, color:this.colors[(Math.random()*this.colors.length)|0], drift:Math.random()*1.5-.75 }; }
+    update(){ if(!this.isActive) return; if(Math.random()<0.3) this.petals.push(this.createPetal()); this.petals=this.petals.filter(p=>{ p.y+=p.speed; p.x+=Math.sin(p.y*.01)*p.drift; p.rotation+=p.rotationSpeed; return p.y<this.canvas.height+50; }); }
+    draw(){ const c=this.ctx; c.clearRect(0,0,this.canvas.width,this.canvas.height); for(const p of this.petals){ c.save(); c.translate(p.x,p.y); c.rotate(p.rotation*Math.PI/180); c.globalAlpha=p.opacity; c.fillStyle=p.color; c.beginPath(); c.ellipse(0,0,p.size,p.size*.6,0,0,Math.PI*2); c.fill(); c.restore(); } }
+    animate(){ this.update(); this.draw(); if(this.isActive) requestAnimationFrame(()=>this.animate()); }
+    start(){ this.isActive=true; this.canvas.classList.add('active'); this.animate(); }
+    burst(){ for(let i=0;i<50;i++) setTimeout(()=>this.petals.push(this.createPetal()), i*20); }
   }
-  document.getElementById('rsvpModal').classList.add('visible');
-}
+  const petals=new PetalsSystem();
 
-document.getElementById('rsvpForm').addEventListener('submit', e => {
-  e.preventDefault();
+  /* ---------- Intro text ---------- */
+  const introTexts=[
+    "With great joy and gratitude",
+    "Samson & Suni D'Costa",
+    "Along With",
+    "Kevin & Annie Fernandes",
+    "Invite you to celebrate the wedding of",
+    "Nikolas & Kavita",
+    "On Monday, 27 Oct 2025",
+    "At Santa Cruz Cathedral Basilica",
+    "Reception to follow at Rose Garden"
+  ];
+  let introStep=0, introTimer;
+  function startIntro(){ const seq=document.getElementById('introSequence'); const t=document.getElementById('introText'); seq.classList.remove('hidden'); introStep=0; introTimer=setInterval(()=>{ if(introStep<introTexts.length){ t.style.opacity='0'; setTimeout(()=>{ t.textContent=introTexts[introStep]; t.classList.toggle('intro-names', introStep===5); t.style.opacity='1'; introStep++; }, 400);} else { endIntro(); } }, 2200); }
+  function endIntro(){ clearInterval(introTimer); document.getElementById('introSequence').classList.add('hidden'); document.getElementById('mainContent').classList.add('visible'); }
+  document.getElementById('skipIntro').addEventListener('click', endIntro);
 
-  const name = document.getElementById('fullName').value.trim();
-  const guestCount = (currentRSVPType === 'coming')
-    ? document.getElementById('guestCount').value
-    : 1;
+  /* ---------- Heart gesture ---------- */
+  const heartBtn=document.getElementById('heartButton');
+  const namesWrap=document.getElementById('namesWrap');
+  function begin(){
+    namesWrap.classList.add('name-merge');
+    heartBtn.style.opacity='0';
+    document.getElementById('touchIntro').classList.add('hidden');
+    petals.start(); petals.burst();
+    playMusic();
+    setTimeout(startIntro, 300);
+  }
+  heartBtn.addEventListener('click', begin, {passive:true});
+  heartBtn.addEventListener('touchstart', begin, {passive:true});
+  setTimeout(()=>heartBtn.classList.add('floating'), 900);
 
-  if (!name) return;                       // native required covers this
-  if (currentRSVPType === 'coming' && !guestCount) return; // select required
+  /* ---------- Maps ---------- */
+  function openMap(k){
+    const m={
+      cathedral:'https://maps.google.com/?q=Santa+Cruz+Cathedral+Basilica+Fort+Kochi',
+      rose:'https://www.google.com/maps/place/Rose+Gardens+Function+Hall/@9.9189187,76.2647579,159m/data=!3m1!1e3!4m6!3m5!1s0x3b086d85e7dd2f4b:0xf685b03397b85806!8m2!3d9.9192535!4d76.2646839!16s%2Fg%2F11f00md17k?entry=ttu&g_ep=EgoyMDI1MDgzMC4wIKXMDSoASAFQAw%3D%3D'
+    };
+    window.open(m[k],'_blank');
+  }
 
-  downloadICS(makeICS(currentRSVPType), 'nikolas-kavita-wedding.ics');
-  closeRSVP();
-  alert(currentRSVPType === 'coming'
-    ? `Thank you, ${name}! See you there 💕`
-    : 'Saved! Hope to see you 💕');
+  /* ---------- Countdown ---------- */
+  function updateCountdown(){
+    const target=new Date('2025-10-27T15:00:00+05:30').getTime();
+    const now=Date.now(), diff=Math.max(0,target-now);
+    const d=Math.floor(diff/86400000);
+    const h=String(Math.floor(diff%86400000/3600000)).padStart(2,'0');
+    const m=String(Math.floor(diff%3600000/60000)).padStart(2,'0');
+    const s=String(Math.floor(diff%60000/1000)).padStart(2,'0');
+    document.getElementById('countdownTimer').textContent = diff ? `${d} days ${h}:${m}:${s}` : "The big day is here! 🎉";
+  }
+  setInterval(updateCountdown,1000); updateCountdown();
+
+  /* ---------- RSVP + Sheets + ICS ---------- */
+  let currentRSVPType = '';
+
+  function openRSVP(type){
+    currentRSVPType = type;
+    const group = document.getElementById('guestCountGroup');
+    const select = document.getElementById('guestCount');
+
+    if (type === 'coming') {
+      group.style.display = 'block';
+      select.required = true;
+      select.value = '';
+    } else {
+      group.style.display = 'none';
+      select.required = false;
+      select.value = '';
+    }
+    document.getElementById('rsvpModal').classList.add('visible');
+  }
+
+  // CLOSE MODAL helpers (this was missing before)
+  function closeRSVP() {
+    document.getElementById('rsvpModal').classList.remove('visible');
+  }
+  document.getElementById('rsvpModal').addEventListener('click', (e) => {
+    if (e.target.id === 'rsvpModal') closeRSVP();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeRSVP();
+  });
+
+  document.getElementById('rsvpForm').addEventListener('submit', e => {
+    e.preventDefault();
+
+    const name = document.getElementById('fullName').value.trim();
+    const guestCount = (currentRSVPType === 'coming')
+      ? document.getElementById('guestCount').value
+      : 1;
+
+    if (!name) return;
+    if (currentRSVPType === 'coming' && !guestCount) return;
+
+    // 1) Send to Google Sheet
+    const payload = {
+      name,
+      guestCount: Number(guestCount || 1),
+      rsvpType: currentRSVPType,
+      userAgent: navigator.userAgent,
+      referrer: document.referrer || location.href
+    };
+    sendToSheet(payload);
+
+    // 2) Calendar file
+    downloadICS(makeICS(currentRSVPType), 'nikolas-kavita-wedding.ics');
+
+    // 3) Close + confirm
+    closeRSVP();
+      alert(currentRSVPType === 'coming' ? `Thank you, ${name}! Your reminder is saved.` : 'Reminder saved.');
+
+  submitBtn.disabled = false;
 });
 
-function makeICS(type){
-  const start='20251027T093000Z', end='20251027T103000Z';
-  const trig = (type==='coming')?'-P7D':'-P30D';
-  const desc = [
-    'Wedding Ceremony at Santa Cruz Cathedral Basilica, Fort Kochi.',
-    'Reception: Rose Gardens Function Hall, Kochi.',
-    'Home: Zion Villa, MLA Road, Pallurthy, Kochi 682006.',
-    'Travel: Ernakulam Jn (ERS) | Cochin Intl Airport.',
-    'Maps:',
-    'https://maps.google.com/?q=Santa+Cruz+Cathedral+Basilica+Fort+Kochi',
-    'https://www.google.com/maps/place/Rose+Gardens+Function+Hall/@9.9189187,76.2647579,159m/data=!3m1!1e3!4m6!3m5!1s0x3b086d85e7dd2f4b:0xf685b03397b85806!8m2!3d9.9192535!4d76.2646839!16s%2Fg%2F11f00md17k?entry=ttu&g_ep=EgoyMDI1MDgzMC4wIKXMDSoASAFQAw%3D%3D'
-  ].join('\\n');
-  return `BEGIN:VCALENDAR
+  function sendToSheet(payload) {
+    try {
+      if (navigator.sendBeacon) {
+        const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+        navigator.sendBeacon(SHEET_ENDPOINT, blob);
+      } else {
+        fetch(SHEET_ENDPOINT, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        }).catch(() => {});
+      }
+    } catch (_) {
+      // ignore; the calendar file still downloads
+    }
+  }
+
+  function makeICS(type){
+    const start='20251027T093000Z', end='20251027T103000Z';
+    const trig = (type==='coming')?'-P7D':'-P30D';
+    const desc = [
+      'Wedding Ceremony at Santa Cruz Cathedral Basilica, Fort Kochi.',
+      'Reception: Rose Gardens Function Hall, Kochi.',
+      'Home: Zion Villa, MLA Road, Pallurthy, Kochi 682006.',
+      'Travel: Ernakulam Jn (ERS) | Cochin Intl Airport.',
+      'Maps:',
+      'https://maps.google.com/?q=Santa+Cruz+Cathedral+Basilica+Fort+Kochi',
+      'https://www.google.com/maps/place/Rose+Gardens+Function+Hall/@9.9189187,76.2647579,159m/data=!3m1!1e3!4m6!3m5!1s0x3b086d85e7dd2f4b:0xf685b03397b85806!8m2!3d9.9192535!4d76.2646839!16s%2Fg%2F11f00md17k?entry=ttu&g_ep=EgoyMDI1MDgzMC4wIKXMDSoASAFQAw%3D%3D'
+    ].join('\n');
+    return `BEGIN:VCALENDAR
 VERSION:2.0
 CALSCALE:GREGORIAN
 BEGIN:VEVENT
@@ -346,20 +390,22 @@ TRIGGER:${trig}
 END:VALARM
 END:VEVENT
 END:VCALENDAR`;
-}
-function downloadICS(content,filename){
-  const blob=new Blob([content],{type:'text/calendar;charset=utf-8'});
-  const url=URL.createObjectURL(blob); const a=document.createElement('a');
-  a.href=url; a.download=filename; document.body.appendChild(a); a.click();
-  a.remove(); URL.revokeObjectURL(url);
-}
+  }
 
-/* ---------- Reduced motion ---------- */
-if (window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-  document.getElementById('touchIntro').style.display='none';
-  document.getElementById('introSequence').style.display='none';
-  document.getElementById('mainContent').classList.add('visible');
-}
+  function downloadICS(content,filename){
+    const blob=new Blob([content],{type:'text/calendar;charset=utf-8'});
+    const url=URL.createObjectURL(blob); const a=document.createElement('a');
+    a.href=url; a.download=filename; document.body.appendChild(a); a.click();
+    a.remove(); URL.revokeObjectURL(url);
+  }
+
+  /* ---------- Reduced motion ---------- */
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    document.getElementById('touchIntro').style.display='none';
+    document.getElementById('introSequence').style.display='none';
+    document.getElementById('mainContent').classList.add('visible');
+  }
 </script>
+
 </body>
 </html>
