@@ -182,15 +182,15 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
         <input class="form-input" id="fullName" required>
       </div>
       <div class="form-group" id="guestCountGroup" style="display:none">
-  <label class="form-label" for="guestCount">Number of Guests</label>
-  <select class="form-input" id="guestCount">
-    <option value="" selected disabled>Select</option>
-    <option>1</option><option>2</option><option>3</option>
-    <option>4</option><option>5</option><option>6</option>
-    <option>7</option><option>8</option><option>9</option>
-    <option>10</option>
-  </select>
-</div>
+        <label class="form-label" for="guestCount">Number of Guests</label>
+        <select class="form-input" id="guestCount">
+          <option value="" selected disabled>Select</option>
+          <option>1</option><option>2</option><option>3</option>
+          <option>4</option><option>5</option><option>6</option>
+          <option>7</option><option>8</option><option>9</option>
+          <option>10</option>
+        </select>
+      </div>
 
       <div style="display:flex;gap:.75rem;justify-content:center;margin-top:1rem">
         <button type="button" class="btn-cancel" onclick="closeRSVP()">Cancel</button>
@@ -208,11 +208,11 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
   const musicBtn=document.getElementById('musicControl');
   let musicOn=false;
   function uiMusic(on){ musicBtn.textContent=on?'Music: On':'Music: Off'; musicBtn.setAttribute('aria-pressed',String(on)); }
-  async function playMusic(){ try{ bgm.volume=.35; bgm.loop=true; await bgm.play(); musicOn=true; uiMusic(true);}catch{ musicBtn.textContent='🔈 Tap to play'; } }
+  async function playMusic(){ try{ bgm.volume=.35; bgm.loop=true; await bgm.play(); musicOn=true; uiMusic(true);}catch{ musicBtn.textContent='Tap to play'; } }
   function pauseMusic(){ bgm.pause(); musicOn=false; uiMusic(false); }
   musicBtn.addEventListener('click',()=> musicOn?pauseMusic():playMusic());
   (function unlockOnce(){ const once=()=>{ playMusic(); removeEventListener('pointerdown',once); removeEventListener('keydown',once); }; addEventListener('pointerdown',once,{passive:true}); addEventListener('keydown',once); })();
-  bgm.addEventListener('error',()=>{ musicBtn.textContent='🎵 Music unavailable'; });
+  bgm.addEventListener('error',()=>{ musicBtn.textContent='Music unavailable'; });
 
   /* ---------- Petals (fixed color per petal) ---------- */
   class PetalsSystem{
@@ -227,8 +227,11 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
   }
   const petals=new PetalsSystem();
 
-  /* ---------- Intro text ---------- */
-  const introTexts=[
+  /* ---------- Beat-synced Intro ---------- */
+  const BPM = 96;               // set to your track's BPM
+  const DOWNBEAT_OFFSET = 0.35; // seconds to first strong beat
+
+  const introTexts = [
     "With great joy and gratitude",
     "Samson & Suni D'Costa",
     "Along With",
@@ -239,9 +242,47 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
     "At Santa Cruz Cathedral Basilica",
     "Reception to follow at Rose Garden"
   ];
-  let introStep=0, introTimer;
-  function startIntro(){ const seq=document.getElementById('introSequence'); const t=document.getElementById('introText'); seq.classList.remove('hidden'); introStep=0; introTimer=setInterval(()=>{ if(introStep<introTexts.length){ t.style.opacity='0'; setTimeout(()=>{ t.textContent=introTexts[introStep]; t.classList.toggle('intro-names', introStep===5); t.style.opacity='1'; introStep++; }, 400);} else { endIntro(); } }, 2200); }
-  function endIntro(){ clearInterval(introTimer); document.getElementById('introSequence').classList.add('hidden'); document.getElementById('mainContent').classList.add('visible'); }
+
+  let introStep = 0;
+  let introTimerId = null;
+
+  function endIntro(){
+    if (introTimerId) { clearTimeout(introTimerId); introTimerId = null; }
+    document.getElementById('introSequence').classList.add('hidden');
+    document.getElementById('mainContent').classList.add('visible');
+  }
+
+  function showSlide(step){
+    const seq = document.getElementById('introSequence');
+    const t = document.getElementById('introText');
+    seq.classList.remove('hidden');
+    t.style.opacity = '0';
+    setTimeout(() => {
+      t.textContent = introTexts[step];
+      t.classList.toggle('intro-names', step === 5);
+      t.style.opacity = '1';
+    }, 120);
+  }
+
+  function msUntilNextBeats(nBeats = 1){
+    const beat = 60 / BPM;
+    const now = bgm.currentTime;
+    const beatsSinceOffset = Math.max(0, (now - DOWNBEAT_OFFSET) / beat);
+    const nextBoundaryBeats = Math.ceil(beatsSinceOffset + Number.EPSILON) + (nBeats - 1);
+    const nextBoundaryTime = nextBoundaryBeats * beat + DOWNBEAT_OFFSET;
+    return Math.max(0, (nextBoundaryTime - now) * 1000);
+  }
+
+  function startIntroBeatSynced(beatsPerSlide = 4){
+    introStep = 0;
+    const advance = () => {
+      if (introStep >= introTexts.length) { endIntro(); return; }
+      showSlide(introStep++);
+      introTimerId = setTimeout(advance, msUntilNextBeats(beatsPerSlide));
+    };
+    introTimerId = setTimeout(advance, msUntilNextBeats(1));
+  }
+
   document.getElementById('skipIntro').addEventListener('click', endIntro);
 
   /* ---------- Heart gesture ---------- */
@@ -253,7 +294,7 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
     document.getElementById('touchIntro').classList.add('hidden');
     petals.start(); petals.burst();
     playMusic();
-    setTimeout(startIntro, 300);
+    setTimeout(()=> startIntroBeatSynced(4), 300); // 4 beats per slide
   }
   heartBtn.addEventListener('click', begin, {passive:true});
   heartBtn.addEventListener('touchstart', begin, {passive:true});
@@ -263,7 +304,7 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
   function openMap(k){
     const m={
       cathedral:'https://maps.google.com/?q=Santa+Cruz+Cathedral+Basilica+Fort+Kochi',
-      rose:'https://www.google.com/maps/place/Rose+Gardens+Function+Hall/@9.9189187,76.2647579,159m/data=!3m1!1e3!4m6!3m5!1s0x3b086d85e7dd2f4b:0xf685b03397b85806!8m2!3d9.9192535!4d76.2646839!16s%2Fg%2F11f00md17k?entry=ttu&g_ep=EgoyMDI1MDgzMC4wIKXMDSoASAFQAw%3D%3D'
+      rose:'https://www.google.com/maps/place/Rose+Gardens+Function+Hall/@9.9189187,76.2647579,159m/data=!3m1!1e3!4m6!3m5!1s0x3b086d85e7dd2f4b:0xf685b03397b85806!8m2!3d9.9192535!4d76.2646839!16s%2Fg%2F11f00md17k'
     };
     window.open(m[k],'_blank');
   }
@@ -276,7 +317,7 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
     const h=String(Math.floor(diff%86400000/3600000)).padStart(2,'0');
     const m=String(Math.floor(diff%3600000/60000)).padStart(2,'0');
     const s=String(Math.floor(diff%60000/1000)).padStart(2,'0');
-    document.getElementById('countdownTimer').textContent = diff ? `${d} days ${h}:${m}:${s}` : "The big day is here! 🎉";
+    document.getElementById('countdownTimer').textContent = diff ? `${d} days ${h}:${m}:${s}` : "The big day is here!";
   }
   setInterval(updateCountdown,1000); updateCountdown();
 
@@ -287,7 +328,6 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
     currentRSVPType = type;
     const group = document.getElementById('guestCountGroup');
     const select = document.getElementById('guestCount');
-
     if (type === 'coming') {
       group.style.display = 'block';
       select.required = true;
@@ -300,7 +340,6 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
     document.getElementById('rsvpModal').classList.add('visible');
   }
 
-  // CLOSE MODAL helpers (this was missing before)
   function closeRSVP() {
     document.getElementById('rsvpModal').classList.remove('visible');
   }
@@ -313,34 +352,40 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
 
   document.getElementById('rsvpForm').addEventListener('submit', e => {
     e.preventDefault();
+    const submitBtn = e.submitter || e.target.querySelector('button[type="submit"]');
+    if (submitBtn) submitBtn.disabled = true;
 
-    const name = document.getElementById('fullName').value.trim();
-    const guestCount = (currentRSVPType === 'coming')
-      ? document.getElementById('guestCount').value
-      : 1;
+    try {
+      const name = document.getElementById('fullName').value.trim();
+      const guestCount = (currentRSVPType === 'coming')
+        ? document.getElementById('guestCount').value
+        : 1;
 
-    if (!name) return;
-    if (currentRSVPType === 'coming' && !guestCount) return;
+      if (!name) return;
+      if (currentRSVPType === 'coming' && !guestCount) return;
 
-    // 1) Send to Google Sheet
-    const payload = {
-      name,
-      guestCount: Number(guestCount || 1),
-      rsvpType: currentRSVPType,
-      userAgent: navigator.userAgent,
-      referrer: document.referrer || location.href
-    };
-    sendToSheet(payload);
+      // 1) Send to Google Sheet
+      const payload = {
+        name,
+        guestCount: Number(guestCount || 1),
+        rsvpType: currentRSVPType,
+        userAgent: navigator.userAgent,
+        referrer: document.referrer || location.href
+      };
+      sendToSheet(payload);
 
-    // 2) Calendar file
-    downloadICS(makeICS(currentRSVPType), 'nikolas-kavita-wedding.ics');
+      // 2) Calendar file
+      downloadICS(makeICS(currentRSVPType), 'nikolas-kavita-wedding.ics');
 
-    // 3) Close + confirm
-    closeRSVP();
-      alert(currentRSVPType === 'coming' ? `Thank you, ${name}! Your reminder is saved.` : 'Reminder saved.');
-
-  submitBtn.disabled = false;
-});
+      // 3) Close + confirm
+      closeRSVP();
+      alert(currentRSVPType === 'coming'
+        ? `Thank you, ${name}! Your reminder is saved.`
+        : 'Reminder saved.');
+    } finally {
+      if (submitBtn) submitBtn.disabled = false;
+    }
+  });
 
   function sendToSheet(payload) {
     try {
@@ -355,9 +400,7 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
           body: JSON.stringify(payload)
         }).catch(() => {});
       }
-    } catch (_) {
-      // ignore; the calendar file still downloads
-    }
+    } catch (_) { /* ignore */ }
   }
 
   function makeICS(type){
@@ -370,7 +413,7 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
       'Travel: Ernakulam Jn (ERS) | Cochin Intl Airport.',
       'Maps:',
       'https://maps.google.com/?q=Santa+Cruz+Cathedral+Basilica+Fort+Kochi',
-      'https://www.google.com/maps/place/Rose+Gardens+Function+Hall/@9.9189187,76.2647579,159m/data=!3m1!1e3!4m6!3m5!1s0x3b086d85e7dd2f4b:0xf685b03397b85806!8m2!3d9.9192535!4d76.2646839!16s%2Fg%2F11f00md17k?entry=ttu&g_ep=EgoyMDI1MDgzMC4wIKXMDSoASAFQAw%3D%3D'
+      'https://www.google.com/maps/place/Rose+Gardens+Function+Hall/@9.9189187,76.2647579,159m/data=!3m1!1e3!4m6!3m5!1s0x3b086d85e7dd2f4b:0xf685b03397b85806!8m2!3d9.9192535!4d76.2646839!16s%2Fg%2F11f00md17k'
     ].join('\n');
     return `BEGIN:VCALENDAR
 VERSION:2.0
