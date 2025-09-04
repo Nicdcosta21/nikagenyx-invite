@@ -182,9 +182,16 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
         <input class="form-input" id="fullName" required>
       </div>
       <div class="form-group" id="guestCountGroup" style="display:none">
-        <label class="form-label" for="guestCount">Number of Guests</label>
-        <input class="form-input" id="guestCount" type="number" min="1" max="10" value="1">
-      </div>
+  <label class="form-label" for="guestCount">Number of Guests</label>
+  <select class="form-input" id="guestCount">
+    <option value="" selected disabled>Select</option>
+    <option>1</option><option>2</option><option>3</option>
+    <option>4</option><option>5</option><option>6</option>
+    <option>7</option><option>8</option><option>9</option>
+    <option>10</option>
+  </select>
+</div>
+
       <div style="display:flex;gap:.75rem;justify-content:center;margin-top:1rem">
         <button type="button" class="btn-cancel" onclick="closeRSVP()">Cancel</button>
         <button type="submit" class="btn-primary">Save &amp; Add to Calendar</button>
@@ -272,21 +279,43 @@ function updateCountdown(){
 setInterval(updateCountdown,1000); updateCountdown();
 
 /* ---------- RSVP + ICS (Reception updated to Rose Garden) ---------- */
-let currentRSVPType='';
+let currentRSVPType = '';
+
 function openRSVP(type){
-  currentRSVPType=type;
-  document.getElementById('guestCountGroup').style.display = (type==='coming')?'block':'none';
+  currentRSVPType = type;
+  const group = document.getElementById('guestCountGroup');
+  const select = document.getElementById('guestCount');
+
+  if (type === 'coming') {
+    group.style.display = 'block';
+    select.required = true;
+    select.value = '';               // force user to choose
+  } else {
+    group.style.display = 'none';
+    select.required = false;
+    select.value = '';
+  }
   document.getElementById('rsvpModal').classList.add('visible');
 }
-function closeRSVP(){ document.getElementById('rsvpModal').classList.remove('visible'); document.getElementById('rsvpForm').reset(); }
-document.getElementById('rsvpForm').addEventListener('submit',e=>{
+
+document.getElementById('rsvpForm').addEventListener('submit', e => {
   e.preventDefault();
-  const name=document.getElementById('fullName').value;
-  const guestCount=document.getElementById('guestCount').value||1;
+
+  const name = document.getElementById('fullName').value.trim();
+  const guestCount = (currentRSVPType === 'coming')
+    ? document.getElementById('guestCount').value
+    : 1;
+
+  if (!name) return;                       // native required covers this
+  if (currentRSVPType === 'coming' && !guestCount) return; // select required
+
   downloadICS(makeICS(currentRSVPType), 'nikolas-kavita-wedding.ics');
   closeRSVP();
-  alert(currentRSVPType==='coming' ? `Thank you, ${name}! See you there 💕` : 'Saved! Hope to see you 💕');
+  alert(currentRSVPType === 'coming'
+    ? `Thank you, ${name}! See you there 💕`
+    : 'Saved! Hope to see you 💕');
 });
+
 function makeICS(type){
   const start='20251027T093000Z', end='20251027T103000Z';
   const trig = (type==='coming')?'-P7D':'-P30D';
