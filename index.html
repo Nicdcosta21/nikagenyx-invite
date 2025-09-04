@@ -313,6 +313,7 @@ if (REDUCED){
   }
 }
 heartBtn.addEventListener('pointerup', begin, {passive:true});
+heartBtn.addEventListener('click', begin);
 
   setTimeout(()=>heartBtn.classList.add('floating'), 900);
 
@@ -354,6 +355,7 @@ heartBtn.addEventListener('pointerup', begin, {passive:true});
       select.value = '';
     }
     document.getElementById('rsvpModal').classList.add('visible');
+      setTimeout(()=>document.getElementById('fullName').focus(), 50);
   }
 
   function closeRSVP() {
@@ -392,6 +394,8 @@ heartBtn.addEventListener('pointerup', begin, {passive:true});
 
       // 2) Calendar file
       downloadICS(makeICS(currentRSVPType), 'nikolas-kavita-wedding.ics');
+
+      
 
       // 3) Close + confirm
       closeRSVP();
@@ -470,6 +474,17 @@ if (REDUCED){
   document.getElementById('petalsCanvas').style.display = 'none';
 }
 
+function downloadICS(ics, filename){
+  const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
 
 </script>
 
