@@ -9,11 +9,20 @@
 :root{--wine:#7b1733;--wine-soft:#fdebef;--ink:#1f2937}
 html,body{height:100%;overflow-x:hidden}
 body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;color:var(--ink)}
-/* Background */
-.hero-bg{position:fixed;inset:0;z-index:-3;background:linear-gradient(135deg,#7b1733,#a91d47);filter:brightness(.85) saturate(1.05)}
-.wine-overlay{position:fixed;inset:0;z-index:-2;background:
-  radial-gradient(circle at 50% 30%,rgba(123,23,51,.22),transparent 70%),
-  linear-gradient(180deg,rgba(20,6,10,.35),rgba(20,6,10,.6))}
+/* Background (image + fallback gradient) */
+.hero-bg{
+  position:fixed;inset:0;z-index:-3;
+  background:
+    url('/assets/hero.jpg') center/cover no-repeat,
+    linear-gradient(135deg,#7b1733,#a91d47);
+  filter:brightness(.9) saturate(1.05);
+}
+.wine-overlay{
+  position:fixed;inset:0;z-index:-2;
+  background:
+    radial-gradient(80% 70% at 50% 15%,rgba(123,23,51,.18),transparent 60%),
+    linear-gradient(180deg,rgba(20,6,10,.35),rgba(20,6,10,.60));
+}
 /* Petals */
 #petalsCanvas{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:0;transition:opacity 1s ease}
 #petalsCanvas.active{opacity:1}
@@ -30,17 +39,9 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
 .heart-btn:hover{transform:translateY(-2px)}
 .heart-svg-wrapper{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;animation:pulse 1.5s infinite}
 .heart-svg{width:100%;height:100%;filter:drop-shadow(0 8px 16px rgba(0,0,0,.45))}
-/* Heart color — deep blood red with darker outline */
-.heart-svg path{
-  fill:#960018;          /* blood red */
-  stroke:#7b0013;        /* darker rim for 3D pop */
-  stroke-width:1.2px;
-}
-/* Label on top of the red heart needs to be white for contrast */
-.heart-btn .touch-text{
-  color:#ffffff;
-  text-shadow:0 1px 3px rgba(0,0,0,.6);
-}
+/* Blood-red heart */
+.heart-svg path{fill:#960018;stroke:#7b0013;stroke-width:1.2px}
+.heart-btn .touch-text{color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.6);pointer-events:none}
 .heart-btn.floating{animation:float 3s ease-in-out infinite}
 @keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.08)}100%{transform:scale(1)}}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
@@ -104,7 +105,9 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
 
 <!-- music -->
 <button class="music-control" id="musicControl" type="button" aria-pressed="false">Music: Off</button>
-<audio id="bgm" preload="auto" loop><source src="/assets/music.mp3" type="audio/mpeg"></audio>
+<audio id="bgm" preload="auto" playsinline loop>
+  <source src="/assets/music.mp3" type="audio/mpeg">
+</audio>
 
 <!-- intro -->
 <div id="touchIntro" role="dialog" aria-modal="true" aria-label="Intro">
@@ -148,7 +151,7 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
     <div class="event-details">
       <div class="event-row"><span class="event-label">On:</span><span class="event-value">Monday, 27 Oct 2025</span></div>
       <div class="event-row"><span class="event-label">Time:</span><span class="event-value">3:00 PM — <span class="map-link" onclick="openMap('cathedral')">Santa Cruz Cathedral Basilica, Fort Kochi</span></span></div>
-      <div class="event-row"><span class="event-label">Reception:</span><span class="event-value">To follow at <span class="map-link" onclick="openMap('croft')">The Croft, Kochi</span></span></div>
+      <div class="event-row"><span class="event-label">Reception:</span><span class="event-value">To follow at <span class="map-link" onclick="openMap('rose')">Rose Garden, Kochi</span></span></div>
       <div class="event-row"><span class="event-label">Home:</span><span class="event-value">Zion Villa, MLA Road, Pallurthy, Kochi 682006</span></div>
       <div class="event-row"><span class="event-label">Travel:</span><span class="event-value">Nearest Railway — Ernakulam Jn (ERS)<br>Nearest Airport — Cochin Intl.</span></div>
     </div>
@@ -191,55 +194,31 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
 </div>
 
 <script>
-/* ---------- Music toggle (only plays after user gesture) ---------- */
+/* ---------- Music (robust unlock) ---------- */
 const bgm=document.getElementById('bgm');
 const musicBtn=document.getElementById('musicControl');
 let musicOn=false;
-function setMusic(on){
-  musicOn=!!on;
-  musicBtn.setAttribute('aria-pressed', String(musicOn));
-  musicBtn.textContent = musicOn ? 'Music: On' : 'Music: Off';
-  if(musicOn){ bgm.volume=.35; bgm.play().catch(()=>{}); } else { bgm.pause(); }
-}
-musicBtn.addEventListener('click',()=>setMusic(!musicOn));
+function uiMusic(on){ musicBtn.textContent=on?'Music: On':'Music: Off'; musicBtn.setAttribute('aria-pressed',String(on)); }
+async function playMusic(){ try{ bgm.volume=.35; bgm.loop=true; await bgm.play(); musicOn=true; uiMusic(true);}catch{ musicBtn.textContent='🔈 Tap to play'; } }
+function pauseMusic(){ bgm.pause(); musicOn=false; uiMusic(false); }
+musicBtn.addEventListener('click',()=> musicOn?pauseMusic():playMusic());
+(function unlockOnce(){ const once=()=>{ playMusic(); removeEventListener('pointerdown',once); removeEventListener('keydown',once); }; addEventListener('pointerdown',once,{passive:true}); addEventListener('keydown',once); })();
+bgm.addEventListener('error',()=>{ musicBtn.textContent='🎵 Music unavailable'; });
 
 /* ---------- Petals (fixed color per petal) ---------- */
 class PetalsSystem{
-  constructor(){
-    this.canvas=document.getElementById('petalsCanvas');
-    this.ctx=this.canvas.getContext('2d');
-    this.petals=[]; this.isActive=false;
-    this.colors=['#7b1733','#a91d47','#c92a5a','#ff6b7a'];
-    this.resize(); addEventListener('resize',()=>this.resize());
-  }
+  constructor(){ this.canvas=document.getElementById('petalsCanvas'); this.ctx=this.canvas.getContext('2d'); this.petals=[]; this.isActive=false; this.colors=['#7b1733','#a91d47','#c92a5a','#ff6b7a']; this.resize(); addEventListener('resize',()=>this.resize()); }
   resize(){ this.canvas.width=innerWidth; this.canvas.height=innerHeight; }
-  createPetal(){ return {
-    x:Math.random()*(this.canvas.width+200)-100, y:-30,
-    size:Math.random()*8+4, speed:Math.random()*2+1,
-    rotation:Math.random()*360, rotationSpeed:(Math.random()-.5)*4,
-    opacity:.35+Math.random()*.45, color:this.colors[(Math.random()*this.colors.length)|0],
-    drift:Math.random()*1.5-.75
-  };}
-  update(){
-    if(!this.isActive) return;
-    if(Math.random()<0.3) this.petals.push(this.createPetal());
-    this.petals=this.petals.filter(p=>{ p.y+=p.speed; p.x+=Math.sin(p.y*.01)*p.drift; p.rotation+=p.rotationSpeed; return p.y<this.canvas.height+50; });
-  }
-  draw(){
-    const c=this.ctx; c.clearRect(0,0,this.canvas.width,this.canvas.height);
-    for(const p of this.petals){
-      c.save(); c.translate(p.x,p.y); c.rotate(p.rotation*Math.PI/180);
-      c.globalAlpha=p.opacity; c.fillStyle=p.color;
-      c.beginPath(); c.ellipse(0,0,p.size,p.size*.6,0,0,Math.PI*2); c.fill(); c.restore();
-    }
-  }
+  createPetal(){ return { x:Math.random()*(this.canvas.width+200)-100, y:-30, size:Math.random()*8+4, speed:Math.random()*2+1, rotation:Math.random()*360, rotationSpeed:(Math.random()-.5)*4, opacity:.35+Math.random()*.45, color:this.colors[(Math.random()*this.colors.length)|0], drift:Math.random()*1.5-.75 }; }
+  update(){ if(!this.isActive) return; if(Math.random()<0.3) this.petals.push(this.createPetal()); this.petals=this.petals.filter(p=>{ p.y+=p.speed; p.x+=Math.sin(p.y*.01)*p.drift; p.rotation+=p.rotationSpeed; return p.y<this.canvas.height+50; }); }
+  draw(){ const c=this.ctx; c.clearRect(0,0,this.canvas.width,this.canvas.height); for(const p of this.petals){ c.save(); c.translate(p.x,p.y); c.rotate(p.rotation*Math.PI/180); c.globalAlpha=p.opacity; c.fillStyle=p.color; c.beginPath(); c.ellipse(0,0,p.size,p.size*.6,0,0,Math.PI*2); c.fill(); c.restore(); } }
   animate(){ this.update(); this.draw(); if(this.isActive) requestAnimationFrame(()=>this.animate()); }
   start(){ this.isActive=true; this.canvas.classList.add('active'); this.animate(); }
   burst(){ for(let i=0;i<50;i++) setTimeout(()=>this.petals.push(this.createPetal()), i*20); }
 }
 const petals=new PetalsSystem();
 
-/* ---------- Intro reel ---------- */
+/* ---------- Intro text ---------- */
 const introTexts=[
   "With great joy and gratitude",
   "Samson & Suni D'Costa",
@@ -249,34 +228,22 @@ const introTexts=[
   "Nikolas & Kavita",
   "On Monday, 27 Oct 2025",
   "At Santa Cruz Cathedral Basilica",
-  "Reception to follow at The Croft"
+  "Reception to follow at Rose Garden"
 ];
 let introStep=0, introTimer;
-function startIntro(){
-  const seq=document.getElementById('introSequence');
-  const t=document.getElementById('introText');
-  seq.classList.remove('hidden'); introStep=0;
-  introTimer=setInterval(()=>{
-    if(introStep<introTexts.length){
-      t.style.opacity='0';
-      setTimeout(()=>{ t.textContent=introTexts[introStep];
-        t.classList.toggle('intro-names', introStep===1);
-        t.style.opacity='1'; introStep++; }, 400);
-    } else { endIntro(); }
-  }, 2200);
-}
+function startIntro(){ const seq=document.getElementById('introSequence'); const t=document.getElementById('introText'); seq.classList.remove('hidden'); introStep=0; introTimer=setInterval(()=>{ if(introStep<introTexts.length){ t.style.opacity='0'; setTimeout(()=>{ t.textContent=introTexts[introStep]; t.classList.toggle('intro-names', introStep===5); t.style.opacity='1'; introStep++; }, 400);} else { endIntro(); } }, 2200); }
 function endIntro(){ clearInterval(introTimer); document.getElementById('introSequence').classList.add('hidden'); document.getElementById('mainContent').classList.add('visible'); }
 document.getElementById('skipIntro').addEventListener('click', endIntro);
 
-/* ---------- Heart: make sure it's clickable (click + touch) ---------- */
+/* ---------- Heart gesture ---------- */
 const heartBtn=document.getElementById('heartButton');
 const namesWrap=document.getElementById('namesWrap');
-function begin(e){
+function begin(){
   namesWrap.classList.add('name-merge');
   heartBtn.style.opacity='0';
   document.getElementById('touchIntro').classList.add('hidden');
   petals.start(); petals.burst();
-  setMusic(true);            // start music after user gesture
+  playMusic();               // definitely a gesture
   setTimeout(startIntro, 300);
 }
 heartBtn.addEventListener('click', begin, {passive:true});
@@ -285,8 +252,10 @@ setTimeout(()=>heartBtn.classList.add('floating'), 900);
 
 /* ---------- Maps ---------- */
 function openMap(k){
-  const m={cathedral:'https://maps.google.com/?q=Santa+Cruz+Cathedral+Basilica+Fort+Kochi',
-           croft:'https://maps.google.com/?q=The+Croft+Kochi'};
+  const m={
+    cathedral:'https://maps.google.com/?q=Santa+Cruz+Cathedral+Basilica+Fort+Kochi',
+    rose:'https://www.google.com/maps/place/Rose+Gardens+Function+Hall/@9.9189187,76.2647579,159m/data=!3m1!1e3!4m6!3m5!1s0x3b086d85e7dd2f4b:0xf685b03397b85806!8m2!3d9.9192535!4d76.2646839!16s%2Fg%2F11f00md17k?entry=ttu&g_ep=EgoyMDI1MDgzMC4wIKXMDSoASAFQAw%3D%3D'
+  };
   window.open(m[k],'_blank');
 }
 
@@ -302,7 +271,7 @@ function updateCountdown(){
 }
 setInterval(updateCountdown,1000); updateCountdown();
 
-/* ---------- RSVP + ICS ---------- */
+/* ---------- RSVP + ICS (Reception updated to Rose Garden) ---------- */
 let currentRSVPType='';
 function openRSVP(type){
   currentRSVPType=type;
@@ -323,12 +292,12 @@ function makeICS(type){
   const trig = (type==='coming')?'-P7D':'-P30D';
   const desc = [
     'Wedding Ceremony at Santa Cruz Cathedral Basilica, Fort Kochi.',
-    'Reception: The Croft, Kochi.',
+    'Reception: Rose Gardens Function Hall, Kochi.',
     'Home: Zion Villa, MLA Road, Pallurthy, Kochi 682006.',
     'Travel: Ernakulam Jn (ERS) | Cochin Intl Airport.',
     'Maps:',
     'https://maps.google.com/?q=Santa+Cruz+Cathedral+Basilica+Fort+Kochi',
-    'https://maps.google.com/?q=The+Croft+Kochi'
+    'https://www.google.com/maps/place/Rose+Gardens+Function+Hall/@9.9189187,76.2647579,159m/data=!3m1!1e3!4m6!3m5!1s0x3b086d85e7dd2f4b:0xf685b03397b85806!8m2!3d9.9192535!4d76.2646839!16s%2Fg%2F11f00md17k?entry=ttu&g_ep=EgoyMDI1MDgzMC4wIKXMDSoASAFQAw%3D%3D'
   ].join('\\n');
   return `BEGIN:VCALENDAR
 VERSION:2.0
@@ -338,7 +307,7 @@ UID:${Date.now()}@invite.nikagenyx.com
 DTSTAMP:${new Date().toISOString().replace(/[-:]/g,'').split('.')[0]}Z
 SUMMARY:NIKOLAS & KAVITA — Wedding Ceremony
 DESCRIPTION:${desc}
-LOCATION:Santa Cruz Cathedral Basilica, Fort Kochi; Reception: The Croft, Kochi
+LOCATION:Santa Cruz Cathedral Basilica, Fort Kochi; Reception: Rose Gardens Function Hall, Kochi
 DTSTART:${start}
 DTEND:${end}
 BEGIN:VALARM
@@ -356,7 +325,7 @@ function downloadICS(content,filename){
   a.remove(); URL.revokeObjectURL(url);
 }
 
-/* ---------- Reduced motion fast path ---------- */
+/* ---------- Reduced motion ---------- */
 if (window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   document.getElementById('touchIntro').style.display='none';
   document.getElementById('introSequence').style.display='none';
