@@ -413,15 +413,43 @@ if (REDUCED) {
     return Math.max(0, (nextBoundaryTime - now) * 1000);
   }
 
-  function startIntroBeatSynced(beatsPerSlide = 4){
-    introStep = 0;
-    const advance = () => {
-      if (introStep >= introTexts.length) { endIntro(); return; }
-      showSlide(introStep++);
-      introTimerId = setTimeout(advance, msUntilNextBeats(beatsPerSlide));
-    };
-    introTimerId = setTimeout(advance, msUntilNextBeats(1));
+  function startCreditIntro() {
+  const seq = document.getElementById('introSequence');
+  const textEl = document.getElementById('introText');
+  let i = 0;
+
+  function showNext() {
+    if (i >= introTexts.length) {
+      endIntro();
+      return;
+    }
+
+    const line = introTexts[i++];
+    textEl.textContent = line;
+    textEl.style.opacity = '0';
+    textEl.style.transform = 'translateY(40px)';
+    textEl.classList.remove('intro-names');
+
+    // Optional: style last line specially
+    if (line.includes('Nikolas') || i === introTexts.length) {
+      textEl.classList.add('intro-names');
+    }
+
+    // Animate in
+    requestAnimationFrame(() => {
+      textEl.style.transition = 'opacity 1.2s ease, transform 1.2s ease';
+      textEl.style.opacity = '1';
+      textEl.style.transform = 'translateY(0)';
+    });
+
+    // Delay before showing next
+    setTimeout(showNext, 2500); // adjust for pacing
   }
+
+  seq.classList.remove('hidden');
+  showNext();
+}
+
 
   document.getElementById('skipIntro').addEventListener('click', endIntro);
 
