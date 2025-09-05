@@ -37,8 +37,8 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
 .name-merge .name-left,.name-merge .name-right{transform:translateX(0)}
 .heart-btn {
   position: relative;
-  width: clamp(100px, 18vw, 150px);
-  height: clamp(100px, 18vw, 150px);
+  width: clamp(120px, 22vw, 180px);
+  height: clamp(120px, 22vw, 180px);
   background: none;
   border: none;
   padding: 0;
@@ -78,15 +78,16 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: clamp(14px, 1.25vw, 18px);
+  font-size: clamp(16px, 1.8vw, 22px);
   font-weight: 700;
   color: white;
   z-index: 2;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
   pointer-events: none;
-  white-space: nowrap;
+  text-align: center;
+  line-height: 1.2;
+  white-space: pre-line; /* allows line breaks */
 }
-
 
 .heart-btn.floating{animation:float 3s ease-in-out infinite}
 @keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.08)}100%{transform:scale(1)}}
@@ -215,7 +216,8 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
           <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
         </svg>
       </div>
-      <span class="touch-text">Touch&nbsp;Me</span>
+      <span class="touch-text">Touch<br>me</span>
+
     </button>
     <div class="name-text name-right">KAVITA</div>
   </div>
