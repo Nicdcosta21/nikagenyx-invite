@@ -214,7 +214,7 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
 </div>
 
 <script>
-  const SHEET_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwjktPjENPTTE_JVZsQ-ms3_mZBRkwKEFwX-kSzbephYnJ9CpSc10-CNP8vqRAJ5lF-/exec';
+  const SHEET_ENDPOINT = '/.netlify/functions/log_event';
 
 // respect reduced-motion, but keep the heart (touch intro) visible
 const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -253,7 +253,7 @@ if (REDUCED) {
 
   /* ---------- Beat-synced Intro ---------- */
   const BPM = 96;               // set to your track's BPM
-  const DOWNBEAT_OFFSET = 0.35; // seconds to first strong beat
+  const DOWNBEAT_OFFSET = 0.30; // seconds to first strong beat
 
   const introTexts = [
     "With great joy and gratitude",
@@ -425,32 +425,19 @@ setTimeout(()=>heartBtn.classList.add('floating'), 900);
     }
   });
 
- async function sendToSheet(payload) {
-  // Try beacon first (no CORS preflight, reliable for fire-and-forget)
-  try {
-    if (navigator.sendBeacon) {
-      const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
-      if (navigator.sendBeacon(SHEET_ENDPOINT, blob)) return;
-    }
-  } catch (_) {}
-
-  // Fallback: POST without preflight (text/plain + no-cors)
+async function sendToSheet(payload) {
   try {
     await fetch(SHEET_ENDPOINT, {
       method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // avoids OPTIONS preflight
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
       keepalive: true
     });
-    return;
-  } catch (_) {}
-
-  // Last-resort: GET pixel (requires doGet handler on GAS)
-  try {
-    new Image().src = SHEET_ENDPOINT + '?' + new URLSearchParams(payload).toString();
-  } catch (_) {}
+  } catch (_) {
+    // ignore; calendar file still downloads
+  }
 }
+
 
 
   function makeICS(type){
