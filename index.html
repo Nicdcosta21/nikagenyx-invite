@@ -128,8 +128,10 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
 .intro-scroll {
   display: flex;
   flex-direction: column;
+  transform: translateY(40%);
   animation: creditScroll 22s linear forwards;
 }
+
 
 .intro-line {
   font-family: "Playfair Display", serif;
@@ -308,8 +310,6 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
   <button class="skip-intro" type="button" id="skipIntro">Skip Intro</button>
 </div>
 
-  <button class="skip-intro" type="button" id="skipIntro">Skip Intro</button>
-</div>
 
 <!-- main -->
 <div class="main-content" id="mainContent">
@@ -419,14 +419,6 @@ if (REDUCED) {
   }
   const petals=new PetalsSystem();
 
-  /* ---------- Beat-synced Intro ---------- */
-  const BPM = 96;               // set to your track's BPM
-  const DOWNBEAT_OFFSET = 0.30; // seconds to first strong beat
-
-  
-
-  let introStep = 0;
-  let introTimerId = null;
 
   function endIntro(){
   if (introTimerId) { clearTimeout(introTimerId); introTimerId = null; }
@@ -449,17 +441,7 @@ if (REDUCED) {
 }
 
 
-  function showSlide(step){
-    const seq = document.getElementById('introSequence');
-    const t = document.getElementById('introText');
-    seq.classList.remove('hidden');
-    t.style.opacity = '0';
-    setTimeout(() => {
-      t.textContent = introTexts[step];
-      t.classList.toggle('intro-names', step === 5);
-      t.style.opacity = '1';
-    }, 120);
-  }
+  
 
   function msUntilNextBeats(nBeats = 1){
     const beat = 60 / BPM;
@@ -471,34 +453,6 @@ if (REDUCED) {
   }
 
   
-  
-
-  // Fade out existing text
-  textEl.style.opacity = '0';
-  textEl.style.transform = 'translateY(40px)';
-
-  setTimeout(() => {
-    const line = introTexts[i++];
-    textEl.textContent = line;
-    textEl.classList.remove('intro-names');
-
-    if (line.includes('Nikolas') || i === introTexts.length) {
-      textEl.classList.add('intro-names');
-    }
-
-    requestAnimationFrame(() => {
-      textEl.style.transition = 'opacity 1.2s ease, transform 1.2s ease';
-      textEl.style.opacity = '1';
-      textEl.style.transform = 'translateY(0)';
-    });
-
-    setTimeout(showNext, 2500); // wait for next line
-  }, 600); // fade out duration
-}
-
-
-  seq.classList.remove('hidden');
-  showNext();
 }
 
 
