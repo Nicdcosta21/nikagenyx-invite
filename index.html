@@ -396,7 +396,11 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
 </div>
 
 <script>
+
+
   const SHEET_ENDPOINT = '/.netlify/functions/log_event';
+let introTimerId = null;
+
 
 // respect reduced-motion, but keep the heart (touch intro) visible
 const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
