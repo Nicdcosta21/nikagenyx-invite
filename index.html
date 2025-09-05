@@ -133,6 +133,7 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
   inset: 0;
   z-index: -4; /* below hero-bg and overlay */
   overflow: hidden;
+  transition: opacity 1s ease;
 }
 
 .slideshow-img {
@@ -322,14 +323,12 @@ if (REDUCED) {
 
   const introTexts = [
     "With great joy and gratitude",
-    "Samson & Suni D'Costa",
+    "Samson D'Costa & Suni D'Costa",
     "Along With",
-    "Kevin & Annie Fernandes",
+    "Kevin Fernandes & Annie Fernandes",
     "Invite you to celebrate the wedding of",
     "Nikolas & Kavita",
-    "On Monday, 27 Oct 2025",
-    "At Santa Cruz Cathedral Basilica",
-    "Reception to follow at Rose Garden"
+    
   ];
 
   let introStep = 0;
@@ -340,6 +339,8 @@ if (REDUCED) {
   
   // Hide the slideshow
   document.getElementById('introSlideshow').style.display = 'none';
+    document.getElementById('introSlideshow').style.opacity = '0';
+
   
   // Show the static hero
   document.getElementById('staticHero').classList.remove('hidden');
