@@ -236,9 +236,36 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
 .btn-primary{background:var(--wine);color:#fff;border:none}
 .btn-outline{background:transparent;color:var(--wine);border:2px solid var(--wine)}
 .btn-primary:hover{filter:brightness(.95)} .btn-outline:hover{background:var(--wine);color:#fff}
-.color-note{margin-top:1rem;padding:.9rem;border-radius:12px;background:rgba(123,23,51,.1);color:var(--wine);font-style:italic}
-.countdown-section{margin-top:2rem;color:#fff;text-align:center}
-.countdown-timer{font-family:"Playfair Display",serif;font-size:clamp(24px,5vw,36px);font-weight:700;background:rgba(0,0,0,.3);padding:.8rem 1.4rem;border-radius:14px}
+.color-note {
+  margin-top: 1rem;
+  padding: .9rem;
+  border-radius: 12px;
+  background: rgba(123,23,51,.1);
+  color: var(--wine);
+  font-style: italic;
+}
+
+/* Countdown styled same as color-note */
+.countdown-section {
+  margin-top: 1rem;
+  padding: .9rem;
+  border-radius: 12px;
+  color: var(--wine);
+  font-style: italic;
+}
+
+.countdown-timer {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: .9rem;
+  border-radius: 12px;
+  background: rgba(123,23,51,.1); /* same background */
+  color: var(--wine); /* same text color */
+  
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
 .footer{text-align:center;color:rgba(255,255,255,.85);padding:2rem}
 /* Modal */
 .modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.7);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;visibility:hidden;transition:all .3s ease}
@@ -427,12 +454,15 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
     </div>
 
     <div class="color-note">Colour of the day — Wine Red</div>
+    <div class="countdown-section">
+  <div style="margin:.25rem 0 .5rem;font-weight:700;letter-spacing:.08em">
+    COUNTDOWN
+  </div>
+  <div class="countdown-timer" id="countdownTimer">Loading...</div>
+</div>
   </div>
 
-  <div class="countdown-section">
-    <div style="margin:.25rem 0 .5rem;font-weight:700;letter-spacing:.08em">COUNTDOWN</div>
-    <div class="countdown-timer" id="countdownTimer">Loading...</div>
-  </div>
+
 
   <div class="footer">invite.nikagenyx.com · Kochi, Kerala</div>
 </div>
