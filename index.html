@@ -115,7 +115,23 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
 /* Intro reel */
 .intro-sequence{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;flex-direction:column;color:#fff;text-align:center;padding:2rem;transition:opacity .6s ease,visibility .6s ease}
 .intro-sequence.hidden{opacity:0;visibility:hidden;pointer-events:none}
-.intro-text{font-family:"Playfair Display",serif;font-size:clamp(24px,5vw,48px);line-height:1.35;opacity:0;transform:translateY(26px);animation:fadeInUp 1s ease forwards;margin-bottom:2rem;text-shadow:0 4px 20px rgba(0,0,0,.5)}
+.intro-text {
+  font-family: "Playfair Display", serif;
+  font-size: clamp(24px, 5vw, 36px);
+  line-height: 1.5;
+  text-align: center;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  opacity: 1;
+  transition: all 0.5s ease;
+}
+
+.intro-line {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.9s ease forwards;
+  margin: 0.4em 0;
+}
+
 .intro-names{font-size:clamp(32px,7vw,64px);font-weight:700;color:var(--wine-soft);text-shadow:0 4px 20px rgba(123,23,51,.8)}
 .skip-intro{position:absolute;bottom:24px;right:24px;background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.35);color:#fff;padding:10px 18px;border-radius:24px;cursor:pointer}
 @keyframes fadeInUp{to{opacity:1;transform:translateY(0)}}
@@ -398,8 +414,12 @@ if (REDUCED) {
     seq.classList.remove('hidden');
     t.style.opacity = '0';
     setTimeout(() => {
-      t.textContent = introTexts[step];
-      t.classList.toggle('intro-names', step === 5);
+     const line = document.createElement('div');
+line.className = 'intro-line';
+line.textContent = introTexts[step];
+if (step === introTexts.length - 1) line.classList.add('intro-names');
+t.appendChild(line);
+
       t.style.opacity = '1';
     }, 120);
   }
@@ -414,12 +434,18 @@ if (REDUCED) {
   }
 
   function startIntroBeatSynced(beatsPerSlide = 4){
+document.getElementById('introText').innerHTML = '';
+
     introStep = 0;
     const advance = () => {
-      if (introStep >= introTexts.length) { endIntro(); return; }
-      showSlide(introStep++);
-      introTimerId = setTimeout(advance, msUntilNextBeats(beatsPerSlide));
-    };
+  if (introStep >= introTexts.length) {
+    setTimeout(endIntro, 2000); // Wait 2s after last line
+    return;
+  }
+  showSlide(introStep++);
+  introTimerId = setTimeout(advance, msUntilNextBeats(beatsPerSlide));
+};
+
     introTimerId = setTimeout(advance, msUntilNextBeats(1));
   }
 
