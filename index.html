@@ -114,7 +114,51 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
 @keyframes fadeUp{to{opacity:1;transform:none}}
 /* Intro reel */
 .intro-sequence{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;flex-direction:column;color:#fff;text-align:center;padding:2rem;transition:opacity .6s ease,visibility .6s ease;background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.9));}
-.intro-sequence.hidden{opacity:0;visibility:hidden;pointer-events:none}
+.intro-scroll-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.intro-scroll {
+  display: flex;
+  flex-direction: column;
+  animation: creditScroll 22s linear forwards;
+}
+
+.intro-line {
+  font-family: "Playfair Display", serif;
+  font-size: clamp(24px, 5vw, 48px);
+  color: white;
+  text-align: center;
+  margin: 2rem 0;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  opacity: 0.9;
+}
+
+.intro-names {
+  font-size: clamp(32px, 7vw, 64px);
+  font-weight: 700;
+  color: var(--wine-soft);
+  text-shadow: 0 4px 20px rgba(123, 23, 51, 0.8);
+}
+
+@keyframes creditScroll {
+  0% {
+    transform: translateY(40%);
+  }
+  100% {
+    transform: translateY(-60%);
+  }
+}
+
+  
+  .intro-sequence.hidden{opacity:0;visibility:hidden;pointer-events:none}
 .intro-text {
   font-family:"Playfair Display",serif;
   font-size:clamp(24px,5vw,48px);
@@ -252,7 +296,18 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
   </div>
 
 <div class="intro-sequence hidden" id="introSequence">
-  <div class="intro-text" id="introText">With great joy and gratitude</div>
+  <div class="intro-scroll-container">
+  <div class="intro-scroll" id="introScroll">
+    <div class="intro-line">With great joy and gratitude</div>
+    <div class="intro-line">Samson D'Costa & Suni D'Costa</div>
+    <div class="intro-line">Along With</div>
+    <div class="intro-line">Kevin Fernandes & Annie Fernandes</div>
+    <div class="intro-line">Invite you to celebrate the wedding of</div>
+    <div class="intro-line intro-names">Nikolas & Kavita</div>
+  </div>
+  <button class="skip-intro" type="button" id="skipIntro">Skip Intro</button>
+</div>
+
   <button class="skip-intro" type="button" id="skipIntro">Skip Intro</button>
 </div>
 
@@ -368,15 +423,7 @@ if (REDUCED) {
   const BPM = 96;               // set to your track's BPM
   const DOWNBEAT_OFFSET = 0.30; // seconds to first strong beat
 
-  const introTexts = [
-    "With great joy and gratitude",
-    "Samson D'Costa & Suni D'Costa",
-    "Along With",
-    "Kevin Fernandes & Annie Fernandes",
-    "Invite you to celebrate the wedding of",
-    "Nikolas & Kavita",
-    
-  ];
+  
 
   let introStep = 0;
   let introTimerId = null;
@@ -423,16 +470,8 @@ if (REDUCED) {
     return Math.max(0, (nextBoundaryTime - now) * 1000);
   }
 
-  function startCreditIntro() {
-  const seq = document.getElementById('introSequence');
-  const textEl = document.getElementById('introText');
-  let i = 0;
-
-  function showNext() {
-  if (i >= introTexts.length) {
-    endIntro();
-    return;
-  }
+  
+  
 
   // Fade out existing text
   textEl.style.opacity = '0';
@@ -482,7 +521,14 @@ if (REDUCED) {
 
     if (!REDUCED){
       petals.start(); petals.burst();
-      setTimeout(()=> startCreditIntro(), 300);
+      setTimeout(() => {
+  document.getElementById('introSequence').classList.remove('hidden');
+  petals.start(); petals.burst();
+
+  // auto-end intro when scroll animation completes
+  setTimeout(endIntro, 22000); // matches scroll duration
+}, 300);
+
     } else {
       document.getElementById('introSequence').classList.add('hidden');
       document.getElementById('mainContent').classList.add('visible');
