@@ -356,12 +356,53 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
 
 
     <div class="event-details">
-      <div class="event-row"><span class="event-label">On:</span><span class="event-value">Monday, 27 Oct 2025</span></div>
-      <div class="event-row"><span class="event-label">Time:</span><span class="event-value">3:00 PM — <span class="map-link" onclick="openMap('cathedral')">Santa Cruz Cathedral Basilica, Fort Kochi</span></span></div>
-      <div class="event-row"><span class="event-label">Reception:</span><span class="event-value">To follow at <span class="map-link" onclick="openMap('rose')">Rose Garden, Kochi</span></span></div>
-      <div class="event-row"><span class="event-label">Home:</span><span class="event-value">Zion Villa, MLA Road, Pallurthy, Kochi 682006</span></div>
-      <div class="event-row"><span class="event-label">Travel:</span><span class="event-value">Nearest Railway — Ernakulam Jn (ERS)<br>Nearest Airport — Cochin Intl.</span></div>
-    </div>
+  <div class="event-row">
+    <span class="event-label">On:</span>
+    <span class="event-value">Monday, 27 Oct 2025</span>
+  </div>
+
+  <div class="event-row">
+    <span class="event-label">Time:</span>
+    <span class="event-value">
+      3:00 PM — <span class="map-link" onclick="openMap('cathedral')">
+        Santa Cruz Cathedral Basilica, Fort Kochi
+      </span>
+    </span>
+  </div>
+
+  <div class="event-row">
+    <span class="event-label">Reception:</span>
+    <span class="event-value">
+      To follow at <span class="map-link" onclick="openMap('rose')">
+        Rose Garden, Kochi
+      </span>
+    </span>
+  </div>
+
+  <div class="event-row">
+    <span class="event-label">Home:</span>
+    <span class="event-value">
+      <span class="map-link" onclick="openMap('zion')">
+        Zion Villa, MLA Road, Pallurthy, Kochi 682006
+      </span>
+    </span>
+  </div>
+
+  <div class="event-row">
+    <span class="event-label">Travel:</span>
+    <span class="event-value">
+      Nearest Railway — 
+      <span class="map-link" onclick="openMap('ers')">
+        Ernakulam Jn (ERS)
+      </span><br>
+      Nearest Airport — 
+      <span class="map-link" onclick="openMap('cochin')">
+        Cochin Intl.
+      </span>
+    </span>
+  </div>
+</div>
+
 
     <div class="action-buttons">
       <button class="btn-primary" type="button" onclick="openRSVP('coming')">Save to Calendar</button>
@@ -554,12 +595,16 @@ setTimeout(()=>heartBtn.classList.add('floating'), 900);
 
   /* ---------- Maps ---------- */
   function openMap(k){
-    const m={
-      cathedral:'https://maps.google.com/?q=Santa+Cruz+Cathedral+Basilica+Fort+Kochi',
-      rose:'https://www.google.com/maps/place/Rose+Gardens+Function+Hall/@9.9189187,76.2647579,159m/data=!3m1!1e3!4m6!3m5!1s0x3b086d85e7dd2f4b:0xf685b03397b85806!8m2!3d9.9192535!4d76.2646839!16s%2Fg%2F11f00md17k'
-    };
-    window.open(m[k],'_blank');
-  }
+  const m = {
+    cathedral: "https://maps.google.com/?q=Santa+Cruz+Cathedral+Basilica+Fort+Kochi",
+    rose: "https://www.google.com/maps/place/Rose+Gardens+Function+Hall/@9.9189187,76.2647579,159m/data=!3m1!1e3!4m6!3m5!1s0x3b086d85e7dd2f4b:0xf685b03397b85806!8m2!3d9.9192535!4d76.2646839!16s%2Fg%2F11f00md17k",
+    zion: "https://www.google.com/maps/place/Zion+Villa/@9.9112955,76.2702845,20.25z/data=!4m6!3m5!1s0x3b086d0038573f23:0x3397a84796b8b36c!8m2!3d9.9113358!4d76.270403!16s%2Fg%2F11xvt5xt3l",
+    ers: "https://www.google.com/maps/place/Ernakulam+Junction/@9.9636266,76.2852608,15z/data=!4m10!1m2!2m1!1sERS!3m6!1s0x3b0872b4498c107f:0x2da22b212ba9d071!8m2!3d9.9695719!4d76.2911687!15sCgNFUlNaBSIDZXJzkgENdHJhaW5fc3RhdGlvbqoBQAoKL20vMGNtOWt3ehABKgciA2VycygAMh4QASIagC_z-UvV_M-_y4SvlS5-TtYn_5Z50HsCsBcyBxACIgNlcnPgAQA!16zL20vMGQzY3Ri",
+    cochin: "https://www.google.com/maps/place/Cochin+International+Airport/@10.1532129,76.3933204,17z/data=!3m1!4b1!4m6!3m5!1s0x3b080882748f4a6f:0x30b2ebe45d968458!8m2!3d10.1532129!4d76.3933204!16zL20vMDMxN2wx"
+  };
+  window.open(m[k],'_blank');
+}
+
 
   /* ---------- Countdown ---------- */
   function updateCountdown(){
