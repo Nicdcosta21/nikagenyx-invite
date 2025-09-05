@@ -149,6 +149,21 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
   opacity: 1;
 }
 
+.static-hero {
+  position: fixed;
+  inset: 0;
+  z-index: -4;
+  background: url('/assets/hero.jpg') center/cover no-repeat;
+  transition: opacity 1s ease;
+  opacity: 1;
+}
+
+.static-hero.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+
   
 </style>
 </head>
@@ -160,6 +175,8 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
   <img src="/assets/slide3.png" alt="Romantic night on deck" class="slideshow-img">
   <img src="/assets/slide4.png" alt="Seated couple under stars" class="slideshow-img">
 </div>
+  <div class="static-hero hidden" id="staticHero"></div>
+
 
 
 <canvas id="petalsCanvas"></canvas>
@@ -319,10 +336,18 @@ if (REDUCED) {
   let introTimerId = null;
 
   function endIntro(){
-    if (introTimerId) { clearTimeout(introTimerId); introTimerId = null; }
-    document.getElementById('introSequence').classList.add('hidden');
-    document.getElementById('mainContent').classList.add('visible');
-  }
+  if (introTimerId) { clearTimeout(introTimerId); introTimerId = null; }
+  
+  // Hide the slideshow
+  document.getElementById('introSlideshow').style.display = 'none';
+  
+  // Show the static hero
+  document.getElementById('staticHero').classList.remove('hidden');
+
+  // Show main content
+  document.getElementById('introSequence').classList.add('hidden');
+  document.getElementById('mainContent').classList.add('visible');
+}
 
   function showSlide(step){
     const seq = document.getElementById('introSequence');
