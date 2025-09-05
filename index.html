@@ -218,10 +218,14 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
 
 // respect reduced-motion, but keep the heart (touch intro) visible
 const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-if (REDUCED){
+if (REDUCED) {
+  document.querySelectorAll('.name-text, .heart-btn').forEach(el => {
+    el.style.opacity = '1'; el.style.transform = 'none'; el.style.animation = 'none';
+  });
   document.getElementById('introSequence').style.display = 'none';
   document.getElementById('petalsCanvas').style.display = 'none';
 }
+
 
   /* ---------- Music (robust unlock) ---------- */
   const bgm=document.getElementById('bgm');
@@ -323,8 +327,9 @@ function begin(){
     document.getElementById('mainContent').classList.add('visible');
   }
 }
-heartBtn.addEventListener('pointerup', begin, {passive:true});
-heartBtn.addEventListener('click', begin);
+heartBtn.addEventListener('pointerup', begin, { passive: true });
+heartBtn.addEventListener('click', begin, { passive: true }); // fallback
+
 
   setTimeout(()=>heartBtn.classList.add('floating'), 900);
 
