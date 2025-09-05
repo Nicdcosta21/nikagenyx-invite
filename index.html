@@ -310,28 +310,30 @@ if (REDUCED) {
   document.getElementById('skipIntro').addEventListener('click', endIntro);
 
   /* ---------- Heart gesture ---------- */
-  const heartBtn=document.getElementById('heartButton');
-  const namesWrap=document.getElementById('namesWrap');
-function begin(){
-  playMusic();
+  const heartBtn = document.getElementById('heartButton');
+  const namesWrap = document.getElementById('namesWrap');
+  let started = false; // <-- add this
 
-  if (!REDUCED){
-    petals.start(); petals.burst();
-    // 👇 Show intro only AFTER user clicks heart
-    setTimeout(()=> {
-      startIntroBeatSynced(4);
-      document.getElementById('touchIntro').classList.add('hidden');
-    }, 1200);
-  } else {
-    document.getElementById('introSequence').classList.add('hidden');
-    document.getElementById('mainContent').classList.add('visible');
+  function begin(){
+    if (started) return;        // <-- guard double triggers
+    started = true;
+
+    namesWrap.classList.add('name-merge');
+    heartBtn.style.opacity = '0';
+    document.getElementById('touchIntro').classList.add('hidden');
+
+    playMusic();
+
+    if (!REDUCED){
+      petals.start(); petals.burst();
+      setTimeout(()=> startIntroBeatSynced(4), 300);
+    } else {
+      document.getElementById('introSequence').classList.add('hidden');
+      document.getElementById('mainContent').classList.add('visible');
+    }
   }
-}
 heartBtn.addEventListener('pointerup', begin, { passive: true });
-heartBtn.addEventListener('click', begin, { passive: true }); // fallback
-
-
-  setTimeout(()=>heartBtn.classList.add('floating'), 900);
+setTimeout(()=>heartBtn.classList.add('floating'), 900);
 
   /* ---------- Maps ---------- */
   function openMap(k){
