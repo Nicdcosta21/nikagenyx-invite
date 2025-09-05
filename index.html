@@ -127,10 +127,39 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
   .event-row{flex-direction:column;text-align:center}
   .event-value{text-align:center}
 }
+
+#introSlideshow {
+  position: fixed;
+  inset: 0;
+  z-index: -4;
+  overflow: hidden;
+}
+.slideshow-img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 2s ease-in-out;
+  filter: brightness(0.7) blur(1px);
+}
+.slideshow-img.active {
+  opacity: 1;
+}
+
+
+  
 </style>
 </head>
 <body>
 <div class="hero-bg"></div><div class="wine-overlay"></div>
+<div id="introSlideshow">
+  <img src="/assets/slide1.jpg" alt="Nikolas and Kavita in a field" class="slideshow-img active">
+  <img src="/assets/slide2.jpg" alt="Couple selfie in nature" class="slideshow-img">
+  <img src="/assets/slide3.jpg" alt="Couple under the stars on cruise" class="slideshow-img">
+  <img src="/assets/slide4.jpg" alt="Nikolas and Kavita seated at night" class="slideshow-img">
+</div>
+
 <canvas id="petalsCanvas"></canvas>
 
 <!-- music -->
@@ -508,6 +537,18 @@ function downloadICS(ics, filename){
   URL.revokeObjectURL(url);
 }
 
+const slides = document.querySelectorAll("#introSlideshow .slideshow-img");
+let currentSlide = 0;
+
+function cycleSlides() {
+  slides.forEach((slide, index) => {
+    slide.classList.toggle("active", index === currentSlide);
+  });
+  currentSlide = (currentSlide + 1) % slides.length;
+}
+setInterval(cycleSlides, 4000); // every 4 seconds
+cycleSlides(); // init
+  
 </script>
 
 </body>
