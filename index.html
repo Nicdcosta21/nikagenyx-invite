@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Alice&family=Noto+Serif&display=swap" rel="stylesheet">
+
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Nikolas & Kavita — Wedding Invitation</title>
@@ -146,11 +148,46 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
 .wedding-card{background:linear-gradient(135deg,rgba(255,255,255,.95),rgba(253,235,239,.9));backdrop-filter:blur(20px);border-radius:24px;padding:3rem 2.5rem;max-width:640px;width:100%;text-align:center;box-shadow:0 30px 60px rgba(0,0,0,.3),0 0 0 1px rgba(255,255,255,.2);border:1px solid rgba(123,23,51,.1)}
 .ceremony-title,.couple-names{font-family:"Playfair Display",serif;color:var(--wine)}
 .ceremony-title{font-size:clamp(24px,5vw,32px);font-weight:700;margin:1rem 0 1.25rem}
-.invitation-header{color:var(--ink)}
+/* Header (Together with their families) */
+.invitation-header {
+  font-family: "Alex Brush", cursive;
+  font-size: 1.6rem;
+  font-weight: 400;
+  font-style: italic;
+  margin-bottom: 1rem;
+}
 .parents-info{line-height:1.6}
-.couple-names{font-size:clamp(28px,6vw,40px);font-weight:700;margin:1rem 0}
-.event-details{margin:1.5rem 0;line-height:1.8}
-.event-row{display:flex;justify-content:space-between;gap:.75rem;flex-wrap:wrap;margin:.4rem 0}
+/* Couple Names */
+.couple-names {
+  font-family: "Alice", serif;
+  font-size: 2rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 1rem 0;
+}
+
+/* Request Line */
+.request-line {
+  font-family: "Noto Serif", serif;
+  font-size: 0.9rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin: 1.2rem 0;
+}
+
+/* Highlight: Sacrament of Holy Matrimony */
+.highlight-line {
+  font-family: "Alex Brush", cursive;
+  font-size: 2.2rem;
+  font-weight: 400;
+  margin: 1.5rem 0;
+}
+/* Event Details */
+.event-details, .event-row {
+  font-family: "Alice", serif;
+  font-size: 1rem;
+  line-height: 1.6;
+}
 .event-label{font-weight:700;color:var(--wine);min-width:80px}
 .event-value{flex:1;text-align:right}
 .map-link{color:var(--wine);text-decoration:underline}
@@ -276,14 +313,20 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
   </div>
 
   <div class="wedding-card">
-    <div class="invitation-header">You are cordially invited, together with your families, to the</div>
-    <div class="ceremony-title">WEDDING CEREMONY</div>
+    <div class="invitation-header">Together with their families</div>
 
-    <div class="parents-info">
-      s/o Samson Nicholas D'Costa and Suni Samson D'Costa,<br>
-      <div class="couple-names">NIKOLAS &amp; KAVITA</div>
-      d/o Kevin Thomas Fernandes and Annie Kevin Fernandes.
-    </div>
+<div class="couple-names">
+  NIKOLAS D’COSTA<br>-AND-<br>KAVITA FERNANDES
+</div>
+
+<div class="request-line">
+  REQUEST THE HONOR OF YOUR COMPANY AT THE NUPTIAL MASS UNITING THEM IN
+</div>
+
+<div class="highlight-line">
+  the Sacrament of<br>Holy Matrimony
+</div>
+
 
     <div class="event-details">
       <div class="event-row"><span class="event-label">On:</span><span class="event-value">Monday, 27 Oct 2025</span></div>
