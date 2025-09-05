@@ -31,7 +31,23 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
 /* Tap-to-begin */
 #touchIntro{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;gap:1rem;color:#fff;text-align:center;padding:2rem;transition:opacity .6s ease,visibility .6s ease}
 #touchIntro.hidden{opacity:0;visibility:hidden;pointer-events:none}
-.name-text{font-family:"Playfair Display",serif;font-size:clamp(28px,8vw,60px);font-weight:700;text-shadow:0 2px 14px rgba(0,0,0,.45);opacity:0;transform:translateY(16px);animation:fadeUp 1s ease forwards}
+.name-text {
+  font-family: "Playfair Display", serif;
+  font-size: clamp(32px, 9vw, 72px);
+  font-weight: 900;
+  color: #fff;
+  text-align: center;
+  letter-spacing: 1px;
+  text-shadow:
+    1px 1px 0 #7b1733,
+    2px 2px 0 #a91d47,
+    3px 3px 4px rgba(0,0,0,0.4),
+    0 0 14px rgba(123, 23, 51, 0.6);
+  opacity: 0;
+  transform: translateY(16px);
+  animation: fadeUp 1s ease forwards;
+}
+
 .name-left{transform:translateX(-40px);animation-delay:.2s}
 .name-right{transform:translateX(40px);animation-delay:.2s}
 .name-merge .name-left,.name-merge .name-right{transform:translateX(0)}
@@ -55,13 +71,16 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
 }
 
 
-.heart-btn:hover{transform:translateY(-2px)}
+.heart-btn:hover {
+  transform: translateY(-3px) scale(1.02);
+}
 .heart-svg-wrapper{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;animation:pulse 1.5s infinite}
 .heart-svg {
   width: 100%;
   height: 100%;
-  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.45));
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 6px #a91d47);
 }
+
 
 #namesWrap {
   display: flex;
