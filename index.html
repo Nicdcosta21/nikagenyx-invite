@@ -812,13 +812,12 @@
             <div class="event-details">
                 <div class="event-row">
                     <span class="event-label">On:</span>
-                    <span class="event-value">Monday, 27 Oct 2025</span>
+                    <span class="event-value">Monday, 27 Oct 2025, 3:00 PM</span>
                 </div>
 
                 <div class="event-row">
-                    <span class="event-label">Time:</span>
-                    <span class="event-value">
-                        3:00 PM — <span class="map-link" onclick="openMap('cathedral')">
+                    <span class="event-label">Destination:</span>
+                    <span class="event-value"><span class="map-link" onclick="openMap('cathedral')">
                             Santa Cruz Cathedral Basilica, Fort Kochi
                         </span>
                     </span>
@@ -837,7 +836,7 @@
                     <span class="event-label">Home:</span>
                     <span class="event-value">
                         <span class="map-link" onclick="openMap('zion')">
-                            Zion Villa, MLA Road, Pallurthy, Kochi 682006
+                            Zion Villa, MLA Road, Kochi 682006
                         </span>
                     </span>
                 </div>
@@ -878,38 +877,24 @@
     </div>
 
     <!-- RSVP -->
-    <div class="modal-overlay" id="rsvpModal" aria-modal="true" role="dialog">
-        <div class="modal-content">
-            <div class="modal-title">Save your reminder</div>
-            <form id="rsvpForm">
-                <div class="form-group">
-                    <label class="form-label" for="fullName">Full Name *</label>
-                    <input class="form-input" id="fullName" required>
-                </div>
-                <div class="form-group" id="guestCountGroup" style="display:none">
-                    <label class="form-label" for="guestCount">Number of Guests</label>
-                    <select class="form-input" id="guestCount">
-                        <option value="" selected disabled>Select</option>
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
-                        <option>6</option>
-                        <option>7</option>
-                        <option>8</option>
-                        <option>9</option>
-                        <option>10</option>
-                    </select>
-                </div>
+    <!-- RSVP -->
+<div class="modal-overlay" id="rsvpModal" aria-modal="true" role="dialog">
+  <div class="modal-content">
+    <div class="modal-title">Save your reminder</div>
+    <form id="rsvpForm">
+      <div class="form-group">
+        <label class="form-label" for="fullName">Full Name *</label>
+        <input class="form-input" id="fullName" required>
+      </div>
 
-                <div style="display:flex;gap:.75rem;justify-content:center;margin-top:1rem">
-                    <button type="button" class="btn-cancel" onclick="closeRSVP()">Cancel</button>
-                    <button type="submit" class="btn-primary">Save &amp; Add to Calendar</button>
-                </div>
-            </form>
-        </div>
-    </div>
+      <div style="display:flex;gap:.75rem;justify-content:center;margin-top:1rem">
+        <button type="button" class="btn-cancel" onclick="closeRSVP()">Cancel</button>
+        <button type="submit" class="btn-primary">Save &amp; Add to Calendar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 
     <script>
         const SHEET_ENDPOINT = '/.netlify/functions/log_event';
@@ -1209,43 +1194,54 @@
         });
 
         document.getElementById('rsvpForm').addEventListener('submit', e => {
-            e.preventDefault();
-            const submitBtn = e.submitter || e.target.querySelector('button[type="submit"]');
-            if (submitBtn) submitBtn.disabled = true;
+  e.preventDefault();
+  const submitBtn = e.submitter || e.target.querySelector('button[type="submit"]');
+  if (submitBtn) submitBtn.disabled = true;
 
-            try {
-                const name = document.getElementById('fullName').value.trim();
-                const guestCount = (currentRSVPType === 'coming') ?
-                    document.getElementById('guestCount').value :
-                    1;
+  try {
+    const name = document.getElementById('fullName').value.trim();
+    if (!name) return;
 
-                if (!name) return;
-                if (currentRSVPType === 'coming' && !guestCount) return;
+    // 1) Send to Google Sheet
+    const payload = {
+      name,
+      guestCount: 1, // always default to 1 now
+      rsvpType: currentRSVPType,
+      userAgent: navigator.userAgent,
+      referrer: document.referrer || location.href
+    };
+    sendToSheet(payload);
 
-                // 1) Send to Google Sheet
-                const payload = {
-                    name,
-                    guestCount: Number(guestCount || 1),
-                    rsvpType: currentRSVPType,
-                    userAgent: navigator.userAgent,
-                    referrer: document.referrer || location.href
-                };
-                sendToSheet(payload);
+    // 2) Calendar file
+    downloadICS(makeICS(currentRSVPType), 'nikolas-kavita-wedding.ics');
 
-                // 2) Calendar file
-                downloadICS(makeICS(currentRSVPType), 'nikolas-kavita-wedding.ics');
+    // 3) Close modal smoothly
+closeRSVP();
 
+// Optional: show a temporary toast instead of alert
+const toast = document.createElement('div');
+toast.textContent = `Reminder saved for ${name}`;
+toast.style.position = 'fixed';
+toast.style.bottom = '20px';
+toast.style.left = '50%';
+toast.style.transform = 'translateX(-50%)';
+toast.style.background = 'rgba(123,23,51,0.9)';
+toast.style.color = '#fff';
+toast.style.padding = '10px 20px';
+toast.style.borderRadius = '20px';
+toast.style.fontWeight = '600';
+toast.style.zIndex = '9999';
+toast.style.transition = 'opacity 0.6s ease';
+document.body.appendChild(toast);
 
+setTimeout(() => { toast.style.opacity = '0'; }, 2500);
+setTimeout(() => { toast.remove(); }, 3100);
 
-                // 3) Close + confirm
-                closeRSVP();
-                alert(currentRSVPType === 'coming' ?
-                    `Thank you, ${name}! Your reminder is saved.` :
-                    'Reminder saved.');
-            } finally {
-                if (submitBtn) submitBtn.disabled = false;
-            }
-        });
+  } finally {
+    if (submitBtn) submitBtn.disabled = false;
+  }
+});
+
 
         async function sendToSheet(payload) {
             try {
