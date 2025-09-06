@@ -152,14 +152,28 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
 
 .intro-line {
   opacity: 0;
-  transform: translateY(10px);
-  animation: fadeInUp 1.2s ease forwards;
+  transform: translateY(15px);
+  animation: fadeInUp 0.9s ease forwards;
   margin: 0.4em 0;
+}
+
+.intro-line:nth-child(1) { animation-delay: 0s; }
+.intro-line:nth-child(2) { animation-delay: 0.8s; }
+.intro-line:nth-child(3) { animation-delay: 1.6s; }
+.intro-line:nth-child(4) { animation-delay: 2.4s; }
+.intro-line:nth-child(5) { animation-delay: 3.2s; }
+.intro-line:nth-child(6) { animation-delay: 4s; }
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .intro-names{font-size:clamp(32px,7vw,64px);font-weight:700;color:var(--wine-soft);text-shadow:0 4px 20px rgba(123,23,51,.8)}
 .skip-intro{position:absolute;bottom:24px;right:24px;background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.35);color:#fff;padding:10px 18px;border-radius:24px;cursor:pointer}
-@keyframes fadeInUp{to{opacity:1;transform:translateY(0)}}
+
 /* Main */
 .main-content{position:relative;z-index:10;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1rem;opacity:0;transition:opacity 1s ease}
 .main-content.visible{opacity:1}
@@ -593,22 +607,18 @@ if (REDUCED) {
 }
 
 
-  function showSlide(step){
-    const seq = document.getElementById('introSequence');
-    const t = document.getElementById('introText');
-    seq.classList.remove('hidden');
-    t.style.opacity = '0';
-    setTimeout(() => {
-     const line = document.createElement('div');
-line.className = 'intro-line';
-line.textContent = introTexts[step];
-line.style.animationDelay = `${step * 0.8}s`;
-if (step === introTexts.length - 1) line.classList.add('intro-names');
-t.appendChild(line);
+  function showSlide(step) {
+  const seq = document.getElementById('introSequence');
+  const t = document.getElementById('introText');
+  seq.classList.remove('hidden');
 
-      t.style.opacity = '1';
-    }, 120);
-  }
+  const line = document.createElement('div');
+  line.className = 'intro-line';
+  line.textContent = introTexts[step];
+  if (step === introTexts.length - 1) line.classList.add('intro-names');
+  t.appendChild(line);
+}
+
 
   function msUntilNextBeats(nBeats = 1){
     const beat = 60 / BPM;
