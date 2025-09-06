@@ -1,266 +1,496 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Alice&family=Noto+Serif&display=swap" rel="stylesheet">
-<link rel="preload" as="image" href="/assets/slide1.webp">
+    <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Alice&family=Noto+Serif&display=swap" rel="stylesheet">
+    <link rel="preload" as="image" href="/assets/slide1.webp">
 
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Nikolas & Kavita — Wedding Invitation</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-<style>
-:root{--wine:#7b1733;--wine-soft:#fdebef;--ink:#1f2937}
-html,body{height:100%;overflow-x:hidden}
-body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;color:var(--ink)}
-/* Background (image + fallback gradient) */
-.hero-bg{
-  position:fixed;inset:0;z-index:-5;
-  background:
-    url('/assets/hero.jpg') center/cover no-repeat,
-    linear-gradient(135deg,#7b1733,#a91d47);
-  filter:brightness(.9) saturate(1.05);
-}
-.wine-overlay{
-  position:fixed;inset:0;z-index:-2;
-  background:
-    radial-gradient(80% 70% at 50% 15%, rgba(123,23,51,.10), transparent 90%),
-    linear-gradient(180deg, rgba(20,6,10,.2), rgba(20,6,10,.35));
-}
-/* Petals */
-#petalsCanvas{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:0;transition:opacity 1s ease}
-#petalsCanvas.active{opacity:1}
-/* Music control */
-.music-control {
-  position: fixed;
-  top: .75rem;
-  right: .75rem;
-  z-index: 100;
-  background: rgba(255, 255, 255, .4); /* lighter opacity */
-  border: none;
-  border-radius: .5rem; /* smaller rounding */
-  padding: .15rem .3rem; /* smaller size */
-  font-size: 0.6rem; /* smaller text */
-  cursor: pointer;
-  font-weight: 600;
-  color: var(--wine);
-  box-shadow: 0 3px 8px rgba(0,0,0,.15); /* softer shadow */
-  transition: background 0.3s ease;
-}
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Nikolas & Kavita — Wedding Invitation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --wine: #7b1733;
+            --wine-soft: #fdebef;
+            --ink: #1f2937
+        }
 
-.music-control:hover {
-  background: rgba(255, 255, 255, .9); /* brighten a little on hover */
-}
-/* Tap-to-begin */
-#touchIntro{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;gap:1rem;color:#fff;text-align:center;padding:2rem;transition:opacity .6s ease,visibility .6s ease}
-#touchIntro.hidden{opacity:0;visibility:hidden;pointer-events:none}
-.name-text {
-  font-family: "Playfair Display", serif;
-  font-size: clamp(42px, 12vw, 96px);
-  font-weight: 900;
-  color: #fff;
-  text-align: center;
-  letter-spacing: 1px;
-  text-shadow: 
-    0 4px 12px rgba(0,0,0,0.35), /* soft gray glow */
-    0 0 18px rgba(0,0,0,0.25);
-  opacity: 0;
-  transform: translateY(16px);
-  animation: fadeUp 1s ease forwards;
-}
+        html,
+        body {
+            height: 100%;
+            overflow-x: hidden
+        }
 
-.name-left{transform:translateX(-40px);animation-delay:.2s}
-.name-right{transform:translateX(40px);animation-delay:.2s}
-.name-merge .name-left,.name-merge .name-right{transform:translateX(0)}
-.heart-btn {
-  position: relative;
-  width: clamp(160px, 35vw, 260px);
-  height: clamp(160px, 35vw, 260px);
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  z-index: 70;
-  opacity: 1;
-  animation: fadeUp 1s ease forwards;
-  animation-delay: 0.35s;
-  animation-fill-mode: forwards;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  -webkit-tap-highlight-color: transparent;
-}
+        body {
+            margin: 0;
+            font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+            color: var(--ink)
+        }
+
+        /* Background (image + fallback gradient) */
+        .hero-bg {
+            position: fixed;
+            inset: 0;
+            z-index: -5;
+            background:
+                url('/assets/hero.jpg') center/cover no-repeat,
+                linear-gradient(135deg, #7b1733, #a91d47);
+            filter: brightness(.9) saturate(1.05);
+        }
+
+        .wine-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            background:
+                radial-gradient(80% 70% at 50% 15%, rgba(123, 23, 51, .10), transparent 90%),
+                linear-gradient(180deg, rgba(20, 6, 10, .2), rgba(20, 6, 10, .35));
+        }
+
+        /* Petals */
+        #petalsCanvas {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 1s ease
+        }
+
+        #petalsCanvas.active {
+            opacity: 1
+        }
+
+        /* Music control */
+        .music-control {
+            position: fixed;
+            top: .75rem;
+            right: .75rem;
+            z-index: 100;
+            background: rgba(255, 255, 255, .4);
+            /* lighter opacity */
+            border: none;
+            border-radius: .5rem;
+            /* smaller rounding */
+            padding: .15rem .3rem;
+            /* smaller size */
+            font-size: 0.6rem;
+            /* smaller text */
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--wine);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, .15);
+            /* softer shadow */
+            transition: background 0.3s ease;
+        }
+
+        .music-control:hover {
+            background: rgba(255, 255, 255, .9);
+            /* brighten a little on hover */
+        }
+
+        /* Tap-to-begin */
+        #touchIntro {
+            position: fixed;
+            inset: 0;
+            z-index: 60;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            color: #fff;
+            text-align: center;
+            padding: 2rem;
+            transition: opacity .6s ease, visibility .6s ease
+        }
+
+        #touchIntro.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none
+        }
+
+        .name-text {
+            font-family: "Playfair Display", serif;
+            font-size: clamp(42px, 12vw, 96px);
+            font-weight: 900;
+            color: #fff;
+            text-align: center;
+            letter-spacing: 1px;
+            text-shadow:
+                0 4px 12px rgba(0, 0, 0, 0.35),
+                /* soft gray glow */
+                0 0 18px rgba(0, 0, 0, 0.25);
+            opacity: 0;
+            transform: translateY(16px);
+            animation: fadeUp 1s ease forwards;
+        }
+
+        .name-left {
+            transform: translateX(-40px);
+            animation-delay: .2s
+        }
+
+        .name-right {
+            transform: translateX(40px);
+            animation-delay: .2s
+        }
+
+        .name-merge .name-left,
+        .name-merge .name-right {
+            transform: translateX(0)
+        }
+
+        .heart-btn {
+            position: relative;
+            width: clamp(160px, 35vw, 260px);
+            height: clamp(160px, 35vw, 260px);
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            z-index: 70;
+            opacity: 1;
+            animation: fadeUp 1s ease forwards;
+            animation-delay: 0.35s;
+            animation-fill-mode: forwards;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            -webkit-tap-highlight-color: transparent;
+        }
 
 
-.heart-btn:hover {
-  transform: translateY(-3px) scale(1.02);
-}
-.heart-svg-wrapper{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;animation:pulse 1.5s infinite}
-.heart-svg {
-  width: 100%;
-  height: 100%;
-  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.55)) drop-shadow(0 0 6px #000);
-}
+        .heart-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+        }
+
+        .heart-svg-wrapper {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 1.5s infinite
+        }
+
+        .heart-svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.55)) drop-shadow(0 0 6px #000);
+        }
 
 
-#namesWrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap; /* Allow line wrap on smaller screens */
-  gap: 2rem; /* more breathing space */;
-  text-align: center;
-  padding: 0 1rem; /* add some side breathing room */
-}
+        #namesWrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            /* Allow line wrap on smaller screens */
+            gap: 2rem;
+            /* more breathing space */
+            ;
+            text-align: center;
+            padding: 0 1rem;
+            /* add some side breathing room */
+        }
 
 
 
-/* Blood-red heart */
-.heart-svg path{fill:#960018;stroke:#7b0013;stroke-width:1.2px}
-.heart-btn .touch-text {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: clamp(20px, 3vw, 32px);
-  font-weight: 700;
-  color: white;
-  z-index: 2;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
-  pointer-events: none;
-  text-align: center;
-  line-height: 1.3;
-  white-space: pre-line; /* allows line breaks */
-}
+        /* Blood-red heart */
+        .heart-svg path {
+            fill: #960018;
+            stroke: #7b0013;
+            stroke-width: 1.2px
+        }
 
-.heart-btn.floating{animation:float 3s ease-in-out infinite}
-@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.08)}100%{transform:scale(1)}}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-@keyframes fadeUp{to{opacity:1;transform:none}}
-/* Intro reel */
-.intro-sequence{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;flex-direction:column;color:#fff;text-align:center;padding:2rem;transition:opacity .6s ease,visibility .6s ease}
-.intro-sequence.hidden{opacity:0;visibility:hidden;pointer-events:none}
-.intro-text {
-  font-family: "Playfair Display", serif;
-  font-size: clamp(24px, 5vw, 36px);
-  line-height: 1.5;
-  text-align: center;
-  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-  opacity: 1;
-  transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-}
+        .heart-btn .touch-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(20px, 3vw, 32px);
+            font-weight: 700;
+            color: white;
+            z-index: 2;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+            pointer-events: none;
+            text-align: center;
+            line-height: 1.3;
+            white-space: pre-line;
+            /* allows line breaks */
+        }
 
-.intro-line {
-  opacity: 0;
-  transform: translateY(20px);
-  animation: fadeInUp 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-  margin: 0.6em 0;  /* a bit more breathing room */
-}
+        .heart-btn.floating {
+            animation: float 3s ease-in-out infinite
+        }
 
-.intro-line:nth-child(1) { animation-delay: 0s; }
-.intro-line:nth-child(2) { animation-delay: 0.8s; }
-.intro-line:nth-child(3) { animation-delay: 1.6s; }
-.intro-line:nth-child(4) { animation-delay: 2.4s; }
-.intro-line:nth-child(5) { animation-delay: 3.2s; }
-.intro-line:nth-child(6) { animation-delay: 4s; }
+        @keyframes pulse {
+            0% {
+                transform: scale(1)
+            }
 
-@keyframes fadeInUp {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+            50% {
+                transform: scale(1.08)
+            }
 
-.intro-names {
-  font-size: clamp(32px,7vw,64px);
-  font-weight: 700;
-  color: var(--wine-soft);
-  text-shadow: 0 4px 20px rgba(123,23,51,.8);
-}
+            100% {
+                transform: scale(1)
+            }
+        }
 
-@keyframes pop {
-  from { transform: scale(1); }
-  to   { transform: scale(1.05); }
-}
+        @keyframes float {
 
-.skip-intro{position:absolute;bottom:24px;right:24px;background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.35);color:#fff;padding:10px 18px;border-radius:24px;cursor:pointer}
+            0%,
+            100% {
+                transform: translateY(0)
+            }
 
-/* Main */
-.main-content{position:relative;z-index:10;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1rem;opacity:0;transition:opacity 1s ease}
-.main-content.visible{opacity:1}
-.bible-verse{text-align:center;color:#fff;margin-bottom:3rem;max-width:640px;font-style:italic;line-height:1.6;text-shadow:0 2px 10px rgba(0,0,0,.7)}
-.wedding-card{background:linear-gradient(135deg,rgba(255,255,255,.95),rgba(253,235,239,.9));backdrop-filter:blur(20px);border-radius:24px;padding:3rem 2.5rem;max-width:640px;width:100%;text-align:center;box-shadow:0 30px 60px rgba(0,0,0,.3),0 0 0 1px rgba(255,255,255,.2);border:1px solid rgba(123,23,51,.1)}
-.ceremony-title,.couple-names{font-family:"Playfair Display",serif;color:var(--wine)}
-.ceremony-title{font-size:clamp(24px,5vw,32px);font-weight:700;margin:1rem 0 1.25rem}
-/* Header (Together with their families) */
-.invitation-header {
-  font-family: "Alex Brush", cursive;
-  font-size: 2.5rem;
-  font-weight: 400;
-  font-style: italic;
-  margin: 0 0 2rem 0;   /* push names further down */
-  text-align: center;
-  letter-spacing: .15em;
-  line-height: 0.7;
-}
-.parents-info{line-height:1.6}
+            50% {
+                transform: translateY(-6px)
+            }
+        }
 
-/* Couple names */
-.couple-names {
-  font-family: "Alice", serif;
-  font-size: 1.7rem;  
-  font-weight: 700;
-  text-transform: uppercase;
-  margin: 1rem 0;
-}
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
 
-/* Request line */
-.request-line {
-  font-family: "Noto Serif", serif;
-  font-size: 0.85rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  margin: 1.5rem 0;
-}
+        /* Intro reel */
+        .intro-sequence {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: rgba(0, 0, 0, .5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: #fff;
+            text-align: center;
+            padding: 2rem;
+            transition: opacity .6s ease, visibility .6s ease
+        }
 
-/* Highlight: Sacrament of Holy Matrimony */
-.highlight-line {
-  font-family: "Alex Brush", cursive, bold;
-  font-size: 2.7rem;        /* bigger, elegant */
-  font-weight: 400;
-  margin: 1.5rem 0;
-  letter-spacing: 0.35em;   /* wide spacing between letters */
-  line-height: 1.05;        /* compact vertical spacing */
-  text-align: center;       /* center it cleanly */
-}
-/* Event Details (two-column style) */
+        .intro-sequence.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none
+        }
+
+        .intro-text {
+            font-family: "Playfair Display", serif;
+            font-size: clamp(24px, 5vw, 36px);
+            line-height: 1.5;
+            text-align: center;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            opacity: 1;
+            transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .intro-line {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            margin: 0.6em 0;
+            /* a bit more breathing room */
+        }
+
+        .intro-line:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .intro-line:nth-child(2) {
+            animation-delay: 0.8s;
+        }
+
+        .intro-line:nth-child(3) {
+            animation-delay: 1.6s;
+        }
+
+        .intro-line:nth-child(4) {
+            animation-delay: 2.4s;
+        }
+
+        .intro-line:nth-child(5) {
+            animation-delay: 3.2s;
+        }
+
+        .intro-line:nth-child(6) {
+            animation-delay: 4s;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .intro-names {
+            font-size: clamp(32px, 7vw, 64px);
+            font-weight: 700;
+            color: var(--wine-soft);
+            text-shadow: 0 4px 20px rgba(123, 23, 51, .8);
+        }
+
+        @keyframes pop {
+            from {
+                transform: scale(1);
+            }
+
+            to {
+                transform: scale(1.05);
+            }
+        }
+
+        .skip-intro {
+            position: absolute;
+            bottom: 24px;
+            right: 24px;
+            background: rgba(255, 255, 255, .25);
+            border: 1px solid rgba(255, 255, 255, .35);
+            color: #fff;
+            padding: 10px 18px;
+            border-radius: 24px;
+            cursor: pointer
+        }
+
+        /* Main */
+        .main-content {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+            opacity: 0;
+            transition: opacity 1s ease
+        }
+
+        .main-content.visible {
+            opacity: 1
+        }
+
+        .bible-verse {
+            text-align: center;
+            color: #fff;
+            margin-bottom: 3rem;
+            max-width: 640px;
+            font-style: italic;
+            line-height: 1.6;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, .7)
+        }
+
+        .wedding-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, .95), rgba(253, 235, 239, .9));
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 3rem 2.5rem;
+            max-width: 640px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, .3), 0 0 0 1px rgba(255, 255, 255, .2);
+            border: 1px solid rgba(123, 23, 51, .1)
+        }
+
+        .ceremony-title,
+        .couple-names {
+            font-family: "Playfair Display", serif;
+            color: var(--wine)
+        }
+
+        .ceremony-title {
+            font-size: clamp(24px, 5vw, 32px);
+            font-weight: 700;
+            margin: 1rem 0 1.25rem
+        }
+
+        /* Header (Together with their families) */
+        .invitation-header {
+            font-family: "Alex Brush", cursive;
+            font-size: 2.5rem;
+            font-weight: 400;
+            font-style: italic;
+            margin: 0 0 2rem 0;
+            /* push names further down */
+            text-align: center;
+            letter-spacing: .15em;
+            line-height: 0.7;
+        }
+
+        .parents-info {
+            line-height: 1.6
+        }
+
+        /* Couple names */
+        .couple-names {
+            font-family: "Alice", serif;
+            font-size: 1.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin: 1rem 0;
+        }
+
+        /* Request line */
+        .request-line {
+            font-family: "Noto Serif", serif;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin: 1.5rem 0;
+        }
+
+        /* Highlight: Sacrament of Holy Matrimony */
+        .highlight-line {
+            font-family: "Alex Brush", cursive, bold;
+            font-size: 2.7rem;
+            /* bigger, elegant */
+            font-weight: 400;
+            margin: 1.5rem 0;
+            letter-spacing: 0.35em;
+            /* wide spacing between letters */
+            line-height: 1.05;
+            /* compact vertical spacing */
+            text-align: center;
+            /* center it cleanly */
+        }
+
+ /* Event Details */
 .event-details {
   font-family: "Alice", serif;
   font-size: 1rem;
   line-height: 1.6;
   margin-top: 2rem;
-  max-width: 700px;       /* wider block for clean spacing */
+  max-width: 700px;
   margin-left: auto;
   margin-right: auto;
 }
 
 .event-row {
-  display: flex;
-  justify-content: space-between;  /* spread label left, value right */
-  align-items: flex-start;         /* align multi-line values neatly */
+  display: grid;
+  grid-template-columns: 120px 1fr; /* label + value */
+  gap: 0.5rem 1rem; /* spacing between label and value */
   margin: 0.6rem 0;
-  text-align: left;
+  align-items: start;
 }
 
 .event-label {
-  flex: 0 0 160px;   /* fixed width column for labels */
   font-weight: bold;
   color: var(--wine);
+  text-align: left;
+  word-break: break-word; /* prevents overflow */
 }
 
 .event-value {
-  flex: 1;
-  text-align: right;
+  text-align: left; /* keeps natural reading order */
+  word-break: break-word;
 }
 
 .map-link {
@@ -272,558 +502,782 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
   text-decoration: underline;
 }
 
-.action-buttons{margin:2rem 0 1.25rem;display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
-.btn-primary,.btn-outline{padding:12px 22px;border-radius:28px;font-weight:700;cursor:pointer}
-.btn-primary{background:var(--wine);color:#fff;border:none}
-.btn-outline{background:transparent;color:var(--wine);border:2px solid var(--wine)}
-.btn-primary:hover{filter:brightness(.95)} .btn-outline:hover{background:var(--wine);color:#fff}
-.color-note {
-  margin-top: 1rem;
-  padding: .9rem;
-  border-radius: 12px;
-  background: rgba(123,23,51,.1);
-  color: var(--wine);
-  font-style: italic;
+/* Mobile tweaks */
+@media (max-width: 640px) {
+  .event-row {
+    grid-template-columns: 100px 1fr; /* narrower label column */
+    gap: 0.25rem 0.75rem;
+  }
 }
 
-/* Countdown styled same as color-note */
-.countdown-section {
-  margin-top: 1rem;
-  padding: .9rem;
-  border-radius: 12px;
-  color: var(--wine);
-  font-style: italic;
-}
+        .action-buttons {
+            margin: 2rem 0 1.25rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap
+        }
 
-.countdown-timer {
-  display: inline-block;
-  margin-top: 0.5rem;
-  padding: .9rem;
-  border-radius: 12px;
-  background: rgba(123,23,51,.1); /* same background */
-  color: var(--wine); /* same text color */
-  
-  font-size: 1.2rem;
-  font-weight: 700;
-}
+        .btn-primary,
+        .btn-outline {
+            padding: 12px 22px;
+            border-radius: 28px;
+            font-weight: 700;
+            cursor: pointer
+        }
 
-.footer{text-align:center;color:rgba(255,255,255,.85);padding:2rem}
-/* Modal */
-.modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.7);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;visibility:hidden;transition:all .3s ease}
-.modal-overlay.visible{opacity:1;visibility:visible}
-.modal-content{background:#fff;border-radius:20px;padding:2rem;max-width:500px;width:100%;transform:translateY(18px);transition:transform .3s ease}
-.modal-overlay.visible .modal-content{transform:translateY(0)}
-.modal-title{font-family:"Playfair Display",serif;font-size:26px;font-weight:700;color:var(--wine);text-align:center;margin:0 0 1rem}
-.form-group{margin:.9rem 0}.form-label{display:block;font-weight:600;margin:.4rem 0}.form-input{width:100%;padding:12px 14px;border:2px solid #e5e7eb;border-radius:12px;font-size:16px}
-.form-input:focus{outline:none;border-color:var(--wine)}
-.btn-cancel{background:#6b7280;color:#fff;border:none;border-radius:24px;padding:10px 18px;font-weight:700;cursor:pointer}
-/* Reduced motion */
-@media (prefers-reduced-motion: reduce){
-  .intro-sequence{display:none!important}
-  #petalsCanvas{display:none!important}
-  .main-content{opacity:1!important}
-}
+        .btn-primary {
+            background: var(--wine);
+            color: #fff;
+            border: none
+        }
 
-@media (max-width:640px){
-  .wedding-card{padding:2rem 1.25rem;margin:0 1rem}
-  .event-row{flex-direction:column;text-align:center}
-  .event-value{text-align:center}
-}
+        .btn-outline {
+            background: transparent;
+            color: var(--wine);
+            border: 2px solid var(--wine)
+        }
 
-#introSlideshow {
-  position: fixed;
-  inset: 0;
-  z-index: -4; /* below hero-bg and overlay */
-  overflow: hidden;
-  transition: opacity 1s ease;
-}
+        .btn-primary:hover {
+            filter: brightness(.95)
+        }
 
-.slideshow-img {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0;
-  transition: opacity 2s ease-in-out;
-  filter: brightness(0.85) blur(0.7px); /* subtle dark blur for readability */
-}
+        .btn-outline:hover {
+            background: var(--wine);
+            color: #fff
+        }
 
-.slideshow-img.active {
-  opacity: 1;
-}
+        .color-note {
+            margin-top: 1rem;
+            padding: .9rem;
+            border-radius: 12px;
+            background: rgba(123, 23, 51, .1);
+            color: var(--wine);
+            font-style: italic;
+        }
 
-.static-hero {
-  position: fixed;
-  inset: 0;
-  z-index: -4;
-  background: url('/assets/hero.jpg') center/cover no-repeat;
-  transition: opacity 1s ease;
-  opacity: 1;
-}
+        /* Countdown styled same as color-note */
+        .countdown-section {
+            margin-top: 1rem;
+            padding: .9rem;
+            border-radius: 12px;
+            color: var(--wine);
+            font-style: italic;
+        }
 
-.static-hero.hidden {
-  opacity: 0;
-  pointer-events: none;
-}
+        .countdown-timer {
+            display: inline-block;
+            margin-top: 0.5rem;
+            padding: .9rem;
+            border-radius: 12px;
+            background: rgba(123, 23, 51, .1);
+            /* same background */
+            color: var(--wine);
+            /* same text color */
 
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
 
-  
-</style>
+        .footer {
+            text-align: center;
+            color: rgba(255, 255, 255, .85);
+            padding: 2rem
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            background: rgba(0, 0, 0, .7);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: all .3s ease
+        }
+
+        .modal-overlay.visible {
+            opacity: 1;
+            visibility: visible
+        }
+
+        .modal-content {
+            background: #fff;
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 100%;
+            transform: translateY(18px);
+            transition: transform .3s ease
+        }
+
+        .modal-overlay.visible .modal-content {
+            transform: translateY(0)
+        }
+
+        .modal-title {
+            font-family: "Playfair Display", serif;
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--wine);
+            text-align: center;
+            margin: 0 0 1rem
+        }
+
+        .form-group {
+            margin: .9rem 0
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin: .4rem 0
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--wine)
+        }
+
+        .btn-cancel {
+            background: #6b7280;
+            color: #fff;
+            border: none;
+            border-radius: 24px;
+            padding: 10px 18px;
+            font-weight: 700;
+            cursor: pointer
+        }
+
+        /* Reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            .intro-sequence {
+                display: none !important
+            }
+
+            #petalsCanvas {
+                display: none !important
+            }
+
+            .main-content {
+                opacity: 1 !important
+            }
+        }
+
+        @media (max-width:640px) {
+            .wedding-card {
+                padding: 2rem 1.25rem;
+                margin: 0 1rem
+            }
+
+            .event-row {
+                flex-direction: column;
+                text-align: center
+            }
+
+            .event-value {
+                text-align: center
+            }
+        }
+
+        #introSlideshow {
+            position: fixed;
+            inset: 0;
+            z-index: -4;
+            /* below hero-bg and overlay */
+            overflow: hidden;
+            transition: opacity 1s ease;
+        }
+
+        .slideshow-img {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+            filter: brightness(0.85) blur(0.7px);
+            /* subtle dark blur for readability */
+        }
+
+        .slideshow-img.active {
+            opacity: 1;
+        }
+
+        .static-hero {
+            position: fixed;
+            inset: 0;
+            z-index: -4;
+            background: url('/assets/hero.jpg') center/cover no-repeat;
+            transition: opacity 1s ease;
+            opacity: 1;
+        }
+
+        .static-hero.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+    </style>
 </head>
+
 <body>
-<div class="hero-bg"></div><div class="wine-overlay"></div>
-<div id="introSlideshow">
-  <img 
-  src="/assets/slide1.webp" 
-  alt="Nikolas and Kavita in a field" 
-  class="slideshow-img active" 
-  loading="eager">
+    <div class="hero-bg"></div>
+    <div class="wine-overlay"></div>
+    <div id="introSlideshow">
+        <img src="/assets/slide1.webp" alt="Nikolas and Kavita in a field" class="slideshow-img active" loading="eager">
 
-<img 
-  src="/assets/slide2.webp" 
-  alt="Couple selfie in nature" 
-  class="slideshow-img" 
-  loading="eager">
+        <img src="/assets/slide2.webp" alt="Couple selfie in nature" class="slideshow-img" loading="eager">
 
-<img 
-  src="/assets/slide3.webp" 
-  alt="Romantic night on deck" 
-  class="slideshow-img" 
-  loading="lazy">
+        <img src="/assets/slide3.webp" alt="Romantic night on deck" class="slideshow-img" loading="lazy">
 
-<img 
-  src="/assets/slide4.webp" 
-  alt="Seated couple under stars" 
-  class="slideshow-img" 
-  loading="lazy">
+        <img src="/assets/slide4.webp" alt="Seated couple under stars" class="slideshow-img" loading="lazy">
 
-</div>
+    </div>
 
-  <div class="static-hero hidden" id="staticHero"></div>
+    <div class="static-hero hidden" id="staticHero"></div>
 
 
 
-<canvas id="petalsCanvas"></canvas>
+    <canvas id="petalsCanvas"></canvas>
 
-<!-- music -->
-<button class="music-control" id="musicControl" type="button" aria-pressed="false">Music: Off</button>
-<audio id="bgm" preload="auto" playsinline loop>
-  <source src="/assets/music.mp3" type="audio/mpeg">
-</audio>
+    <!-- music -->
+    <button class="music-control" id="musicControl" type="button" aria-pressed="false">Music: Off</button>
+    <audio id="bgm" preload="auto" playsinline loop>
+        <source src="/assets/music.mp3" type="audio/mpeg">
+    </audio>
 
-<!-- intro -->
-<div id="touchIntro" role="dialog" aria-modal="true" aria-label="Intro">
-    <div id="namesWrap">
-  <div class="name-text name-left">NIKOLAS</div>
-  <button id="heartButton" class="heart-btn" type="button" aria-label="Begin">
-    <div class="heart-svg-wrapper">
-      <svg class="heart-svg" viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 
+    <!-- intro -->
+    <div id="touchIntro" role="dialog" aria-modal="true" aria-label="Intro">
+        <div id="namesWrap">
+            <div class="name-text name-left">NIKOLAS</div>
+            <button id="heartButton" class="heart-btn" type="button" aria-label="Begin">
+                <div class="heart-svg-wrapper">
+                    <svg class="heart-svg" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 
                  2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 
                  14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 
-                 11.54L12 21.35z"/>
-      </svg>
-    </div>
-    <span class="touch-text">Touch<br>me</span>
-  </button>
-  <div class="name-text name-right">KAVITA</div>
-</div>
+                 11.54L12 21.35z" />
+                    </svg>
+                </div>
+                <span class="touch-text">Touch<br>me</span>
+            </button>
+            <div class="name-text name-right">KAVITA</div>
+        </div>
 
-  </div>
-
-<div class="intro-sequence hidden" id="introSequence">
-  <div class="intro-text" id="introText"></div>
-
-  <button class="skip-intro" type="button" id="skipIntro">Skip Intro</button>
-</div>
-
-<!-- main -->
-<div class="main-content" id="mainContent">
-  <div class="bible-verse">
-    “Place me like a seal over your heart… for love is as strong as death…<br>
-    Many waters cannot quench love; rivers cannot sweep it away”
-    <div class="verse-reference">— Song of Solomon 8:6–7</div>
-  </div>
-
-  <div class="wedding-card">
-    <div class="invitation-header">Together with their families</div>
-
-<div class="couple-names">
-  NIKOLAS D’COSTA<br>-AND-<br>KAVITA FERNANDES
-</div>
-
-<div class="request-line">
-  REQUEST THE HONOR OF YOUR COMPANY AT THE NUPTIAL MASS UNITING THEM IN
-</div>
-
-<div class="highlight-line">
-  the Sacrament of<br>Holy Matrimony
-</div>
-
-
-    <div class="event-details">
-  <div class="event-row">
-    <span class="event-label">On:</span>
-    <span class="event-value">Monday, 27 Oct 2025</span>
-  </div>
-
-  <div class="event-row">
-    <span class="event-label">Time:</span>
-    <span class="event-value">
-      3:00 PM — <span class="map-link" onclick="openMap('cathedral')">
-        Santa Cruz Cathedral Basilica, Fort Kochi
-      </span>
-    </span>
-  </div>
-
-  <div class="event-row">
-    <span class="event-label">Reception:</span>
-    <span class="event-value">
-      To follow at <span class="map-link" onclick="openMap('rose')">
-        Rose Garden, Kochi
-      </span>
-    </span>
-  </div>
-
-  <div class="event-row">
-    <span class="event-label">Home:</span>
-    <span class="event-value">
-      <span class="map-link" onclick="openMap('zion')">
-        Zion Villa, MLA Road, Pallurthy, Kochi 682006
-      </span>
-    </span>
-  </div>
-
-  <div class="event-row">
-    <span class="event-label">Travel:</span>
-    <span class="event-value">
-      Nearest Railway — 
-      <span class="map-link" onclick="openMap('ers')">
-        Ernakulam Jn (ERS)
-      </span><br>
-      Nearest Airport — 
-      <span class="map-link" onclick="openMap('cochin')">
-        Cochin Intl.
-      </span>
-    </span>
-  </div>
-</div>
-
-
-    <div class="action-buttons">
-      <button class="btn-primary" type="button" onclick="openRSVP('coming')">Save to Calendar</button>
-      <button class="btn-outline" type="button" onclick="openRSVP('save')">Set a Reminder</button>
     </div>
 
-    <div class="color-note">Colour of the day — Wine Red</div>
-    <div class="countdown-section">
-  <div style="margin:.25rem 0 .5rem;font-weight:700;letter-spacing:.08em">
-    COUNTDOWN
-  </div>
-  <div class="countdown-timer" id="countdownTimer">Loading...</div>
-</div>
-  </div>
+    <div class="intro-sequence hidden" id="introSequence">
+        <div class="intro-text" id="introText"></div>
+
+        <button class="skip-intro" type="button" id="skipIntro">Skip Intro</button>
+    </div>
+
+    <!-- main -->
+    <div class="main-content" id="mainContent">
+        <div class="bible-verse">
+            “Place me like a seal over your heart… for love is as strong as death…<br>
+            Many waters cannot quench love; rivers cannot sweep it away”
+            <div class="verse-reference">— Song of Solomon 8:6–7</div>
+        </div>
+
+        <div class="wedding-card">
+            <div class="invitation-header">Together with their families</div>
+
+            <div class="couple-names">
+                NIKOLAS D’COSTA<br>-AND-<br>KAVITA FERNANDES
+            </div>
+
+            <div class="request-line">
+                REQUEST THE HONOR OF YOUR COMPANY AT THE NUPTIAL MASS UNITING THEM IN
+            </div>
+
+            <div class="highlight-line">
+                the Sacrament of<br>Holy Matrimony
+            </div>
+
+
+            <div class="event-details">
+                <div class="event-row">
+                    <span class="event-label">On:</span>
+                    <span class="event-value">Monday, 27 Oct 2025</span>
+                </div>
+
+                <div class="event-row">
+                    <span class="event-label">Time:</span>
+                    <span class="event-value">
+                        3:00 PM — <span class="map-link" onclick="openMap('cathedral')">
+                            Santa Cruz Cathedral Basilica, Fort Kochi
+                        </span>
+                    </span>
+                </div>
+
+                <div class="event-row">
+                    <span class="event-label">Reception:</span>
+                    <span class="event-value">
+                        To follow at <span class="map-link" onclick="openMap('rose')">
+                            Rose Garden, Kochi
+                        </span>
+                    </span>
+                </div>
+
+                <div class="event-row">
+                    <span class="event-label">Home:</span>
+                    <span class="event-value">
+                        <span class="map-link" onclick="openMap('zion')">
+                            Zion Villa, MLA Road, Pallurthy, Kochi 682006
+                        </span>
+                    </span>
+                </div>
+
+                <div class="event-row">
+                    <span class="event-label">Travel:</span>
+                    <span class="event-value">
+                        Nearest Railway —
+                        <span class="map-link" onclick="openMap('ers')">
+                            Ernakulam Jn (ERS)
+                        </span><br>
+                        Nearest Airport —
+                        <span class="map-link" onclick="openMap('cochin')">
+                            Cochin Intl.
+                        </span>
+                    </span>
+                </div>
+            </div>
+
+
+            <div class="action-buttons">
+                <button class="btn-primary" type="button" onclick="openRSVP('coming')">Save to Calendar</button>
+                <button class="btn-outline" type="button" onclick="openRSVP('save')">Set a Reminder</button>
+            </div>
+
+            <div class="color-note">Colour of the day — Wine Red</div>
+            <div class="countdown-section">
+                <div style="margin:.25rem 0 .5rem;font-weight:700;letter-spacing:.08em">
+                    COUNTDOWN
+                </div>
+                <div class="countdown-timer" id="countdownTimer">Loading...</div>
+            </div>
+        </div>
 
 
 
-  <div class="footer">invite.nikagenyx.com · Kochi, Kerala</div>
-</div>
+        <div class="footer">invite.nikagenyx.com · Kochi, Kerala</div>
+    </div>
 
-<!-- RSVP -->
-<div class="modal-overlay" id="rsvpModal" aria-modal="true" role="dialog">
-  <div class="modal-content">
-    <div class="modal-title">Save your reminder</div>
-    <form id="rsvpForm">
-      <div class="form-group">
-        <label class="form-label" for="fullName">Full Name *</label>
-        <input class="form-input" id="fullName" required>
-      </div>
-      <div class="form-group" id="guestCountGroup" style="display:none">
-        <label class="form-label" for="guestCount">Number of Guests</label>
-        <select class="form-input" id="guestCount">
-          <option value="" selected disabled>Select</option>
-          <option>1</option><option>2</option><option>3</option>
-          <option>4</option><option>5</option><option>6</option>
-          <option>7</option><option>8</option><option>9</option>
-          <option>10</option>
-        </select>
-      </div>
+    <!-- RSVP -->
+    <div class="modal-overlay" id="rsvpModal" aria-modal="true" role="dialog">
+        <div class="modal-content">
+            <div class="modal-title">Save your reminder</div>
+            <form id="rsvpForm">
+                <div class="form-group">
+                    <label class="form-label" for="fullName">Full Name *</label>
+                    <input class="form-input" id="fullName" required>
+                </div>
+                <div class="form-group" id="guestCountGroup" style="display:none">
+                    <label class="form-label" for="guestCount">Number of Guests</label>
+                    <select class="form-input" id="guestCount">
+                        <option value="" selected disabled>Select</option>
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                        <option>6</option>
+                        <option>7</option>
+                        <option>8</option>
+                        <option>9</option>
+                        <option>10</option>
+                    </select>
+                </div>
 
-      <div style="display:flex;gap:.75rem;justify-content:center;margin-top:1rem">
-        <button type="button" class="btn-cancel" onclick="closeRSVP()">Cancel</button>
-        <button type="submit" class="btn-primary">Save &amp; Add to Calendar</button>
-      </div>
-    </form>
-  </div>
-</div>
+                <div style="display:flex;gap:.75rem;justify-content:center;margin-top:1rem">
+                    <button type="button" class="btn-cancel" onclick="closeRSVP()">Cancel</button>
+                    <button type="submit" class="btn-primary">Save &amp; Add to Calendar</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-<script>
-  const SHEET_ENDPOINT = '/.netlify/functions/log_event';
+    <script>
+        const SHEET_ENDPOINT = '/.netlify/functions/log_event';
 
-// respect reduced-motion, but keep the heart (touch intro) visible
-const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-if (REDUCED) {
-  document.querySelectorAll('.name-text, .heart-btn').forEach(el => {
-    el.style.opacity = '1'; el.style.transform = 'none'; el.style.animation = 'none';
-  });
-  document.getElementById('introSequence').style.display = 'none';
-  document.getElementById('petalsCanvas').style.display = 'none';
-}
-
-
-  /* ---------- Music (robust unlock) ---------- */
-  const bgm=document.getElementById('bgm');
-  const musicBtn=document.getElementById('musicControl');
-  let musicOn=false;
-  function uiMusic(on){ musicBtn.textContent=on?'Music: On':'Music: Off'; musicBtn.setAttribute('aria-pressed',String(on)); }
-  async function playMusic(){ try{ bgm.volume=.35; bgm.loop=true; await bgm.play(); musicOn=true; uiMusic(true);}catch{ musicBtn.textContent='Tap to play'; } }
-  function pauseMusic(){ bgm.pause(); musicOn=false; uiMusic(false); }
-  musicBtn.addEventListener('click',()=> musicOn?pauseMusic():playMusic());
-  (function unlockOnce(){ const once=()=>{ playMusic(); removeEventListener('pointerdown',once); removeEventListener('keydown',once); }; addEventListener('pointerdown',once,{passive:true}); addEventListener('keydown',once); })();
-  bgm.addEventListener('error',()=>{ musicBtn.textContent='Music unavailable'; });
-
-  /* ---------- Petals (fixed color per petal) ---------- */
-  class PetalsSystem{
-    constructor(){ this.canvas=document.getElementById('petalsCanvas'); this.ctx=this.canvas.getContext('2d'); this.petals=[]; this.isActive=false; this.colors=['#7b1733','#a91d47','#c92a5a','#ff6b7a']; this.resize(); addEventListener('resize',()=>this.resize()); }
-    resize(){ this.canvas.width=innerWidth; this.canvas.height=innerHeight; }
-    createPetal(){ return { x:Math.random()*(this.canvas.width+200)-100, y:-30, size:Math.random()*8+4, speed:Math.random()*2+1, rotation:Math.random()*360, rotationSpeed:(Math.random()-.5)*4, opacity:.35+Math.random()*.45, color:this.colors[(Math.random()*this.colors.length)|0], drift:Math.random()*1.5-.75 }; }
-    update(){ if(!this.isActive) return; if(Math.random()<0.3) this.petals.push(this.createPetal()); this.petals=this.petals.filter(p=>{ p.y+=p.speed; p.x+=Math.sin(p.y*.01)*p.drift; p.rotation+=p.rotationSpeed; return p.y<this.canvas.height+50; }); }
-    draw(){ const c=this.ctx; c.clearRect(0,0,this.canvas.width,this.canvas.height); for(const p of this.petals){ c.save(); c.translate(p.x,p.y); c.rotate(p.rotation*Math.PI/180); c.globalAlpha=p.opacity; c.fillStyle=p.color; c.beginPath(); c.ellipse(0,0,p.size,p.size*.6,0,0,Math.PI*2); c.fill(); c.restore(); } }
-    animate(){ this.update(); this.draw(); if(this.isActive) requestAnimationFrame(()=>this.animate()); }
-    start(){ this.isActive=true; this.canvas.classList.add('active'); this.animate(); }
-    burst(){ for(let i=0;i<50;i++) setTimeout(()=>this.petals.push(this.createPetal()), i*20); }
-  }
-  const petals=new PetalsSystem();
-
-  /* ---------- Beat-synced Intro ---------- */
-  const BPM = 96;               // set to your track's BPM
-  const DOWNBEAT_OFFSET = 0.30; // seconds to first strong beat
-
-  const introTexts = [
-    "With great joy and gratitude",
-    "Samson D'Costa & Suni D'Costa",
-    "Along With",
-    "Kevin Fernandes & Annie Fernandes",
-    "Invite you to celebrate the wedding of",
-    "Nikolas & Kavita",
-    
-  ];
-
-  let introStep = 0;
-  let introTimerId = null;
-
-  function endIntro(){
-  if (introTimerId) { clearTimeout(introTimerId); introTimerId = null; }
-
-  const slideshow = document.getElementById('introSlideshow');
-  const staticHero = document.getElementById('staticHero');
-
-  // Fade out the slideshow
-  slideshow.style.opacity = '0';
-
-  // After fade (1s), hide it and show static hero
-  setTimeout(() => {
-    slideshow.style.display = 'none';
-    staticHero.classList.remove('hidden');
-  }, 1000); // matches your CSS transition: opacity 1s ease
-
-  // Hide intro and show main content
-  document.getElementById('introSequence').classList.add('hidden');
-  document.getElementById('mainContent').classList.add('visible');
-}
+        // respect reduced-motion, but keep the heart (touch intro) visible
+        const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (REDUCED) {
+            document.querySelectorAll('.name-text, .heart-btn').forEach(el => {
+                el.style.opacity = '1';
+                el.style.transform = 'none';
+                el.style.animation = 'none';
+            });
+            document.getElementById('introSequence').style.display = 'none';
+            document.getElementById('petalsCanvas').style.display = 'none';
+        }
 
 
-  function showSlide(step) {
-  const seq = document.getElementById('introSequence');
-  const t = document.getElementById('introText');
-  seq.classList.remove('hidden');
+        /* ---------- Music (robust unlock) ---------- */
+        const bgm = document.getElementById('bgm');
+        const musicBtn = document.getElementById('musicControl');
+        let musicOn = false;
 
-  const line = document.createElement('div');
-  line.className = 'intro-line';
-  line.textContent = introTexts[step];
-  if (step === introTexts.length - 1) line.classList.add('intro-names');
-  t.appendChild(line);
-  t.style.transform = "translateY(-10px)";
-setTimeout(() => t.style.transform = "translateY(0)", 150);
+        function uiMusic(on) {
+            musicBtn.textContent = on ? 'Music: On' : 'Music: Off';
+            musicBtn.setAttribute('aria-pressed', String(on));
+        }
+        async function playMusic() {
+            try {
+                bgm.volume = .35;
+                bgm.loop = true;
+                await bgm.play();
+                musicOn = true;
+                uiMusic(true);
+            } catch {
+                musicBtn.textContent = 'Tap to play';
+            }
+        }
 
-}
+        function pauseMusic() {
+            bgm.pause();
+            musicOn = false;
+            uiMusic(false);
+        }
+        musicBtn.addEventListener('click', () => musicOn ? pauseMusic() : playMusic());
+        (function unlockOnce() {
+            const once = () => {
+                playMusic();
+                removeEventListener('pointerdown', once);
+                removeEventListener('keydown', once);
+            };
+            addEventListener('pointerdown', once, {
+                passive: true
+            });
+            addEventListener('keydown', once);
+        })();
+        bgm.addEventListener('error', () => {
+            musicBtn.textContent = 'Music unavailable';
+        });
 
+        /* ---------- Petals (fixed color per petal) ---------- */
+        class PetalsSystem {
+            constructor() {
+                this.canvas = document.getElementById('petalsCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.petals = [];
+                this.isActive = false;
+                this.colors = ['#7b1733', '#a91d47', '#c92a5a', '#ff6b7a'];
+                this.resize();
+                addEventListener('resize', () => this.resize());
+            }
+            resize() {
+                this.canvas.width = innerWidth;
+                this.canvas.height = innerHeight;
+            }
+            createPetal() {
+                return {
+                    x: Math.random() * (this.canvas.width + 200) - 100,
+                    y: -30,
+                    size: Math.random() * 8 + 4,
+                    speed: Math.random() * 2 + 1,
+                    rotation: Math.random() * 360,
+                    rotationSpeed: (Math.random() - .5) * 4,
+                    opacity: .35 + Math.random() * .45,
+                    color: this.colors[(Math.random() * this.colors.length) | 0],
+                    drift: Math.random() * 1.5 - .75
+                };
+            }
+            update() {
+                if (!this.isActive) return;
+                if (Math.random() < 0.3) this.petals.push(this.createPetal());
+                this.petals = this.petals.filter(p => {
+                    p.y += p.speed;
+                    p.x += Math.sin(p.y * .01) * p.drift;
+                    p.rotation += p.rotationSpeed;
+                    return p.y < this.canvas.height + 50;
+                });
+            }
+            draw() {
+                const c = this.ctx;
+                c.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                for (const p of this.petals) {
+                    c.save();
+                    c.translate(p.x, p.y);
+                    c.rotate(p.rotation * Math.PI / 180);
+                    c.globalAlpha = p.opacity;
+                    c.fillStyle = p.color;
+                    c.beginPath();
+                    c.ellipse(0, 0, p.size, p.size * .6, 0, 0, Math.PI * 2);
+                    c.fill();
+                    c.restore();
+                }
+            }
+            animate() {
+                this.update();
+                this.draw();
+                if (this.isActive) requestAnimationFrame(() => this.animate());
+            }
+            start() {
+                this.isActive = true;
+                this.canvas.classList.add('active');
+                this.animate();
+            }
+            burst() {
+                for (let i = 0; i < 50; i++) setTimeout(() => this.petals.push(this.createPetal()), i * 20);
+            }
+        }
+        const petals = new PetalsSystem();
 
-  function msUntilNextBeats(nBeats = 1){
-    const beat = 60 / BPM;
-    const now = bgm.currentTime;
-    const beatsSinceOffset = Math.max(0, (now - DOWNBEAT_OFFSET) / beat);
-    const nextBoundaryBeats = Math.ceil(beatsSinceOffset + Number.EPSILON) + (nBeats - 1);
-    const nextBoundaryTime = nextBoundaryBeats * beat + DOWNBEAT_OFFSET;
-    return Math.max(0, (nextBoundaryTime - now) * 1000);
-  }
+        /* ---------- Beat-synced Intro ---------- */
+        const BPM = 96; // set to your track's BPM
+        const DOWNBEAT_OFFSET = 0.30; // seconds to first strong beat
 
-  function startIntroBeatSynced(beatsPerSlide = 4){
-document.getElementById('introText').innerHTML = '';
+        const introTexts = [
+            "With great joy and gratitude",
+            "Samson D'Costa & Suni D'Costa",
+            "Along With",
+            "Kevin Fernandes & Annie Fernandes",
+            "Invite you to celebrate the wedding of",
+            "Nikolas & Kavita",
 
-    introStep = 0;
-    const advance = () => {
-  if (introStep >= introTexts.length) {
-    setTimeout(endIntro, 3000); // Wait 4s after last line
-    return;
-  }
-  showSlide(introStep++);
-  introTimerId = setTimeout(advance, msUntilNextBeats(beatsPerSlide));
-};
+        ];
 
-    introTimerId = setTimeout(advance, msUntilNextBeats(1));
-  }
+        let introStep = 0;
+        let introTimerId = null;
 
-  document.getElementById('skipIntro').addEventListener('click', endIntro);
+        function endIntro() {
+            if (introTimerId) {
+                clearTimeout(introTimerId);
+                introTimerId = null;
+            }
 
-  /* ---------- Heart gesture ---------- */
-  const heartBtn = document.getElementById('heartButton');
-  const namesWrap = document.getElementById('namesWrap');
-  let started = false; // <-- add this
+            const slideshow = document.getElementById('introSlideshow');
+            const staticHero = document.getElementById('staticHero');
 
-  function begin(){
-    if (started) return;        // <-- guard double triggers
-    started = true;
+            // Fade out the slideshow
+            slideshow.style.opacity = '0';
 
-    namesWrap.classList.add('name-merge');
-    heartBtn.style.opacity = '0';
-    document.getElementById('touchIntro').classList.add('hidden');
+            // After fade (1s), hide it and show static hero
+            setTimeout(() => {
+                slideshow.style.display = 'none';
+                staticHero.classList.remove('hidden');
+            }, 1000); // matches your CSS transition: opacity 1s ease
 
-    playMusic();
-
-    if (!REDUCED){
-      petals.start(); petals.burst();
-      setTimeout(()=> startIntroBeatSynced(4), 300);
-    } else {
-      document.getElementById('introSequence').classList.add('hidden');
-      document.getElementById('mainContent').classList.add('visible');
-    }
-  }
-heartBtn.addEventListener('pointerup', begin, { passive: true });
-setTimeout(()=>heartBtn.classList.add('floating'), 900);
-
-  /* ---------- Maps ---------- */
-  function openMap(k){
-  const m = {
-    cathedral: "https://maps.google.com/?q=Santa+Cruz+Cathedral+Basilica+Fort+Kochi",
-    rose: "https://www.google.com/maps/place/Rose+Gardens+Function+Hall/@9.9189187,76.2647579,159m/data=!3m1!1e3!4m6!3m5!1s0x3b086d85e7dd2f4b:0xf685b03397b85806!8m2!3d9.9192535!4d76.2646839!16s%2Fg%2F11f00md17k",
-    zion: "https://www.google.com/maps/place/Zion+Villa/@9.9112955,76.2702845,20.25z/data=!4m6!3m5!1s0x3b086d0038573f23:0x3397a84796b8b36c!8m2!3d9.9113358!4d76.270403!16s%2Fg%2F11xvt5xt3l",
-    ers: "https://www.google.com/maps/place/Ernakulam+Junction/@9.9636266,76.2852608,15z/data=!4m10!1m2!2m1!1sERS!3m6!1s0x3b0872b4498c107f:0x2da22b212ba9d071!8m2!3d9.9695719!4d76.2911687!15sCgNFUlNaBSIDZXJzkgENdHJhaW5fc3RhdGlvbqoBQAoKL20vMGNtOWt3ehABKgciA2VycygAMh4QASIagC_z-UvV_M-_y4SvlS5-TtYn_5Z50HsCsBcyBxACIgNlcnPgAQA!16zL20vMGQzY3Ri",
-    cochin: "https://www.google.com/maps/place/Cochin+International+Airport/@10.1532129,76.3933204,17z/data=!3m1!4b1!4m6!3m5!1s0x3b080882748f4a6f:0x30b2ebe45d968458!8m2!3d10.1532129!4d76.3933204!16zL20vMDMxN2wx"
-  };
-  window.open(m[k],'_blank');
-}
-
-
-  /* ---------- Countdown ---------- */
-  function updateCountdown(){
-    const target=new Date('2025-10-27T15:00:00+05:30').getTime();
-    const now=Date.now(), diff=Math.max(0,target-now);
-    const d=Math.floor(diff/86400000);
-    const h=String(Math.floor(diff%86400000/3600000)).padStart(2,'0');
-    const m=String(Math.floor(diff%3600000/60000)).padStart(2,'0');
-    const s=String(Math.floor(diff%60000/1000)).padStart(2,'0');
-    document.getElementById('countdownTimer').textContent = diff ? `${d} days ${h}:${m}:${s}` : "The big day is here!";
-  }
-  setInterval(updateCountdown,1000); updateCountdown();
-
-  /* ---------- RSVP + Sheets + ICS ---------- */
-  let currentRSVPType = '';
-
-  function openRSVP(type){
-    currentRSVPType = type;
-    const group = document.getElementById('guestCountGroup');
-    const select = document.getElementById('guestCount');
-    if (type === 'coming') {
-      group.style.display = 'block';
-      select.required = true;
-      select.value = '';
-    } else {
-      group.style.display = 'none';
-      select.required = false;
-      select.value = '';
-    }
-    document.getElementById('rsvpModal').classList.add('visible');
-      setTimeout(()=>document.getElementById('fullName').focus(), 50);
-  }
-
-  function closeRSVP() {
-    document.getElementById('rsvpModal').classList.remove('visible');
-  }
-  document.getElementById('rsvpModal').addEventListener('click', (e) => {
-    if (e.target.id === 'rsvpModal') closeRSVP();
-  });
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeRSVP();
-  });
-
-  document.getElementById('rsvpForm').addEventListener('submit', e => {
-    e.preventDefault();
-    const submitBtn = e.submitter || e.target.querySelector('button[type="submit"]');
-    if (submitBtn) submitBtn.disabled = true;
-
-    try {
-      const name = document.getElementById('fullName').value.trim();
-      const guestCount = (currentRSVPType === 'coming')
-        ? document.getElementById('guestCount').value
-        : 1;
-
-      if (!name) return;
-      if (currentRSVPType === 'coming' && !guestCount) return;
-
-      // 1) Send to Google Sheet
-      const payload = {
-        name,
-        guestCount: Number(guestCount || 1),
-        rsvpType: currentRSVPType,
-        userAgent: navigator.userAgent,
-        referrer: document.referrer || location.href
-      };
-      sendToSheet(payload);
-
-      // 2) Calendar file
-      downloadICS(makeICS(currentRSVPType), 'nikolas-kavita-wedding.ics');
-
-      
-
-      // 3) Close + confirm
-      closeRSVP();
-      alert(currentRSVPType === 'coming'
-        ? `Thank you, ${name}! Your reminder is saved.`
-        : 'Reminder saved.');
-    } finally {
-      if (submitBtn) submitBtn.disabled = false;
-    }
-  });
-
-async function sendToSheet(payload) {
-  try {
-    await fetch(SHEET_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-      keepalive: true
-    });
-  } catch (_) {
-    // ignore; calendar file still downloads
-  }
-}
+            // Hide intro and show main content
+            document.getElementById('introSequence').classList.add('hidden');
+            document.getElementById('mainContent').classList.add('visible');
+        }
 
 
+        function showSlide(step) {
+            const seq = document.getElementById('introSequence');
+            const t = document.getElementById('introText');
+            seq.classList.remove('hidden');
 
-  function makeICS(type){
-    const start='20251027T093000Z', end='20251027T103000Z';
-    const trig = (type==='coming')?'-P7D':'-P30D';
-    const desc = [
-      'Wedding Ceremony at Santa Cruz Cathedral Basilica, Fort Kochi.',
-      'Reception: Rose Gardens Function Hall, Kochi.',
-      'Home: Zion Villa, MLA Road, Pallurthy, Kochi 682006.',
-      'Travel: Ernakulam Jn (ERS) | Cochin Intl Airport.',
-      'Maps:',
-      'https://maps.google.com/?q=Santa+Cruz+Cathedral+Basilica+Fort+Kochi',
-      'https://www.google.com/maps/place/Rose+Gardens+Function+Hall/@9.9189187,76.2647579,159m/data=!3m1!1e3!4m6!3m5!1s0x3b086d85e7dd2f4b:0xf685b03397b85806!8m2!3d9.9192535!4d76.2646839!16s%2Fg%2F11f00md17k'
-    ].join('\n');
-    return `BEGIN:VCALENDAR
+            const line = document.createElement('div');
+            line.className = 'intro-line';
+            line.textContent = introTexts[step];
+            if (step === introTexts.length - 1) line.classList.add('intro-names');
+            t.appendChild(line);
+            t.style.transform = "translateY(-10px)";
+            setTimeout(() => t.style.transform = "translateY(0)", 150);
+
+        }
+
+
+        function msUntilNextBeats(nBeats = 1) {
+            const beat = 60 / BPM;
+            const now = bgm.currentTime;
+            const beatsSinceOffset = Math.max(0, (now - DOWNBEAT_OFFSET) / beat);
+            const nextBoundaryBeats = Math.ceil(beatsSinceOffset + Number.EPSILON) + (nBeats - 1);
+            const nextBoundaryTime = nextBoundaryBeats * beat + DOWNBEAT_OFFSET;
+            return Math.max(0, (nextBoundaryTime - now) * 1000);
+        }
+
+        function startIntroBeatSynced(beatsPerSlide = 4) {
+            document.getElementById('introText').innerHTML = '';
+
+            introStep = 0;
+            const advance = () => {
+                if (introStep >= introTexts.length) {
+                    setTimeout(endIntro, 3000); // Wait 4s after last line
+                    return;
+                }
+                showSlide(introStep++);
+                introTimerId = setTimeout(advance, msUntilNextBeats(beatsPerSlide));
+            };
+
+            introTimerId = setTimeout(advance, msUntilNextBeats(1));
+        }
+
+        document.getElementById('skipIntro').addEventListener('click', endIntro);
+
+        /* ---------- Heart gesture ---------- */
+        const heartBtn = document.getElementById('heartButton');
+        const namesWrap = document.getElementById('namesWrap');
+        let started = false; // <-- add this
+
+        function begin() {
+            if (started) return; // <-- guard double triggers
+            started = true;
+
+            namesWrap.classList.add('name-merge');
+            heartBtn.style.opacity = '0';
+            document.getElementById('touchIntro').classList.add('hidden');
+
+            playMusic();
+
+            if (!REDUCED) {
+                petals.start();
+                petals.burst();
+                setTimeout(() => startIntroBeatSynced(4), 300);
+            } else {
+                document.getElementById('introSequence').classList.add('hidden');
+                document.getElementById('mainContent').classList.add('visible');
+            }
+        }
+        heartBtn.addEventListener('pointerup', begin, {
+            passive: true
+        });
+        setTimeout(() => heartBtn.classList.add('floating'), 900);
+
+        /* ---------- Maps ---------- */
+        function openMap(k) {
+            const m = {
+                cathedral: "https://maps.google.com/?q=Santa+Cruz+Cathedral+Basilica+Fort+Kochi",
+                rose: "https://www.google.com/maps/place/Rose+Gardens+Function+Hall/@9.9189187,76.2647579,159m/data=!3m1!1e3!4m6!3m5!1s0x3b086d85e7dd2f4b:0xf685b03397b85806!8m2!3d9.9192535!4d76.2646839!16s%2Fg%2F11f00md17k",
+                zion: "https://www.google.com/maps/place/Zion+Villa/@9.9112955,76.2702845,20.25z/data=!4m6!3m5!1s0x3b086d0038573f23:0x3397a84796b8b36c!8m2!3d9.9113358!4d76.270403!16s%2Fg%2F11xvt5xt3l",
+                ers: "https://www.google.com/maps/place/Ernakulam+Junction/@9.9636266,76.2852608,15z/data=!4m10!1m2!2m1!1sERS!3m6!1s0x3b0872b4498c107f:0x2da22b212ba9d071!8m2!3d9.9695719!4d76.2911687!15sCgNFUlNaBSIDZXJzkgENdHJhaW5fc3RhdGlvbqoBQAoKL20vMGNtOWt3ehABKgciA2VycygAMh4QASIagC_z-UvV_M-_y4SvlS5-TtYn_5Z50HsCsBcyBxACIgNlcnPgAQA!16zL20vMGQzY3Ri",
+                cochin: "https://www.google.com/maps/place/Cochin+International+Airport/@10.1532129,76.3933204,17z/data=!3m1!4b1!4m6!3m5!1s0x3b080882748f4a6f:0x30b2ebe45d968458!8m2!3d10.1532129!4d76.3933204!16zL20vMDMxN2wx"
+            };
+            window.open(m[k], '_blank');
+        }
+
+
+        /* ---------- Countdown ---------- */
+        function updateCountdown() {
+            const target = new Date('2025-10-27T15:00:00+05:30').getTime();
+            const now = Date.now(),
+                diff = Math.max(0, target - now);
+            const d = Math.floor(diff / 86400000);
+            const h = String(Math.floor(diff % 86400000 / 3600000)).padStart(2, '0');
+            const m = String(Math.floor(diff % 3600000 / 60000)).padStart(2, '0');
+            const s = String(Math.floor(diff % 60000 / 1000)).padStart(2, '0');
+            document.getElementById('countdownTimer').textContent = diff ? `${d} days ${h}:${m}:${s}` : "The big day is here!";
+        }
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        /* ---------- RSVP + Sheets + ICS ---------- */
+        let currentRSVPType = '';
+
+        function openRSVP(type) {
+            currentRSVPType = type;
+            const group = document.getElementById('guestCountGroup');
+            const select = document.getElementById('guestCount');
+            if (type === 'coming') {
+                group.style.display = 'block';
+                select.required = true;
+                select.value = '';
+            } else {
+                group.style.display = 'none';
+                select.required = false;
+                select.value = '';
+            }
+            document.getElementById('rsvpModal').classList.add('visible');
+            setTimeout(() => document.getElementById('fullName').focus(), 50);
+        }
+
+        function closeRSVP() {
+            document.getElementById('rsvpModal').classList.remove('visible');
+        }
+        document.getElementById('rsvpModal').addEventListener('click', (e) => {
+            if (e.target.id === 'rsvpModal') closeRSVP();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeRSVP();
+        });
+
+        document.getElementById('rsvpForm').addEventListener('submit', e => {
+            e.preventDefault();
+            const submitBtn = e.submitter || e.target.querySelector('button[type="submit"]');
+            if (submitBtn) submitBtn.disabled = true;
+
+            try {
+                const name = document.getElementById('fullName').value.trim();
+                const guestCount = (currentRSVPType === 'coming') ?
+                    document.getElementById('guestCount').value :
+                    1;
+
+                if (!name) return;
+                if (currentRSVPType === 'coming' && !guestCount) return;
+
+                // 1) Send to Google Sheet
+                const payload = {
+                    name,
+                    guestCount: Number(guestCount || 1),
+                    rsvpType: currentRSVPType,
+                    userAgent: navigator.userAgent,
+                    referrer: document.referrer || location.href
+                };
+                sendToSheet(payload);
+
+                // 2) Calendar file
+                downloadICS(makeICS(currentRSVPType), 'nikolas-kavita-wedding.ics');
+
+
+
+                // 3) Close + confirm
+                closeRSVP();
+                alert(currentRSVPType === 'coming' ?
+                    `Thank you, ${name}! Your reminder is saved.` :
+                    'Reminder saved.');
+            } finally {
+                if (submitBtn) submitBtn.disabled = false;
+            }
+        });
+
+        async function sendToSheet(payload) {
+            try {
+                await fetch(SHEET_ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload),
+                    keepalive: true
+                });
+            } catch (_) {
+                // ignore; calendar file still downloads
+            }
+        }
+
+
+
+        function makeICS(type) {
+            const start = '20251027T093000Z',
+                end = '20251027T103000Z';
+            const trig = (type === 'coming') ? '-P7D' : '-P30D';
+            const desc = [
+                'Wedding Ceremony at Santa Cruz Cathedral Basilica, Fort Kochi.',
+                'Reception: Rose Gardens Function Hall, Kochi.',
+                'Home: Zion Villa, MLA Road, Pallurthy, Kochi 682006.',
+                'Travel: Ernakulam Jn (ERS) | Cochin Intl Airport.',
+                'Maps:',
+                'https://maps.google.com/?q=Santa+Cruz+Cathedral+Basilica+Fort+Kochi',
+                'https://www.google.com/maps/place/Rose+Gardens+Function+Hall/@9.9189187,76.2647579,159m/data=!3m1!1e3!4m6!3m5!1s0x3b086d85e7dd2f4b:0xf685b03397b85806!8m2!3d9.9192535!4d76.2646839!16s%2Fg%2F11f00md17k'
+            ].join('\n');
+            return `BEGIN:VCALENDAR
 VERSION:2.0
 CALSCALE:GREGORIAN
 BEGIN:VEVENT
@@ -841,41 +1295,43 @@ TRIGGER:${trig}
 END:VALARM
 END:VEVENT
 END:VCALENDAR`;
-  }
+        }
 
 
-if (REDUCED){
-  // skip the slide show and petals, but keep the heart visible
-  document.getElementById('introSequence').style.display = 'none';
-  document.getElementById('petalsCanvas').style.display = 'none';
-}
+        if (REDUCED) {
+            // skip the slide show and petals, but keep the heart visible
+            document.getElementById('introSequence').style.display = 'none';
+            document.getElementById('petalsCanvas').style.display = 'none';
+        }
 
-function downloadICS(ics, filename){
-  const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
-}
+        function downloadICS(ics, filename) {
+            const blob = new Blob([ics], {
+                type: 'text/calendar;charset=utf-8'
+            });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+        }
 
-const slides = document.querySelectorAll("#introSlideshow .slideshow-img");
-let currentSlide = 0;
+        const slides = document.querySelectorAll("#introSlideshow .slideshow-img");
+        let currentSlide = 0;
 
-function cycleSlides() {
-  slides.forEach((slide, index) => {
-    slide.classList.toggle("active", index === currentSlide);
-  });
-  currentSlide = (currentSlide + 1) % slides.length;
-}
+        function cycleSlides() {
+            slides.forEach((slide, index) => {
+                slide.classList.toggle("active", index === currentSlide);
+            });
+            currentSlide = (currentSlide + 1) % slides.length;
+        }
 
-setInterval(cycleSlides, 4000); // every 4 seconds
-cycleSlides(); // start immediately
-  
-</script>
+        setInterval(cycleSlides, 4000); // every 4 seconds
+        cycleSlides(); // start immediately
+    </script>
 
 </body>
+
 </html>
