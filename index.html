@@ -607,14 +607,16 @@
         }
 
         .modal-content {
-            background: #fff;
-            border-radius: 20px;
-            padding: 2rem;
-            max-width: 500px;
-            width: 100%;
-            transform: translateY(18px);
-            transition: transform .3s ease
-        }
+  background: #fff;
+  border-radius: 20px;
+  padding: 2rem;
+  max-width: 420px;  /* narrower so the input doesn't look too wide */
+  width: 100%;
+  box-sizing: border-box; /* ensures padding doesn't expand width */
+  transform: translateY(18px);
+  transition: transform .3s ease;
+  text-align: center; /* center-align title + buttons */
+}
 
         .modal-overlay.visible .modal-content {
             transform: translateY(0)
@@ -630,22 +632,27 @@
         }
 
         .form-group {
-            margin: .9rem 0
-        }
+  margin: 1rem 0;
+  text-align: left; /* keeps label aligned left */
+}
 
         .form-label {
-            display: block;
-            font-weight: 600;
-            margin: .4rem 0
-        }
+  display: block;
+  font-weight: 600;
+  margin-bottom: .4rem;
+  color: var(--wine);
+}
+
 
         .form-input {
-            width: 100%;
-            padding: 12px 14px;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            font-size: 16px
-        }
+  width: 100%; /* make it exactly fit modal width */
+  max-width: 100%;
+  padding: 12px 14px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 16px;
+  box-sizing: border-box; /* avoids overflow */
+}
 
         .form-input:focus {
             outline: none;
@@ -1194,7 +1201,7 @@
     // 1) Send to Google Sheet
     const payload = {
       name,
-      guestCount: 1,
+      guestCount: 2,
       rsvpType: 'save', // just mark as save
       userAgent: navigator.userAgent,
       referrer: document.referrer || location.href
