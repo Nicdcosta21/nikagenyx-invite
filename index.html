@@ -858,9 +858,9 @@
 
 
             <div class="action-buttons">
-                <button class="btn-primary" type="button" onclick="openRSVP('coming')">Save to Calendar</button>
-                <button class="btn-outline" type="button" onclick="openRSVP('save')">Set a Reminder</button>
-            </div>
+  <button class="btn-primary" type="button" onclick="openRSVP()">Save the Date</button>
+</div>
+
 
             <div class="color-note">Colour of the day — Wine Red</div>
             <div class="countdown-section">
@@ -1029,9 +1029,9 @@
 
         const introTexts = [
             "With great joy and gratitude",
-            "Samson D'Costa & Suni D'Costa",
+            "Samson & Suni D'Costa",
             "Along With",
-            "Kevin Fernandes & Annie Fernandes",
+            "Kevin & Annie Fernandes",
             "Invite you to celebrate the wedding of",
             "Nikolas & Kavita",
 
@@ -1166,22 +1166,11 @@
         /* ---------- RSVP + Sheets + ICS ---------- */
         let currentRSVPType = '';
 
-        function openRSVP(type) {
-            currentRSVPType = type;
-            const group = document.getElementById('guestCountGroup');
-            const select = document.getElementById('guestCount');
-            if (type === 'coming') {
-                group.style.display = 'block';
-                select.required = true;
-                select.value = '';
-            } else {
-                group.style.display = 'none';
-                select.required = false;
-                select.value = '';
-            }
-            document.getElementById('rsvpModal').classList.add('visible');
-            setTimeout(() => document.getElementById('fullName').focus(), 50);
-        }
+        function openRSVP() {
+  document.getElementById('rsvpModal').classList.add('visible');
+  setTimeout(() => document.getElementById('fullName').focus(), 50);
+}
+
 
         function closeRSVP() {
             document.getElementById('rsvpModal').classList.remove('visible');
@@ -1205,42 +1194,24 @@
     // 1) Send to Google Sheet
     const payload = {
       name,
-      guestCount: 1, // always default to 1 now
-      rsvpType: currentRSVPType,
+      guestCount: 1,
+      rsvpType: 'save', // just mark as save
       userAgent: navigator.userAgent,
       referrer: document.referrer || location.href
     };
     sendToSheet(payload);
 
     // 2) Calendar file
-    downloadICS(makeICS(currentRSVPType), 'nikolas-kavita-wedding.ics');
+    downloadICS(makeICS(), 'nikolas-kavita-wedding.ics');
 
-    // 3) Close modal smoothly
-closeRSVP();
-
-// Optional: show a temporary toast instead of alert
-const toast = document.createElement('div');
-toast.textContent = `Reminder saved for ${name}`;
-toast.style.position = 'fixed';
-toast.style.bottom = '20px';
-toast.style.left = '50%';
-toast.style.transform = 'translateX(-50%)';
-toast.style.background = 'rgba(123,23,51,0.9)';
-toast.style.color = '#fff';
-toast.style.padding = '10px 20px';
-toast.style.borderRadius = '20px';
-toast.style.fontWeight = '600';
-toast.style.zIndex = '9999';
-toast.style.transition = 'opacity 0.6s ease';
-document.body.appendChild(toast);
-
-setTimeout(() => { toast.style.opacity = '0'; }, 2500);
-setTimeout(() => { toast.remove(); }, 3100);
-
+    // 3) Close + confirm
+    closeRSVP();
+    alert(`Thank you, ${name}! The date has been saved with reminders.`);
   } finally {
     if (submitBtn) submitBtn.disabled = false;
   }
 });
+
 
 
         async function sendToSheet(payload) {
@@ -1260,20 +1231,20 @@ setTimeout(() => { toast.remove(); }, 3100);
 
 
 
-        function makeICS(type) {
-            const start = '20251027T093000Z',
-                end = '20251027T103000Z';
-            const trig = (type === 'coming') ? '-P7D' : '-P30D';
-            const desc = [
-                'Wedding Ceremony at Santa Cruz Cathedral Basilica, Fort Kochi.',
-                'Reception: Rose Gardens Function Hall, Kochi.',
-                'Home: Zion Villa, MLA Road, Pallurthy, Kochi 682006.',
-                'Travel: Ernakulam Jn (ERS) | Cochin Intl Airport.',
-                'Maps:',
-                'https://maps.google.com/?q=Santa+Cruz+Cathedral+Basilica+Fort+Kochi',
-                'https://www.google.com/maps/place/Rose+Gardens+Function+Hall/@9.9189187,76.2647579,159m/data=!3m1!1e3!4m6!3m5!1s0x3b086d85e7dd2f4b:0xf685b03397b85806!8m2!3d9.9192535!4d76.2646839!16s%2Fg%2F11f00md17k'
-            ].join('\n');
-            return `BEGIN:VCALENDAR
+        function makeICS() {
+  const start = '20251027T093000Z'; // UTC start
+  const end = '20251027T103000Z';   // UTC end
+  const desc = [
+    'Wedding Ceremony at Santa Cruz Cathedral Basilica, Fort Kochi.',
+    'Reception: Rose Gardens Function Hall, Kochi.',
+    'Home: Zion Villa, MLA Road, Pallurthy, Kochi 682006.',
+    'Travel: Ernakulam Jn (ERS) | Cochin Intl Airport.',
+    'Maps:',
+    'https://maps.google.com/?q=Santa+Cruz+Cathedral+Basilica+Fort+Kochi',
+    'https://www.google.com/maps/place/Rose+Gardens+Function+Hall/@9.9189187,76.2647579,159m/data=!3m1!1e3'
+  ].join('\n');
+
+  return `BEGIN:VCALENDAR
 VERSION:2.0
 CALSCALE:GREGORIAN
 BEGIN:VEVENT
@@ -1286,12 +1257,18 @@ DTSTART:${start}
 DTEND:${end}
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Wedding reminder
-TRIGGER:${trig}
+DESCRIPTION:Wedding reminder (7 days before)
+TRIGGER:-P7D
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Wedding reminder (3 days before)
+TRIGGER:-P3D
 END:VALARM
 END:VEVENT
 END:VCALENDAR`;
-        }
+}
+
 
 
         if (REDUCED) {
