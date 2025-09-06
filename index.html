@@ -147,14 +147,14 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
   text-align: center;
   text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
   opacity: 1;
-  transition: all 0.5s ease;
+  transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .intro-line {
   opacity: 0;
-  transform: translateY(15px);
-  animation: fadeInUp 0.9s ease forwards;
-  margin: 0.4em 0;
+  transform: translateY(20px);
+  animation: fadeInUp 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  margin: 0.6em 0;  /* a bit more breathing room */
 }
 
 .intro-line:nth-child(1) { animation-delay: 0s; }
@@ -233,30 +233,45 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
   line-height: 1.05;        /* compact vertical spacing */
   text-align: center;       /* center it cleanly */
 }
-/* Event Details (stacked + centered) */
+/* Event Details (two-column style) */
 .event-details {
   font-family: "Alice", serif;
   font-size: 1rem;
   line-height: 1.6;
-  text-align: center;
   margin-top: 2rem;
+  max-width: 700px;       /* wider block for clean spacing */
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .event-row {
-  display: block;
-  margin: 0.4rem 0;
+  display: flex;
+  justify-content: space-between;  /* spread label left, value right */
+  align-items: flex-start;         /* align multi-line values neatly */
+  margin: 0.6rem 0;
+  text-align: left;
 }
 
 .event-label {
+  flex: 0 0 160px;   /* fixed width column for labels */
   font-weight: bold;
   color: var(--wine);
-  margin-right: 0.25rem;
 }
 
 .event-value {
-  display: inline; /* keep it on the same line as label */
+  flex: 1;
+  text-align: right;
 }
-.map-link{color:var(--wine);text-decoration:underline}
+
+.map-link {
+  color: var(--wine);
+  font-style: italic;
+  text-decoration: none;
+}
+.map-link:hover {
+  text-decoration: underline;
+}
+
 .action-buttons{margin:2rem 0 1.25rem;display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
 .btn-primary,.btn-outline{padding:12px 22px;border-radius:28px;font-weight:700;cursor:pointer}
 .btn-primary{background:var(--wine);color:#fff;border:none}
@@ -628,6 +643,9 @@ if (REDUCED) {
   line.textContent = introTexts[step];
   if (step === introTexts.length - 1) line.classList.add('intro-names');
   t.appendChild(line);
+  t.style.transform = "translateY(-10px)";
+setTimeout(() => t.style.transform = "translateY(0)", 150);
+
 }
 
 
@@ -646,7 +664,7 @@ document.getElementById('introText').innerHTML = '';
     introStep = 0;
     const advance = () => {
   if (introStep >= introTexts.length) {
-    setTimeout(endIntro, 5000); // Wait 4s after last line
+    setTimeout(endIntro, 3000); // Wait 4s after last line
     return;
   }
   showSlide(introStep++);
