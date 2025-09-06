@@ -88,7 +88,7 @@ exports.handler = async (event) => {
 // --- Helper: add CORS headers ---
 function cors() {
   return {
-    'Access-Control-Allow-Origin': '*', // 👈 during testing
+    'Access-Control-Allow-Origin': 'https://invite.nikagenyx.com',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Allow-Methods': 'POST,OPTIONS',
   };
