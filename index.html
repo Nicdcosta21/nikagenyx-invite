@@ -152,8 +152,8 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
 
 .intro-line {
   opacity: 0;
-  transform: translateY(20px);
-  animation: fadeInUp 0.9s ease forwards;
+  transform: translateY(10px);
+  animation: fadeInUp 1.2s ease forwards;
   margin: 0.4em 0;
 }
 
@@ -602,6 +602,7 @@ if (REDUCED) {
      const line = document.createElement('div');
 line.className = 'intro-line';
 line.textContent = introTexts[step];
+line.style.animationDelay = `${step * 0.8}s`;
 if (step === introTexts.length - 1) line.classList.add('intro-names');
 t.appendChild(line);
 
