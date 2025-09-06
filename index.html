@@ -646,7 +646,7 @@ document.getElementById('introText').innerHTML = '';
     introStep = 0;
     const advance = () => {
   if (introStep >= introTexts.length) {
-    setTimeout(endIntro, 4000); // Wait 4s after last line
+    setTimeout(endIntro, 5000); // Wait 4s after last line
     return;
   }
   showSlide(introStep++);
